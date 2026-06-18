@@ -104,6 +104,21 @@
   .entry-analysis{color:var(--text-dim);font-size:.95rem;line-height:1.75;white-space:pre-wrap;margin-bottom:1rem}
   .entry-notes{background:var(--bg3);border-left:2px solid var(--gold-dim);padding:.7rem 1rem;font-size:.9rem;color:var(--text-dim);font-style:italic;border-radius:0 6px 6px 0;white-space:pre-wrap}
   .entry-notes:empty{display:none}
+
+  /* FOTO */
+  .photo-upload-area{border:2px dashed var(--border);border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
+  .photo-upload-area:hover{border-color:var(--purple-light);background:rgba(122,78,184,.06)}
+  .photo-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+  .photo-upload-label{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;color:var(--text-dim);pointer-events:none}
+  .photo-upload-label span{font-size:1.5rem;display:block;margin-bottom:.4rem}
+  .photo-preview-wrap{position:relative;display:inline-block;margin-top:.8rem}
+  .photo-preview{max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--border);display:block}
+  .photo-remove{position:absolute;top:-8px;right:-8px;background:var(--rose);border:none;border-radius:50%;width:26px;height:26px;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+  .entry-photo{width:100%;max-height:320px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-bottom:1rem;cursor:zoom-in;background:#080514}
+  .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:9998;align-items:center;justify-content:center;padding:1rem}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:100%;max-height:92vh;border-radius:8px;object-fit:contain}
+  .lightbox-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:50%;width:38px;height:38px;color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .entry-actions{display:flex;gap:.6rem;margin-top:1rem;justify-content:flex-end}
   .btn-edit,.btn-delete{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .8rem;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.08em;cursor:pointer;transition:all .2s}
   .btn-edit{color:var(--gold-dim)}
@@ -218,6 +233,19 @@
       <textarea id="f-analysis" placeholder="Cole aqui a análise do chat..."></textarea>
     </div>
     <div class="form-row">
+      <label>Foto da Tiragem (opcional)</label>
+      <div class="photo-upload-area" id="photo-upload-area">
+        <input type="file" id="f-photo" accept="image/*" capture="environment">
+        <div class="photo-upload-label" id="photo-upload-label">
+          <span>📷</span>Fotografar ou escolher da galeria
+        </div>
+      </div>
+      <div class="photo-preview-wrap" id="photo-preview-wrap" style="display:none">
+        <img id="photo-preview" class="photo-preview" src="" alt="Preview">
+        <button class="photo-remove" id="photo-remove" type="button">×</button>
+      </div>
+    </div>
+    <div class="form-row">
       <label>Notas pessoais (opcional)</label>
       <textarea id="f-notes" style="min-height:80px" placeholder="O que você sentiu? O que aconteceu no dia?"></textarea>
     </div>
@@ -237,6 +265,11 @@
   </div>
 
 </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close">×</button>
+  <img id="lightbox-img" src="" alt="Tiragem">
 </div>
 
 <!-- MODAL DELETE -->
@@ -287,6 +320,50 @@ let editingId = null;
 let deleteTargetId = null;
 let cardTags = [];
 let currentUser = null;
+let currentPhotoB64 = null;
+
+// ── FOTO ──
+function compressImage(file){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        const max=900;
+        if(w>max||h>max){ const r=Math.min(max/w,max/h); w=Math.round(w*r); h=Math.round(h*r) }
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',0.72));
+      };
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('f-photo').addEventListener('change', async e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const b64=await compressImage(file);
+  currentPhotoB64=b64;
+  document.getElementById('photo-preview').src=b64;
+  document.getElementById('photo-preview-wrap').style.display='inline-block';
+  document.getElementById('photo-upload-label').style.display='none';
+});
+
+document.getElementById('photo-remove').addEventListener('click',()=>{
+  currentPhotoB64=null;
+  document.getElementById('f-photo').value='';
+  document.getElementById('photo-preview').src='';
+  document.getElementById('photo-preview-wrap').style.display='none';
+  document.getElementById('photo-upload-label').style.display='';
+});
+
+// ── LIGHTBOX ──
+window.openLightbox=function(src){ document.getElementById('lightbox-img').src=src; document.getElementById('lightbox').classList.add('open') };
+document.getElementById('lightbox-close').addEventListener('click',()=>document.getElementById('lightbox').classList.remove('open'));
+document.getElementById('lightbox').addEventListener('click',e=>{ if(e.target===e.currentTarget) e.currentTarget.classList.remove('open') });
 
 // ── HELPERS ──
 function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2) }
@@ -444,6 +521,11 @@ function resetForm(){
   document.getElementById('f-date').value='';
   document.getElementById('f-analysis').value='';
   document.getElementById('f-notes').value='';
+  document.getElementById('f-photo').value='';
+  document.getElementById('photo-preview').src='';
+  document.getElementById('photo-preview-wrap').style.display='none';
+  document.getElementById('photo-upload-label').style.display='';
+  currentPhotoB64=null;
   cardTags=[]; tagInput.value=''; renderTags();
   editingId=null;
 }
@@ -462,6 +544,7 @@ document.getElementById('save-entry').addEventListener('click', async ()=>{
     id: editingId||genId(),
     date, cards:[...cardTags], analysis,
     notes: document.getElementById('f-notes').value.trim(),
+    photo: currentPhotoB64 || (editingId?(entries.find(e=>e.id===editingId)?.photo||null):null),
     createdAt: editingId?(entries.find(e=>e.id===editingId)?.createdAt||Date.now()):Date.now()
   };
   try {
@@ -493,6 +576,12 @@ window.editEntry=function(id){
   document.getElementById('f-date').value=e.date;
   document.getElementById('f-analysis').value=e.analysis;
   document.getElementById('f-notes').value=e.notes||'';
+  currentPhotoB64=e.photo||null;
+  if(e.photo){
+    document.getElementById('photo-preview').src=e.photo;
+    document.getElementById('photo-preview-wrap').style.display='inline-block';
+    document.getElementById('photo-upload-label').style.display='none';
+  }
   cardTags=[...e.cards]; renderTags();
   form.classList.add('open'); toggleBtn.textContent='✕ Fechar';
   form.scrollIntoView({behavior:'smooth',block:'start'});
@@ -550,6 +639,7 @@ function render(){
         <span class="entry-chevron">▼</span>
       </div>
       <div class="entry-body">
+        ${e.photo?`<div class="entry-section-label">Tiragem</div><img class="entry-photo" src="${e.photo}" alt="Foto da tiragem" onclick="openLightbox('${e.photo}')">`:''} 
         ${an?`<div class="entry-section-label">Análise</div><div class="entry-analysis">${an}</div>`:''}
         ${nt?`<div class="entry-section-label">Notas pessoais</div><div class="entry-notes">${nt}</div>`:''}
         <div class="entry-actions">
