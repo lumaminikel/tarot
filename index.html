@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Completo de Tarot</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #0e0b1a;
+    --bg2: #15102a;
+    --bg3: #1e1638;
+    --gold: #c9a84c;
+    --gold-light: #e8cc7a;
+    --gold-dim: #7a6230;
+    --purple: #6b3fa0;
+    --purple-light: #9b6fd0;
+    --rose: #c05070;
+    --text: #e8e0d0;
+    --text-dim: #a09880;
+    --border: #2e2450;
+    --card-bg: #120d24;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(180deg, #080514 0%, var(--bg2) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(107,63,160,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-symbol {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 0 12px var(--gold));
+  }
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.12em;
+    text-shadow: 0 0 30px rgba(201,168,76,0.4);
+  }
+  header p {
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 0.4rem;
+    font-size: 1rem;
+  }
+
+  /* ── LAYOUT ── */
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: rgba(14,11,26,0.97);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.7rem 1.5rem;
+  }
+  .search-inner {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+  #search {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--gold-dim);
+    border-radius: 8px;
+    padding: 0.6rem 1.1rem;
+    color: var(--text);
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #search:focus { border-color: var(--gold); }
+  #search::placeholder { color: var(--text-dim); }
+  #search-count {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: right;
+  }
+  .highlight { background: rgba(201,168,76,0.28); border-radius: 3px; padding: 0 2px; }
+
+  /* ── BODY LAYOUT ── */
+  .page-body {
+    display: flex;
+    align-items: flex-start;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  nav.sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 56px; /* altura da search-wrap */
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 1.2rem 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  nav.sidebar::-webkit-scrollbar { width: 4px; }
+  nav.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .nav-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    padding: 0.9rem 1.2rem 0.3rem;
+    user-select: none;
+  }
+
+  nav.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: 'Crimson Text', serif;
+    font-size: 0.92rem;
+    padding: 0.42rem 1.2rem 0.42rem 1rem;
+    border-left: 2px solid transparent;
+    transition: all 0.18s;
+    line-height: 1.3;
+    cursor: pointer;
+  }
+  nav.sidebar a .nav-icon { font-size: 0.85rem; flex-shrink: 0; }
+  nav.sidebar a:hover {
+    color: var(--gold-light);
+    border-left-color: var(--gold-dim);
+    background: rgba(201,168,76,0.06);
+  }
+  nav.sidebar a.active {
+    color: var(--gold-light);
+    border-left-color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    font-weight: 600;
+  }
+
+  /* ── MOBILE: sidebar vira barra sticky no topo ── */
+  @media (max-width: 768px) {
+    .page-body { flex-direction: column; }
+    nav.sidebar {
+      width: 100%;
+      height: auto;
+      position: sticky;
+      top: 48px;
+      z-index: 150;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0 0.5rem;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      gap: 0;
+      scrollbar-width: none;
+    }
+    nav.sidebar::-webkit-scrollbar { display: none; }
+    .nav-label { display: none; }
+    nav.sidebar a {
+      white-space: nowrap;
+      padding: 0.55rem 0.85rem;
+      border-left: none;
+      border-bottom: 2px solid transparent;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+    nav.sidebar a.active {
+      color: var(--gold-light);
+      border-left-color: transparent;
+      border-bottom-color: var(--gold);
+      background: rgba(201,168,76,0.08);
+    }
+    nav.sidebar a:hover {
+      border-left-color: transparent;
+      border-bottom-color: var(--gold-dim);
+    }
+  }
+
+  /* ── MAIN ── */
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 2.5rem 2rem 4rem;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 70px; /* desktop: só a search-wrap */
+  }
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--gold-dim);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-title .icon { font-size: 1.4rem; }
+
+  /* ── CARDS GRID ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+  .card:hover::before { opacity: 1; }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    margin-bottom: 0.5rem;
+  }
+  .card-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: var(--gold-dim);
+    min-width: 24px;
+  }
+  .card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    cursor: pointer;
+  }
+  .card-name:hover { color: #fff; }
+
+  .card-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.5rem 0;
+  }
+  .tag {
+    background: rgba(107,63,160,0.25);
+    color: var(--purple-light);
+    border: 1px solid rgba(107,63,160,0.4);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.6rem;
+  }
+  .tag.rev {
+    background: rgba(192,80,112,0.2);
+    color: #e08090;
+    border-color: rgba(192,80,112,0.35);
+  }
+
+  .card-body { font-size: 0.92rem; color: var(--text-dim); }
+  .card-body strong { color: var(--text); }
+
+  details { margin-top: 0.8rem; }
+  details summary {
+    cursor: pointer;
+    color: var(--gold-dim);
+    font-size: 0.85rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  details summary::before { content: '▶'; font-size: 0.6rem; transition: transform 0.2s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary::-webkit-details-marker { display: none; }
+  details .detail-body {
+    margin-top: 0.7rem;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    border-left: 2px solid var(--gold-dim);
+    padding-left: 1rem;
+  }
+  details .detail-body p + p { margin-top: 0.5rem; }
+
+  /* ── ARCANOS MAIORES / MENORES LABELS ── */
+  .arcana-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .arcana-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── INFO BLOCKS ── */
+  .info-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+  .info-block h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    margin-bottom: 0.7rem;
+  }
+  .info-block p + p { margin-top: 0.5rem; }
+  .info-block ul {
+    padding-left: 1.3rem;
+    margin-top: 0.4rem;
+  }
+  .info-block li { margin-bottom: 0.3rem; }
+
+  .ritual-steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+  .ritual-steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+  .ritual-steps li::before {
+    content: counter(step);
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    color: #0e0b1a;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  /* ── SPREAD LAYOUTS ── */
+  .spread-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+  }
+  .spread-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+  }
+  .spread-card h3 {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+  }
+  .spread-visual {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 0.8rem 0;
+    align-items: flex-start;
+  }
+  .sv-pos {
+    background: var(--bg3);
+    border: 1px solid var(--purple);
+    border-radius: 4px;
+    width: 36px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    color: var(--purple-light);
+    font-weight: 600;
+  }
+
+  /* ── COMBINATIONS ── */
+  .combo-list { display: flex; flex-direction: column; gap: 0.8rem; }
+  .combo-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.8rem;
+    align-items: start;
+  }
+  .combo-cards {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: var(--gold);
+    min-width: 130px;
+    line-height: 1.4;
+  }
+  .combo-meaning { font-size: 0.9rem; color: var(--text-dim); }
+
+  /* ── TIPS ── */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .tip-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold-dim);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.2rem;
+  }
+  .tip-card h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--gold-light);
+    margin-bottom: 0.4rem;
+  }
+  .tip-card p { font-size: 0.88rem; color: var(--text-dim); }
+
+  /* ── HIDDEN ── */
+  .hidden { display: none !important; }
+  .no-results {
+    text-align: center;
+    color: var(--text-dim);
+    font-style: italic;
+    padding: 2rem;
+    display: none;
+  }
+
+  /* ── SUIT BADGE ── */
+  .suit-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.1em;
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+    margin-bottom: 0.4rem;
+  }
+  .suit-ouros { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .suit-copas { background: rgba(192,80,112,0.15); color: #e08090; border: 1px solid rgba(192,80,112,0.4); }
+  .suit-espadas { background: rgba(100,130,200,0.15); color: #90b0e8; border: 1px solid rgba(100,130,200,0.4); }
+  .suit-paus { background: rgba(80,160,100,0.15); color: #80c890; border: 1px solid rgba(80,160,100,0.4); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+  @media (max-width: 768px) {
+    body { font-size: 16px; }
+    header { padding: 1.8rem 1rem 1.4rem; }
+    .header-symbol { font-size: 2.2rem; }
+    header h1 { font-size: 1.4rem; letter-spacing: 0.06em; }
+    .search-wrap { padding: 0.55rem 1rem; }
+    main { padding: 1.5rem 1rem 3rem; }
+    section { scroll-margin-top: 98px; } /* search (~48px) + nav (~38px) + folga */
+    .cards-grid { grid-template-columns: 1fr; }
+    .combo-item { grid-template-columns: 1fr; }
+    .section-title { font-size: 1.1rem; }
+    .info-block { padding: 1rem 1.1rem; }
+    .spread-grid { grid-template-columns: 1fr; }
+    .tips-grid { grid-template-columns: 1fr; }
+    details .detail-body { padding-left: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-symbol">🌙</span>
+  <h1>Guia Completo de Tarot</h1>
+  <p>Das tradições ancestrais ao seu primeiro baralho</p>
+  <a href="diario-tarot.html" style="display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.8rem;color:var(--gold-dim);text-decoration:none;font-family:'Cinzel',serif;font-size:0.75rem;letter-spacing:0.1em;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--gold-dim)'">
+    📖 Abrir Diário de Tiragens →
+  </a>
+</header>
+
+
+<div class="search-wrap">
+  <div class="search-inner">
+    <input type="text" id="search" placeholder="🔍  Buscar carta, símbolo, tema..." autocomplete="off">
+    <span id="search-count"></span>
+  </div>
+</div>
+
+<div class="page-body">
+
+<nav class="sidebar" id="sidebar">
+  <span class="nav-label">Rituais</span>
+  <a data-section="consagracao"><span class="nav-icon">✨</span> Consagração</a>
+  <a data-section="respeito"><span class="nav-icon">🙏</span> Respeito</a>
+  <a data-section="boas-praticas"><span class="nav-icon">📿</span> Boas Práticas</a>
+
+  <span class="nav-label">Arcanos</span>
+  <a data-section="maiores"><span class="nav-icon">🌟</span> Maiores</a>
+  <a data-section="copas"><span class="nav-icon">🌊</span> Copas</a>
+  <a data-section="espadas"><span class="nav-icon">⚔️</span> Espadas</a>
+  <a data-section="ouros"><span class="nav-icon">💛</span> Ouros</a>
+  <a data-section="paus"><span class="nav-icon">🌿</span> Paus</a>
+
+  <span class="nav-label">Leitura</span>
+  <a data-section="combinacoes"><span class="nav-icon">🔗</span> Combinações</a>
+  <a data-section="tiragens"><span class="nav-icon">🃏</span> Tiragens</a>
+  <a data-section="aprender"><span class="nav-icon">📚</span> O Que Aprender</a>
+</nav>
+
+<main>
+<div id="no-results" class="no-results">Nenhum resultado encontrado. Tente outra palavra.</div>
+
+<!-- ═══════════════ CONSAGRAÇÃO ═══════════════ -->
+<section id="consagracao">
+  <h2 class="section-title"><span class="icon">✨</span> Consagração do Novo Baralho</h2>
+
+  <div class="info-block" data-search>
+    <h3>Por que consagrar?</h3>
+    <p>Nas tradições esotéricas, um baralho de tarot é um instrumento de conexão entre o consciente e o inconsciente coletivo. Consagrar significa <strong>limpar as energias de produção, transporte e manuseio alheio</strong>, e sintonizar as cartas à sua vibração pessoal. Assim, as respostas emergem do seu campo energético, não de interferências externas.</p>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Ritual de Limpeza e Consagração — Passo a Passo</h3>
+    <p><em>Escolha uma noite de lua cheia ou lua nova para maior potência.</em></p>
+    <ol class="ritual-steps">
+      <li><strong>Prepare o espaço.</strong> Limpe o ambiente fisicamente e acenda incenso de sândalo, mirra ou arruda. Apague as luzes deixando apenas velas brancas ou lilás. Coloque uma toalha de tecido natural (linho, seda ou algodão) sobre a mesa — esta será a "toalha do oráculo".</li>
+      <li><strong>Centre-se.</strong> Sente-se, feche os olhos, respire fundo três vezes. Visualize uma luz branca ou dourada descendo pela coroa da cabeça até os pés, enraizando-o à terra.</li>
+      <li><strong>Primeira limpeza — Fumaça.</strong> Passe o baralho (ainda embrulhado ou fechado) sobre a fumaça do incenso em movimentos circulares no sentido anti-horário, pedindo mentalmente que todas as energias alheias sejam dissolvidas.</li>
+      <li><strong>Segunda limpeza — Som.</strong> Bata três vezes com os nós dos dedos sobre o baralho, ou use um sino/tingsha. O som quebra padrões energéticos estagnados.</li>
+      <li><strong>Apresente-se ao baralho.</strong> Segure o deck com as duas mãos ao coração e diga em voz alta ou mentalmente: <em>"Eu [seu nome] consagro este baralho como meu instrumento de sabedoria. Que ele sirva à luz, à verdade e ao bem maior de todos que consultarem este oráculo."</em></li>
+      <li><strong>Permita que o baralho o conheça.</strong> Durma com o deck sob seu travesseiro por três noites consecutivas. Isso cria um vínculo energético entre você e as cartas.</li>
+      <li><strong>Primeira tiragem de apresentação.</strong> Na quarta noite, embaralhe pedindo: <em>"Quem és tu para mim?"</em> e retire três cartas. Não interprete com regras — apenas sinta o que cada imagem comunica.</li>
+      <li><strong>Limpeza após cada uso.</strong> Após cada sessão de leitura, passe as cartas na fumaça de palo santo ou bata novamente três vezes. Guarde sempre na toalha ou em uma bolsinha de tecido natural.</li>
+    </ol>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Elementos para potencializar a consagração</h3>
+    <ul>
+      <li>🌕 <strong>Lua:</strong> Deixe o baralho sob a luz da lua cheia por uma noite (proteção da chuva e umidade).</li>
+      <li>🔮 <strong>Cristal:</strong> Coloque uma pedra de quartzo transparente ou ametista sobre o deck por 24h.</li>
+      <li>🌿 <strong>Ervas:</strong> Embale com folhas secas de lavanda (proteção e clareza) ou alecrim (memória e intuição).</li>
+      <li>🧂 <strong>Sal:</strong> Coloque o deck sobre um prato com sal grosso ao redor (não em contato) por uma noite.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════ RESPEITO ═══════════════ -->
+<section id="respeito">
+  <h2 class="section-title"><span class="icon">🙏</span> Como Ser Respeitosa com o Deck</h2>
+
+  <div class="tips-grid" data-search>
+    <div class="tip-card">
+      <h4>Guarda sagrada</h4>
+      <p>Mantenha o baralho sempre embrulhado em tecido e/ou em uma caixa de madeira. Nunca deixe outras pessoas manusearem sem sua permissão.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Mãos limpas e intenção limpa</h4>
+      <p>Lave as mãos antes de consultar. Não faça tiragens quando estiver com raiva intensa, embriagada ou de coração fechado.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Local específico</h4>
+      <p>Se possível, tenha um altarzinho ou canto dedicado ao tarot. Isso cria uma "memória energética" do espaço.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Não consulte obsessivamente</h4>
+      <p>A mesma pergunta não deve ser refeita na mesma semana. O oráculo não gosta de ser testado; confie na primeira resposta.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Agradeça sempre</h4>
+      <p>Ao terminar, agradeça ao baralho, às guias e à sua intuição. Encerre o espaço conscientemente.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Limpeza regular</h4>
+      <p>Em lua cheia, faça uma limpeza completa do deck com fumaça. Principalmente após leituras para outras pessoas.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Não deixe em locais frios ou escuros</h4>
+      <p>Evite gavetas esquecidas, porões ou junto à eletrônicos. Locais com boa energia, luz natural eventual e ventilação são ideais.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Respeite os sinais do baralho</h4>
+      <p>Se cartas caem repetidamente ou a mesma carta aparece em tiragens distintas, é uma mensagem urgente. Pare e medite sobre ela.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ BOAS PRÁTICAS ═══════════════ -->
+<section id="boas-praticas">
+  <h2 class="section-title"><span class="icon">📿</span> Boas Práticas de Leitura</h2>
+
+  <div class="info-block" data-search>
+    <h3>Como embaralhar</h3>
+    <p>Não existe uma forma "correta" universal. Escolha a que parecer mais natural:</p>
+    <ul>
+      <li><strong>Riffle shuffle (baralhada americana):</strong> divide ao meio e intercala — comum em baralhos de cartas tradicionais.</li>
+      <li><strong>Overhand shuffle (arrastar):</strong> passa as cartas de mão em mão em pequenos grupos.</li>
+      <li><strong>Spiral (espalhar na mesa):</strong> espalha todas as cartas sobre a mesa e mistura com as mãos em movimentos circulares — muito intuitivo e poderoso.</li>
+    </ul>
+    <p>Enquanto embaralha, <strong>mantenha sua pergunta no coração</strong>, não apenas na mente. Pare quando sentir uma "chamada" interna — não há número certo de vezes.</p>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Cartas invertidas (reversas)</h3>
+    <p>Quando uma carta sai de cabeça para baixo, pode indicar: energia bloqueada, resistência, internalização do tema, atraso, ou o aspecto sombra daquela carta. Algumas tradições ignoram reversas no início — defina seu estilo e seja consistente.</p>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Formulando boas perguntas</h3>
+    <ul>
+      <li>❌ "Fulano me ama?" → ✅ "O que eu preciso saber sobre essa relação?"</li>
+      <li>❌ "Vou ser rica?" → ✅ "Que energia rege minha situação financeira agora?"</li>
+      <li>❌ "Sim ou não?" → ✅ "Que forças estão em jogo nessa decisão?"</li>
+    </ul>
+    <p>O tarot não prevê um futuro fixo — ele revela <strong>padrões, energias e potenciais</strong>. Perguntas abertas geram leituras mais ricas.</p>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Diário do Tarot</h3>
+    <p>Mantenha um caderno dedicado. Após cada tiragem, anote: data, fase da lua, pergunta, cartas retiradas, sua intuição imediata e, depois de alguns dias, o que se manifestou. Com o tempo, você descobrirá suas próprias associações simbólicas — que valem tanto quanto as tradicionais.</p>
+  </div>
+</section>
+
+<!-- ═══════════════ ARCANOS MAIORES ═══════════════ -->
+<section id="maiores">
+  <h2 class="section-title"><span class="icon">🌟</span> Arcanos Maiores (22 cartas)</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem; font-style:italic;">Os Arcanos Maiores representam os grandes arquétipos da jornada humana — os "professores" do baralho. Quando aparecem, indicam temas fundamentais, lições cármicas e forças maiores em ação.</p>
+
+  <div class="cards-grid" id="maiores-grid">
+
+    <!-- 0 – O LOUCO -->
+    <div class="card" data-search data-name="O Louco The Fool">
+      <div class="card-header"><span class="card-num">0</span><span class="card-name">O Louco</span></div>
+      <div class="card-keywords">
+        <span class="tag">Começos</span><span class="tag">Liberdade</span><span class="tag">Fé cega</span>
+        <span class="tag rev">Imprudência</span><span class="tag rev">Irresponsabilidade</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Novos começos, salto de fé, aventura, espontaneidade, espírito livre.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O Louco é o herói antes da jornada — puro potencial sem forma. Numerologicamente é zero, o círculo que contém tudo. Ele salta do precipício sem olhar para baixo porque ainda não aprendeu o medo. Traz a mensagem de que a ingenuidade sagrada às vezes é mais sábia do que a experiência cautelosa.</p>
+          <p><strong>Reverso:</strong> Impulsividade destrutiva, recusa a crescer, fuga das responsabilidades, decisões sem planejamento.</p>
+          <p><strong>Símbolo-chave:</strong> O cão que late — instinto alertando o que a mente ignora. A mochila pequena — o suficiente para a jornada. A flor branca — pureza de intenção.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- I – O MAGO -->
+    <div class="card" data-search data-name="O Mago The Magician">
+      <div class="card-header"><span class="card-num">I</span><span class="card-name">O Mago</span></div>
+      <div class="card-keywords">
+        <span class="tag">Manifestação</span><span class="tag">Vontade</span><span class="tag">Habilidade</span>
+        <span class="tag rev">Manipulação</span><span class="tag rev">Talento desperdiçado</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Poder pessoal, habilidade de manifestar, força de vontade, criatividade ativa.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O Mago conecta o céu (mão apontando para cima) e a terra (mão apontando para baixo) — ele é o canal entre intenção e realidade. Sobre sua mesa estão os quatro naipes: emoção, razão, intuição e ação. Ele possui todas as ferramentas; a questão é se usará sabiamente.</p>
+          <p><strong>Reverso:</strong> Manipulação, uso de poderes para fins egoístas, charlatanismo, bloqueio criativo, sabotagem própria.</p>
+          <p><strong>Símbolo-chave:</strong> O símbolo do infinito sobre a cabeça — recursos ilimitados. O cinturão de serpentes — transformação circular.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- II – A SACERDOTISA -->
+    <div class="card" data-search data-name="A Sacerdotisa The High Priestess">
+      <div class="card-header"><span class="card-num">II</span><span class="card-name">A Sacerdotisa</span></div>
+      <div class="card-keywords">
+        <span class="tag">Intuição</span><span class="tag">Mistério</span><span class="tag">Sabedoria interior</span>
+        <span class="tag rev">Segredos ocultos</span><span class="tag rev">Intuição bloqueada</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Intuição profunda, o mundo interior, segredos, paciência, o que não é dito.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> A Sacerdotisa guarda o véu entre os mundos — ela não revela tudo, pois alguns mistérios devem ser vividos, não explicados. Ligada à lua, ao inconsciente e ao feminino sagrado. Quando aparece, convida ao silêncio, à meditação e à confiança na voz interior acima de qualquer conselho externo.</p>
+          <p><strong>Reverso:</strong> Informações ocultas que prejudicam, intuição que está sendo ignorada, segredos que machucam, superficialidade.</p>
+          <p><strong>Símbolo-chave:</strong> Pergaminho da Torá — conhecimento sagrado. Romã — fertilidade e mistério. Duas colunas B e J — dualidade, limiar.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- III – A IMPERATRIZ -->
+    <div class="card" data-search data-name="A Imperatriz The Empress">
+      <div class="card-header"><span class="card-num">III</span><span class="card-name">A Imperatriz</span></div>
+      <div class="card-keywords">
+        <span class="tag">Fertilidade</span><span class="tag">Abundância</span><span class="tag">Natureza</span>
+        <span class="tag rev">Dependência</span><span class="tag rev">Estagnação</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Fertilidade, abundância, maternidade, criatividade, natureza em flor.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> A Imperatriz é Vênus encarnada — a mãe Terra, o princípio criativo feminino em sua expressão mais plena. Ela não cria pela força, mas pela nutrição: cuida até que tudo floresça. Representa também o corpo, os prazeres sensuais e a beleza como porta espiritual.</p>
+          <p><strong>Reverso:</strong> Sufocamento materno, dependência criativa, bloqueio na fertilidade (literal ou simbólica), negligência consigo.</p>
+          <p><strong>Símbolo-chave:</strong> Trigo maduro — colheita. Escudo com Vênus — amor como força. Coroa de estrelas — 12 signos, mãe do zodíaco.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- IV – O IMPERADOR -->
+    <div class="card" data-search data-name="O Imperador The Emperor">
+      <div class="card-header"><span class="card-num">IV</span><span class="card-name">O Imperador</span></div>
+      <div class="card-keywords">
+        <span class="tag">Autoridade</span><span class="tag">Estrutura</span><span class="tag">Disciplina</span>
+        <span class="tag rev">Tirania</span><span class="tag rev">Rigidez</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Autoridade, estrutura, pai, liderança, ordem e regras.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O Imperador é o princípio organizador do universo — sem ele, a criatividade da Imperatriz seria caos puro. Representa Áries, a força que inicia e estrutura. Traz a mensagem de que limites bem colocados protegem e libertam. Também pode indicar uma figura paterna na vida do consulente.</p>
+          <p><strong>Reverso:</strong> Abuso de poder, controle excessivo, pai ausente ou autoritário, incapacidade de seguir regras necessárias.</p>
+          <p><strong>Símbolo-chave:</strong> Cajado com ankh — poder que gera vida. Cabeças de carneiro — Áries. Montanhas áridas — domínio pela razão, não pela natureza.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- V – O HIEROFANTE -->
+    <div class="card" data-search data-name="O Hierofante The Hierophant Papa">
+      <div class="card-header"><span class="card-num">V</span><span class="card-name">O Hierofante</span></div>
+      <div class="card-keywords">
+        <span class="tag">Tradição</span><span class="tag">Espiritualidade</span><span class="tag">Instituição</span>
+        <span class="tag rev">Dogma</span><span class="tag rev">Rebeldia</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Tradição, religião organizada, mestre espiritual, convenções sociais, casamento.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O Hierofante guarda os ritos de passagem — ele é o pont entre o divino e o humano dentro das estruturas sociais. Pode indicar a busca por um professor, mentor ou tradição espiritual. Também fala sobre contratos formais, votos e compromissos.</p>
+          <p><strong>Reverso:</strong> Aprisionamento por dogmas, hipocisia religiosa, quebra de convenções necessária, mentor tóxico.</p>
+          <p><strong>Símbolo-chave:</strong> Três coroas — domínio físico, espiritual e mental. Chaves cruzadas — as portas do sagrado. Dois discípulos — transmissão de conhecimento.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- VI – OS AMANTES -->
+    <div class="card" data-search data-name="Os Amantes The Lovers amor relacionamento">
+      <div class="card-header"><span class="card-num">VI</span><span class="card-name">Os Amantes</span></div>
+      <div class="card-keywords">
+        <span class="tag">Escolha</span><span class="tag">Amor</span><span class="tag">Valores</span>
+        <span class="tag rev">Dilema</span><span class="tag rev">Desequilíbrio</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Amor romântico, relacionamentos, escolhas importantes, alinhamento de valores.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> Mais do que amor, Os Amantes fala de <em>escolha consciente</em>. A imagem (no Rider-Waite) mostra um homem entre duas mulheres, com um anjo acima — a decisão deve vir do mais alto em si. É a carta da integração dos opostos: racional e emocional, masculino e feminino, sagrado e profano.</p>
+          <p><strong>Reverso:</strong> Escolha evitada, traição, valores desalinhados, relacionamento baseado em dependência ou ilusão.</p>
+          <p><strong>Símbolo-chave:</strong> Anjo Rael ou Miguel — bênção divina. Árvore do conhecimento — consciência. Montanha ao fundo — desafio da integração.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- VII – O CARRO -->
+    <div class="card" data-search data-name="O Carro The Chariot vitória movimento">
+      <div class="card-header"><span class="card-num">VII</span><span class="card-name">O Carro</span></div>
+      <div class="card-keywords">
+        <span class="tag">Vitória</span><span class="tag">Controle</span><span class="tag">Movimento</span>
+        <span class="tag rev">Descontrole</span><span class="tag rev">Agressividade</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Vitória por força de vontade, movimento rápido, controle de forças opostas, triunfo.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O guerreiro não usa rédeas — ele guia as esfinges pelo poder da mente e intenção. O Carro ensina que a verdadeira vitória não vem de forçar as circunstâncias, mas de manter o foco interno enquanto o mundo externo se move. Câncer regido pela lua: a armadura protege um coração sensível.</p>
+          <p><strong>Reverso:</strong> Perda de controle, agressividade cega, vitória pela força errada, viagem ou projeto desmoronando.</p>
+          <p><strong>Símbolo-chave:</strong> Duas esfinges (preta e branca) — polaridades da vida. Estrelas no dossel — guia cósmico. Escudo lunar — intuição como bússola.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- VIII – A FORÇA -->
+    <div class="card" data-search data-name="A Força Strength coragem">
+      <div class="card-header"><span class="card-num">VIII</span><span class="card-name">A Força</span></div>
+      <div class="card-keywords">
+        <span class="tag">Coragem</span><span class="tag">Compaixão</span><span class="tag">Força interior</span>
+        <span class="tag rev">Dúvida</span><span class="tag rev">Medo</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Força interior, coragem, compaixão, domínio dos instintos pelo amor.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> Uma mulher abre suavemente a boca de um leão — não com violência, mas com amor. A Força verdadeira não domina pela repressão, mas pela integração. Representa a capacidade de olhar para os próprios "leões internos" — medos, raivas, sombras — e domesticá-los com compaixão.</p>
+          <p><strong>Reverso:</strong> Fraqueza disfarçada, medo que paralisa, agressividade reprimida ou explodindo, crueldade.</p>
+          <p><strong>Símbolo-chave:</strong> Símbolo do infinito sobre a cabeça — mesma do Mago: força criativa infinita. Guirlanda de flores — beleza e paz na abordagem. O leão — instintos, paixão, vitalidade.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- IX – O EREMITA -->
+    <div class="card" data-search data-name="O Eremita The Hermit solidão sabedoria">
+      <div class="card-header"><span class="card-num">IX</span><span class="card-name">O Eremita</span></div>
+      <div class="card-keywords">
+        <span class="tag">Solidão</span><span class="tag">Sabedoria</span><span class="tag">Introspecção</span>
+        <span class="tag rev">Isolamento</span><span class="tag rev">Reclusão doentia</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Recolhimento, busca interior, mentor sábio, fase de reflexão.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O Eremita sobe a montanha não para fugir do mundo, mas para ver mais longe. Sua lanterna ilumina apenas um passo à frente — a sabedoria não revela o caminho inteiro, apenas o necessário. É a carta da individuação jungiana: o processo de se tornar quem verdadeiramente se é.</p>
+          <p><strong>Reverso:</strong> Isolamento patológico, fuga da vida social necessária, sábio que se recusa a compartilhar, solidão dolorosa.</p>
+          <p><strong>Símbolo-chave:</strong> Lanterna com estrela de seis pontas — iluminação de Hermes. Cajado — guia na jornada. Capa cinza — neutralidade, desapego.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- X – RODA DA FORTUNA -->
+    <div class="card" data-search data-name="Roda da Fortuna Wheel of Fortune ciclo destino karma">
+      <div class="card-header"><span class="card-num">X</span><span class="card-name">Roda da Fortuna</span></div>
+      <div class="card-keywords">
+        <span class="tag">Ciclos</span><span class="tag">Destino</span><span class="tag">Karma</span>
+        <span class="tag rev">Azar</span><span class="tag rev">Resistência ao ciclo</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Virada do destino, ciclos, karma, oportunidade, movimento constante.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> A Roda gira sempre — o que está em baixo sobe, o que está em cima desce. Nenhuma situação é permanente. Representa as leis cósmicas (Júpiter) e o karma: tudo que foi semeado retorna. Convida a reconhecer em que parte da roda você está e a fluir com o movimento.</p>
+          <p><strong>Reverso:</strong> Resistência às mudanças, ciclo negativo que se repete, má sorte por questões cármicas não resolvidas.</p>
+          <p><strong>Símbolo-chave:</strong> Esfinge no topo — consciência que observa a roda sem ser dominada por ela. ROTA e TARO — o tarot como ciclo. Quatro evangelistas nos cantos — os quatro elementos estáveis.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XI – A JUSTIÇA -->
+    <div class="card" data-search data-name="A Justiça Justice equilíbrio lei karma">
+      <div class="card-header"><span class="card-num">XI</span><span class="card-name">A Justiça</span></div>
+      <div class="card-keywords">
+        <span class="tag">Equilíbrio</span><span class="tag">Verdade</span><span class="tag">Causa e efeito</span>
+        <span class="tag rev">Injustiça</span><span class="tag rev">Desonestidade</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Justiça, equilíbrio, causa e efeito, verdade objetiva, decisões legais.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> A Justiça não venda os olhos — ela olha direto para a realidade como ela é. A balança não é movida por sentimentos, mas por verdade. Convida à honestidade radical consigo mesmo: o que você semeou está chegando. Também pode indicar processos legais ou a necessidade de uma decisão equilibrada.</p>
+          <p><strong>Reverso:</strong> Injustiça sofrida ou cometida, fuga da responsabilidade, desonestidade, desequilíbrio entre dar e receber.</p>
+          <p><strong>Símbolo-chave:</strong> Balança — equilíbrio. Espada erguida — verdade que corta ilusões. Véu vermelho atrás — paixão contida pela razão.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XII – O ENFORCADO -->
+    <div class="card" data-search data-name="O Enforcado The Hanged Man sacrifício perspectiva">
+      <div class="card-header"><span class="card-num">XII</span><span class="card-name">O Enforcado</span></div>
+      <div class="card-keywords">
+        <span class="tag">Sacrifício</span><span class="tag">Rendição</span><span class="tag">Nova perspectiva</span>
+        <span class="tag rev">Estagnação</span><span class="tag rev">Martírio</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Pausa forçada, sacrifício consciente, ver de um ângulo diferente, entrega.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O Enforcado está suspenso voluntariamente — seu rosto é de paz, não de sofrimento. Ele representa Odin que se pendurou na Ygdrasil para obter a sabedoria das runas. A entrega consciente é diferente da derrota — é o momento de parar de lutar para que uma compreensão mais profunda possa emergir.</p>
+          <p><strong>Reverso:</strong> Martirio sem propósito, recusa a se render ao necessário, procrastinação disfarçada de "espera sábia".</p>
+          <p><strong>Símbolo-chave:</strong> Aureola — iluminação através do sacrifício. Perna cruzada em 4 — símbolo hermético de proteção. Árvore viva — crescimento no paradoxo.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XIII – A MORTE -->
+    <div class="card" data-search data-name="A Morte Death transformação fim ciclo">
+      <div class="card-header"><span class="card-num">XIII</span><span class="card-name">A Morte</span></div>
+      <div class="card-keywords">
+        <span class="tag">Transformação</span><span class="tag">Fim de ciclo</span><span class="tag">Renovação</span>
+        <span class="tag rev">Resistência</span><span class="tag rev">Estagnação</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Transformação radical, fim de uma fase, renovação, morte simbólica.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> A Morte raramente significa morte física. É a carta da metamorfose — como a lagarta que se dissolve completamente para tornar-se borboleta. A bandeira branca com rosa indica pureza no processo. Regida por Escorpião, traz a mensagem: o que deve morrer para que você possa viver mais plenamente?</p>
+          <p><strong>Reverso:</strong> Resistência à transformação necessária, apego ao que já acabou, medo da mudança que paralisa a vida.</p>
+          <p><strong>Símbolo-chave:</strong> Esqueleto na armadura — a morte que iguala todos. Rosa branca — pureza da transformação. Sol nascendo ao fundo — sempre há amanhecer após o fim.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XIV – A TEMPERANÇA -->
+    <div class="card" data-search data-name="A Temperança Temperance equilíbrio moderação alquimia">
+      <div class="card-header"><span class="card-num">XIV</span><span class="card-name">A Temperança</span></div>
+      <div class="card-keywords">
+        <span class="tag">Equilíbrio</span><span class="tag">Alquimia</span><span class="tag">Moderação</span>
+        <span class="tag rev">Excesso</span><span class="tag rev">Desequilíbrio</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Moderação, paciência, equilíbrio, integração de opostos, cura gradual.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O anjo mistura líquidos entre dois cálices — alquimia pura. A temperança não é ausência de extremos, mas a habilidade de trabalhar com eles sem ser destruído. É a cura que acontece lentamente, a integração que leva tempo, a paciência como virtude espiritual. Sagitário: visão de longo prazo.</p>
+          <p><strong>Reverso:</strong> Excessos, impaciência, tentativa de forçar cura ou resultados, desarmonia interna.</p>
+          <p><strong>Símbolo-chave:</strong> Um pé na terra, um na água — equilíbrio entre mundos. Triângulo no vestido — fogo divino. Caminho que leva ao sol — evolução gradual.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XV – O DIABO -->
+    <div class="card" data-search data-name="O Diabo The Devil apego vício sombra">
+      <div class="card-header"><span class="card-num">XV</span><span class="card-name">O Diabo</span></div>
+      <div class="card-keywords">
+        <span class="tag">Sombra</span><span class="tag">Vício</span><span class="tag">Apego material</span>
+        <span class="tag rev">Libertação</span><span class="tag rev">Quebra de correntes</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Vício, apego, sombra pessoal, sedução, correntes que aprisionam.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> Note que as correntes do casal em volta do pescoço são largas — podem ser removidas. O Diabo representa as correntes que criamos nós mesmos: crenças limitantes, vícios, relacionamentos tóxicos, apego ao material. Ele não nos prende — nós nos prendemos. Capricórnio: a matéria como ilusão aprisionadora.</p>
+          <p><strong>Reverso:</strong> Libertação de vícios ou padrões tóxicos, tomada de consciência sobre o próprio aprisionamento, começo de processo de cura.</p>
+          <p><strong>Símbolo-chave:</strong> O mesmo anjo dos Amantes corrompido — o amor como vício. Correntes frouxas — prisão é ilusória. Chamas nas caudas — desejos que consomem.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XVI – A TORRE -->
+    <div class="card" data-search data-name="A Torre The Tower ruptura revelação colapso">
+      <div class="card-header"><span class="card-num">XVI</span><span class="card-name">A Torre</span></div>
+      <div class="card-keywords">
+        <span class="tag">Ruptura</span><span class="tag">Revelação</span><span class="tag">Libertação súbita</span>
+        <span class="tag rev">Colapso evitado</span><span class="tag rev">Resistência à mudança</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Ruptura súbita, revelação chocante, destruição do que é falso, colapso de estruturas.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> A Torre é construída sobre fundações falsas — o raio (verdade divina) não pode ser contido. Ela é uma das cartas mais temidas, mas é a mais honesta: destrói apenas o que já estava podre. Após o caos da Torre, sempre é possível reconstruir sobre bases verdadeiras. É dolorosa, mas libertadora.</p>
+          <p><strong>Reverso:</strong> Colapso adiado que ainda virá, resistência a uma mudança necessária, explosão internalizada como depressão.</p>
+          <p><strong>Símbolo-chave:</strong> Coroa voando — o ego destronado. Raio dourado — iluminação que liberta. 22 chamas caindo — os 22 arcanos como potencial após a queda.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XVII – A ESTRELA -->
+    <div class="card" data-search data-name="A Estrela The Star esperança renovação cura">
+      <div class="card-header"><span class="card-num">XVII</span><span class="card-name">A Estrela</span></div>
+      <div class="card-keywords">
+        <span class="tag">Esperança</span><span class="tag">Cura</span><span class="tag">Renovação</span>
+        <span class="tag rev">Desilusão</span><span class="tag rev">Descrença</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Esperança renovada, cura, bênçãos, conexão com o divino, fase de graça.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> A Estrela surge após a Torre — é a promessa de que após toda destruição, a beleza retorna. A mulher despeja dois cálices: um na terra (plano físico) e um na água (emocional/espiritual). Ela está nua e vulnerável, mas sem medo — pureza reconquistada. Aquário: a visão de um mundo melhor.</p>
+          <p><strong>Reverso:</strong> Perda de fé, desilusão, falta de esperança, desconexão do próprio propósito.</p>
+          <p><strong>Símbolo-chave:</strong> Estrela de 8 pontas — Vênus como estrela d'alva. Sete estrelas menores — chakras ou planetas. Íbis na árvore — Thoth, sabedoria que observa.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XVIII – A LUA -->
+    <div class="card" data-search data-name="A Lua The Moon ilusão sonho medo inconsciente">
+      <div class="card-header"><span class="card-num">XVIII</span><span class="card-name">A Lua</span></div>
+      <div class="card-keywords">
+        <span class="tag">Ilusão</span><span class="tag">Inconsciente</span><span class="tag">Medo</span>
+        <span class="tag rev">Confusão</span><span class="tag rev">Revelação de ilusão</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Ilusão, medo, inconsciente, sonhos, confusão, coisas não são como parecem.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> A lua reflete a luz do sol — ela não tem luz própria. O que vemos sob ela pode ser belo ou aterrorizante, mas nunca é totalmente real. Ela ilumina os medos do inconsciente para que possam ser enfrentados. O caminho passa entre duas torres: entre o familiar e o desconhecido. Peixes: as profundezas do inconsciente.</p>
+          <p><strong>Reverso:</strong> Ilusões sendo desfeitas, ansiedade em diminuição, clareza emergindo após confusão, segredos revelados.</p>
+          <p><strong>Símbolo-chave:</strong> Cão e lobo — a natureza domesticada e selvagem do medo. Lagosta saindo d'água — o inconsciente emergindo. Gota que cai — ilusão como orvalho passageiro.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XIX – O SOL -->
+    <div class="card" data-search data-name="O Sol The Sun alegria sucesso vitalidade">
+      <div class="card-header"><span class="card-num">XIX</span><span class="card-name">O Sol</span></div>
+      <div class="card-keywords">
+        <span class="tag">Alegria</span><span class="tag">Sucesso</span><span class="tag">Vitalidade</span>
+        <span class="tag rev">Ego inflado</span><span class="tag rev">Otimismo excessivo</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Alegria, sucesso, clareza, vitalidade, infância, celebração.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O Sol é a carta mais positiva do baralho — a consciência plena que ilumina tudo sem distorção. A criança no cavalo branco não tem medo porque a luz do sol dissolve todas as sombras. Representa também a criança interior, a espontaneidade saudável e o período de colheita e reconhecimento.</p>
+          <p><strong>Reverso:</strong> Ego inflado, ilusão de grandeza, otimismo que ignora realidades, alegria superficial.</p>
+          <p><strong>Símbolo-chave:</strong> Girassóis — que seguem o sol. Criança nua — inocência e autenticidade. Cavalo branco — pureza e poder controlado com suavidade.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XX – O JULGAMENTO -->
+    <div class="card" data-search data-name="O Julgamento Judgement renascimento chamado despertar">
+      <div class="card-header"><span class="card-num">XX</span><span class="card-name">O Julgamento</span></div>
+      <div class="card-keywords">
+        <span class="tag">Renascimento</span><span class="tag">Chamado</span><span class="tag">Absolvição</span>
+        <span class="tag rev">Autojulgamento</span><span class="tag rev">Chamado ignorado</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Chamado superior, renascimento, avaliação, absolvição, despertar espiritual.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O anjo toca a trombeta e os mortos ressuscitam — não como punição, mas como chamado ao propósito. É a carta que pergunta: você está vivendo de acordo com o que sua alma veio fazer? Representa momentos de clareza absoluta, onde o passado é avaliado e o futuro se abre em uma nova direção.</p>
+          <p><strong>Reverso:</strong> Autossabotagem, chamado espiritual ignorado por medo, autojulgamento severo, incapacidade de se perdoar.</p>
+          <p><strong>Símbolo-chave:</strong> Bandeira da cruz vermelha — a vitória sobre a matéria. Caixões abertos — liberação dos mortos (velhos selves). Montanhas ao fundo — o caminho ainda à frente.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- XXI – O MUNDO -->
+    <div class="card" data-search data-name="O Mundo The World completude realização integração">
+      <div class="card-header"><span class="card-num">XXI</span><span class="card-name">O Mundo</span></div>
+      <div class="card-keywords">
+        <span class="tag">Completude</span><span class="tag">Integração</span><span class="tag">Realização</span>
+        <span class="tag rev">Incompletude</span><span class="tag rev">Jornada inacabada</span>
+      </div>
+      <div class="card-body"><strong>Superficial:</strong> Completude, realização, integração, sucesso total, fim de ciclo com honra.</div>
+      <details><summary>Ver mais</summary>
+        <div class="detail-body">
+          <p><strong>Aprofundado:</strong> O Mundo fecha o ciclo que o Louco abriu. A figura dança dentro de uma grinalda — ela é o próprio universo, plenamente ela mesma. Os quatro seres nos cantos representam os quatro elementos integrados. É a realização não apenas externa, mas interna: tornar-se quem se veio ser.</p>
+          <p><strong>Reverso:</strong> Ciclo quase completo mas não finalizado, procrastinação que impede a conclusão, falta de integração dos ensinamentos vividos.</p>
+          <p><strong>Símbolo-chave:</strong> Grinalda oval — o ovo cósmico, completude. Faixas roxas em forma de ∞ — infinito nos dois eixos. Quatro seres — evangelistas, elementos, pilares do cosmos.</p>
+        </div>
+      </details>
+    </div>
+
+  </div><!-- /cards-grid -->
+</section>
+
+<!-- ═══════════════ COPAS ═══════════════ -->
+<section id="copas">
+  <h2 class="section-title"><span class="icon">🌊</span> Arcanos Menores — Copas</h2>
+  <p style="color:var(--text-dim); margin-bottom:1rem; font-style:italic;">Elemento Água · Emoções, relacionamentos, intuição, amor, sonhos, criatividade. Regidas por Vênus e Lua.</p>
+  <div class="cards-grid">
+
+    <div class="card" data-search data-name="Ás de Copas amor emocional novo começo">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">Ás</span><span class="card-name">Ás de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Novo amor</span><span class="tag">Abertura emocional</span><span class="tag rev">Bloqueio emocional</span></div>
+      <div class="card-body">O cálice transbordante representa o coração aberto e abundante. Novo começo emocional, amor que surge, abertura para sentir.</div>
+    </div>
+
+    <div class="card" data-search data-name="2 Dois de Copas parceria união relacionamento">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">2</span><span class="card-name">Dois de Copas</span></div>
+      <div class="card-keywords"><span class="tag">União</span><span class="tag">Parceria</span><span class="tag">Reciprocidade</span><span class="tag rev">Desequilíbrio</span></div>
+      <div class="card-body">Dois seres que se reconhecem mutuamente. O amor mais equilibrado do baralho — dar e receber em igual medida. Pode indicar nova parceria amorosa ou de negócios profunda.</div>
+    </div>
+
+    <div class="card" data-search data-name="3 Três de Copas celebração amizade comunidade">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">3</span><span class="card-name">Três de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Celebração</span><span class="tag">Amizade</span><span class="tag">Comunidade</span><span class="tag rev">Fofoca</span></div>
+      <div class="card-body">Três figuras dançando em círculo. Celebração, encontros felizes, amizades profundas, conquista compartilhada. Reverso pode indicar excesso de festas ou triângulo amoroso.</div>
+    </div>
+
+    <div class="card" data-search data-name="4 Quatro de Copas meditação tédio contemplação">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">4</span><span class="card-name">Quatro de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Contemplação</span><span class="tag">Tédio</span><span class="tag">Indiferença</span><span class="tag rev">Abertura</span></div>
+      <div class="card-body">Figura sentada sob árvore, ignorando um cálice oferecido. A bênção está sendo ignorada. Fase de apreciação do que já existe antes de pedir mais.</div>
+    </div>
+
+    <div class="card" data-search data-name="5 Cinco de Copas perda luto tristeza">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">5</span><span class="card-name">Cinco de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Perda</span><span class="tag">Luto</span><span class="tag">Tristeza</span><span class="tag rev">Superação</span></div>
+      <div class="card-body">Figura de costas lamentando os três cálices caídos — mas dois permanecem de pé atrás. Convite a virar-se para o que restou em vez de só lamentar o que se perdeu.</div>
+    </div>
+
+    <div class="card" data-search data-name="6 Seis de Copas nostalgia infância passado presente">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">6</span><span class="card-name">Seis de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Nostalgia</span><span class="tag">Infância</span><span class="tag">Passado</span><span class="tag rev">Idealização</span></div>
+      <div class="card-body">Crianças trocando flores. Memórias doces, reencontros, inocência recuperada. Pode indicar volta ao passado, amor de infância ou excesso de saudosismo.</div>
+    </div>
+
+    <div class="card" data-search data-name="7 Sete de Copas ilusão escolhas fantasia devaneio">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">7</span><span class="card-name">Sete de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Ilusões</span><span class="tag">Muitas escolhas</span><span class="tag">Fantasia</span><span class="tag rev">Clareza</span></div>
+      <div class="card-body">Sete cálices com visões diferentes. O excesso de possibilidades paralisa. Cuidado com ilusões e com escapismo. Precisa de discernimento para separar o real do fantasioso.</div>
+    </div>
+
+    <div class="card" data-search data-name="8 Oito de Copas abandono partida busca espiritual">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">8</span><span class="card-name">Oito de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Partida</span><span class="tag">Busca espiritual</span><span class="tag">Deixar ir</span><span class="tag rev">Fuga</span></div>
+      <div class="card-body">Figura caminhando de costas para cálices bem organizados. Abandono voluntário do que foi construído em busca de algo mais profundo. Coragem de deixar para trás.</div>
+    </div>
+
+    <div class="card" data-search data-name="9 Nove de Copas satisfação desejo realizado contentamento">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">9</span><span class="card-name">Nove de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Satisfação</span><span class="tag">Desejo realizado</span><span class="tag">Prazer</span><span class="tag rev">Excesso</span></div>
+      <div class="card-body">A "carta dos desejos" — a figura sentada satisfeita com seus nove cálices. Realização emocional, contentamento genuíno. Bom agouro para pedidos e manifestações.</div>
+    </div>
+
+    <div class="card" data-search data-name="10 Dez de Copas família felicidade harmonia lar">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">10</span><span class="card-name">Dez de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Família</span><span class="tag">Harmonia</span><span class="tag">Felicidade plena</span><span class="tag rev">Ilusão de harmonia</span></div>
+      <div class="card-body">Família feliz sob arco-íris de cálices. O lar ideal, amor familiar completo, paz duradoura. A realização emocional mais completa do baralho.</div>
+    </div>
+
+    <div class="card" data-search data-name="Valete Página de Copas mensagem jovem criativo sensitivo">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">Valete</span><span class="card-name">Valete de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Mensagem emocional</span><span class="tag">Jovem sensitivo</span><span class="tag rev">Imaturidade emocional</span></div>
+      <div class="card-body">Jovem sonhador observando um peixe no cálice. Mensagens do mundo espiritual, intuição em desenvolvimento, pessoa jovem muito sensível e artística.</div>
+    </div>
+
+    <div class="card" data-search data-name="Cavaleiro de Copas romance proposta idealismo">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">Cavaleiro</span><span class="card-name">Cavaleiro de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Romance</span><span class="tag">Proposta</span><span class="tag">Mensageiro amoroso</span><span class="tag rev">Idealismo excessivo</span></div>
+      <div class="card-body">O príncipe encantado em movimento suave. Propostas românticas, convites, mensagens de amor. Pode ser uma pessoa romântica e sonhadora — ou apenas não confiável.</div>
+    </div>
+
+    <div class="card" data-search data-name="Rainha de Copas intuição empatia cuidado maternal">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">Rainha</span><span class="card-name">Rainha de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Empatia</span><span class="tag">Intuição madura</span><span class="tag">Cuidado</span><span class="tag rev">Dependência emocional</span></div>
+      <div class="card-body">A rainha mais intuitiva — segura um cálice fechado pois compreende o inconsciente. Representa cuidado profundo, psíquico desenvolvido, amor maduro e curador.</div>
+    </div>
+
+    <div class="card" data-search data-name="Rei de Copas sabedoria emocional equilíbrio masulino sensível">
+      <div class="card-header"><span class="suit-badge suit-copas">COPAS</span></div>
+      <div class="card-header"><span class="card-num">Rei</span><span class="card-name">Rei de Copas</span></div>
+      <div class="card-keywords"><span class="tag">Sabedoria emocional</span><span class="tag">Equilíbrio</span><span class="tag">Maturidade</span><span class="tag rev">Repressão emocional</span></div>
+      <div class="card-body">Rei sentado no mar turbulento sem se perturbar. A maestria emocional masculina — sentir tudo sem ser arrastado. Líder que usa o coração como bússola.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ ESPADAS ═══════════════ -->
+<section id="espadas">
+  <h2 class="section-title"><span class="icon">⚔️</span> Arcanos Menores — Espadas</h2>
+  <p style="color:var(--text-dim); margin-bottom:1rem; font-style:italic;">Elemento Ar · Mente, comunicação, conflito, verdade, decisões difíceis. Regidas por Mercúrio e Saturno.</p>
+  <div class="cards-grid">
+
+    <div class="card" data-search data-name="Ás de Espadas verdade clareza breakthrough corte">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">Ás</span><span class="card-name">Ás de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Clareza</span><span class="tag">Verdade</span><span class="tag">Breakthrough</span><span class="tag rev">Confusão mental</span></div>
+      <div class="card-body">A espada da verdade corta toda ilusão. Clareza mental repentina, breakthrough, decisão firme, início de projeto intelectual.</div>
+    </div>
+
+    <div class="card" data-search data-name="2 Dois de Espadas impasse decisão difícil evitação">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">2</span><span class="card-name">Dois de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Impasse</span><span class="tag">Decisão difícil</span><span class="tag">Evitação</span><span class="tag rev">Paralisia</span></div>
+      <div class="card-body">Figura vendada com espadas cruzadas. Recusa de ver a realidade, impasse entre duas opções, necessidade de tomar uma decisão que foi adiada.</div>
+    </div>
+
+    <div class="card" data-search data-name="3 Três de Espadas dor traição desgosto separação coração partido">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">3</span><span class="card-name">Três de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Dor</span><span class="tag">Traição</span><span class="tag">Separação</span><span class="tag rev">Superação da dor</span></div>
+      <div class="card-body">Coração atravessado por três espadas. A dor que não pode ser evitada. Separação, traição, desgosto. Mas as espadas na chuva — a dor passa e limpa o ar.</div>
+    </div>
+
+    <div class="card" data-search data-name="4 Quatro de Espadas descanso recuperação meditação pausa">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">4</span><span class="card-name">Quatro de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Descanso</span><span class="tag">Recuperação</span><span class="tag">Pausa necessária</span><span class="tag rev">Stagnação</span></div>
+      <div class="card-body">Cavaleiro em repouso. Após batalhas mentais, é hora de descansar e recuperar. Meditação, silêncio, retiro. O guerreiro que não repousa perde a próxima batalha.</div>
+    </div>
+
+    <div class="card" data-search data-name="5 Cinco de Espadas conflito derrota vitória vazia">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">5</span><span class="card-name">Cinco de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Conflito</span><span class="tag">Derrota</span><span class="tag">Vitória vazia</span><span class="tag rev">Reconciliação</span></div>
+      <div class="card-body">Figura segurando espadas dos derrotados — mas seu rosto não é de triunfo. Vencer a qualquer custo tem consequências. Conflitos que não têm vencedores reais.</div>
+    </div>
+
+    <div class="card" data-search data-name="6 Seis de Espadas transição mudança partida calmaria">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">6</span><span class="card-name">Seis de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Transição</span><span class="tag">Afastamento</span><span class="tag">Calmaria após tormenta</span><span class="tag rev">Resistência à mudança</span></div>
+      <div class="card-body">Barqueiro levando família para longe. Transição difícil mas necessária para águas mais calmas. Deixar para trás o que foi doloroso para encontrar paz.</div>
+    </div>
+
+    <div class="card" data-search data-name="7 Sete de Espadas furtividade estratégia desonestidade engano">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">7</span><span class="card-name">Sete de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Estratégia</span><span class="tag">Desonestidade</span><span class="tag">Furtividade</span><span class="tag rev">Confissão</span></div>
+      <div class="card-body">Figura saindo sorrateiramente com espadas roubadas. Pode indicar traição, estratégia necessária ou evitação de conflito. Cuidado com quem ou o que não é o que parece.</div>
+    </div>
+
+    <div class="card" data-search data-name="8 Oito de Espadas armadilha restrição limitação mental presa">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">8</span><span class="card-name">Oito de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Aprisionamento mental</span><span class="tag">Limitação</span><span class="tag">Restrição</span><span class="tag rev">Liberação</span></div>
+      <div class="card-body">Figura vendada e amarrada entre espadas — mas poderia se afastar. A prisão é mental. Crenças limitantes, ansiedade paralisante, vitimismo. A venda pode ser tirada.</div>
+    </div>
+
+    <div class="card" data-search data-name="9 Nove de Espadas ansiedade pesadelo preocupação angústia">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">9</span><span class="card-name">Nove de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Ansiedade</span><span class="tag">Pesadelo</span><span class="tag">Angústia mental</span><span class="tag rev">Superação</span></div>
+      <div class="card-body">Figura acordando em desespero às 3 da manhã. Ansiedade, pensamentos catastróficos, insônia por preocupação. Muitas vezes a situação é menos grave do que a mente faz parecer.</div>
+    </div>
+
+    <div class="card" data-search data-name="10 Dez de Espadas fim doloroso colapso toque do fundo">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">10</span><span class="card-name">Dez de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Fim doloroso</span><span class="tag">Toque do fundo</span><span class="tag">Colapso</span><span class="tag rev">Recuperação</span></div>
+      <div class="card-body">Figura caída com dez espadas no dorso. O pior já passou — não pode piorar mais. Fim inevitável, toque do fundo, mas o amanhecer começa no horizonte.</div>
+    </div>
+
+    <div class="card" data-search data-name="Valete Página de Espadas comunicação jovem inteligente curiosidade">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">Valete</span><span class="card-name">Valete de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Curiosidade</span><span class="tag">Vigilância</span><span class="tag">Jovem intelectual</span><span class="tag rev">Fofoca</span></div>
+      <div class="card-body">Jovem com espada erguida, vigilante. Notícias chegando, pensamento crítico, perspicácia. Pode ser uma pessoa curiosa e às vezes metida demais.</div>
+    </div>
+
+    <div class="card" data-search data-name="Cavaleiro de Espadas velocidade ação impulsiva comunicação direta">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">Cavaleiro</span><span class="card-name">Cavaleiro de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Velocidade</span><span class="tag">Ação direta</span><span class="tag">Impulsividade</span><span class="tag rev">Agressividade</span></div>
+      <div class="card-body">Cavaleiro em galope furioso. Decisões rápidas, pensamento veloz, comunicação direta — às vezes sem tacto. Energia que resolve mas pode atropelar sentimentos.</div>
+    </div>
+
+    <div class="card" data-search data-name="Rainha de Espadas independência clareza mental viúva percepção">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">Rainha</span><span class="card-name">Rainha de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Clareza</span><span class="tag">Independência</span><span class="tag">Percepção aguçada</span><span class="tag rev">Frieza</span></div>
+      <div class="card-body">Rainha com espada erguida e mão estendida — pede a verdade antes da gentileza. Mulher que passou por dor e tornou-se sábia. Julgamento claro, sem filtros emocionais.</div>
+    </div>
+
+    <div class="card" data-search data-name="Rei de Espadas autoridade intelectual razão julgamento liderança">
+      <div class="card-header"><span class="suit-badge suit-espadas">ESPADAS</span></div>
+      <div class="card-header"><span class="card-num">Rei</span><span class="card-name">Rei de Espadas</span></div>
+      <div class="card-keywords"><span class="tag">Autoridade intelectual</span><span class="tag">Razão</span><span class="tag">Julgamento justo</span><span class="tag rev">Tirania</span></div>
+      <div class="card-body">Rei de olhar penetrante com espada erguida. A lei, a mente superior, julgamento claro. Pode ser um advogado, juiz, médico ou qualquer figura de autoridade intelectual.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ OUROS ═══════════════ -->
+<section id="ouros">
+  <h2 class="section-title"><span class="icon">💛</span> Arcanos Menores — Ouros</h2>
+  <p style="color:var(--text-dim); margin-bottom:1rem; font-style:italic;">Elemento Terra · Dinheiro, trabalho, corpo, materialidade, prosperidade, praticidade. Regidos por Vênus e Saturno.</p>
+  <div class="cards-grid">
+
+    <div class="card" data-search data-name="Ás de Ouros prosperidade manifesto oportunidade financeira">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">Ás</span><span class="card-name">Ás de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Prosperidade</span><span class="tag">Nova oportunidade</span><span class="tag">Manifestação</span><span class="tag rev">Oportunidade perdida</span></div>
+      <div class="card-body">Mão celestial oferece moeda de ouro. Nova oportunidade financeira ou material, início de projeto próspero, semente de abundância.</div>
+    </div>
+
+    <div class="card" data-search data-name="2 Dois de Ouros malabarismo equilíbrio finanças flexibilidade">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">2</span><span class="card-name">Dois de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Malabarismo</span><span class="tag">Equilíbrio financeiro</span><span class="tag">Flexibilidade</span><span class="tag rev">Desorganização</span></div>
+      <div class="card-body">Figura equilibrando duas moedas em ondas. Malabarismo financeiro, múltiplas responsabilidades em equilíbrio. Adaptação às mudanças com humor e destreza.</div>
+    </div>
+
+    <div class="card" data-search data-name="3 Três de Ouros trabalho em equipe habilidade reconhecimento artesanato">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">3</span><span class="card-name">Três de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Trabalho em equipe</span><span class="tag">Habilidade</span><span class="tag">Reconhecimento</span><span class="tag rev">Falta de cooperação</span></div>
+      <div class="card-body">Artesão trabalhando enquanto patronos observam. Colaboração, aprendizado de um ofício, trabalho reconhecido. Hora de unir forças com outros.</div>
+    </div>
+
+    <div class="card" data-search data-name="4 Quatro de Ouros avareza controle apego ao dinheiro segurança">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">4</span><span class="card-name">Quatro de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Controle</span><span class="tag">Segurança financeira</span><span class="tag">Possessividade</span><span class="tag rev">Generosidade</span></div>
+      <div class="card-body">Figura abraçando moedas com rigidez. Apego ao dinheiro, medo de perder o que se tem, segurança financeira mas fechamento. O que você se recusa a soltar?</div>
+    </div>
+
+    <div class="card" data-search data-name="5 Cinco de Ouros pobreza dificuldade exclusão fé">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">5</span><span class="card-name">Cinco de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Dificuldade financeira</span><span class="tag">Exclusão</span><span class="tag">Pobreza</span><span class="tag rev">Recuperação</span></div>
+      <div class="card-body">Dois mendigos passando frio diante de vitral iluminado. Dificuldades materiais, sensação de exclusão. A luz (ajuda) está mais perto do que parece — basta pedir.</div>
+    </div>
+
+    <div class="card" data-search data-name="6 Seis de Ouros generosidade doação equilíbrio dar receber caridade">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">6</span><span class="card-name">Seis de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Generosidade</span><span class="tag">Dar e receber</span><span class="tag">Equilíbrio</span><span class="tag rev">Dívida</span></div>
+      <div class="card-body">Mercador distribuindo moedas. O equilíbrio entre dar e receber, caridade genuína, reconhecimento financeiro merecido, pagamentos chegando.</div>
+    </div>
+
+    <div class="card" data-search data-name="7 Sete de Ouros paciência investimento avaliação colheita espera">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">7</span><span class="card-name">Sete de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Paciência</span><span class="tag">Investimento</span><span class="tag">Avaliação</span><span class="tag rev">Impaciência</span></div>
+      <div class="card-body">Agricultor descansando sobre a enxada olhando para a colheita que cresce. O trabalho foi feito — agora é aguardar os frutos. Avalie se o esforço vale o retorno.</div>
+    </div>
+
+    <div class="card" data-search data-name="8 Oito de Ouros dedicação artesanato aperfeiçoamento trabalho diligente">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">8</span><span class="card-name">Oito de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Dedicação</span><span class="tag">Aperfeiçoamento</span><span class="tag">Aprendizado</span><span class="tag rev">Perfeccionismo</span></div>
+      <div class="card-body">Artesão esculpindo moedas pacientemente. Aprender um novo ofício, dedicação ao trabalho, melhoria contínua, formação profissional. A maestria vem com a prática.</div>
+    </div>
+
+    <div class="card" data-search data-name="9 Nove de Ouros abundância autossuficiência luxo prazer solo">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">9</span><span class="card-name">Nove de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Abundância</span><span class="tag">Autossuficiência</span><span class="tag">Prazer</span><span class="tag rev">Dependência</span></div>
+      <div class="card-body">Figura elegante em jardim florido com falcão. Independência financeira conquistada, luxo merecido, apreciação das próprias conquistas. A prosperidade no singular.</div>
+    </div>
+
+    <div class="card" data-search data-name="10 Dez de Ouros herança família riqueza legado segurança longo prazo">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">10</span><span class="card-name">Dez de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Herança</span><span class="tag">Legado</span><span class="tag">Segurança familiar</span><span class="tag rev">Peso da tradição</span></div>
+      <div class="card-body">Família multi-geracional em abundância. Riqueza que se perpetua, herança (literal ou simbólica), investimentos de longo prazo, segurança construída para filhos.</div>
+    </div>
+
+    <div class="card" data-search data-name="Valete Página de Ouros estudante aprendiz novo projeto prático">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">Valete</span><span class="card-name">Valete de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Estudante</span><span class="tag">Novo projeto</span><span class="tag">Prático e metódico</span><span class="tag rev">Falta de foco</span></div>
+      <div class="card-body">Jovem contemplando uma moeda de ouro. Aprendizado prático, novo projeto em estágio inicial, pessoa jovem confiável e trabalhadora, bolsas de estudo.</div>
+    </div>
+
+    <div class="card" data-search data-name="Cavaleiro de Ouros responsabilidade trabalho diligente confiável determinação">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">Cavaleiro</span><span class="card-name">Cavaleiro de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Responsabilidade</span><span class="tag">Diligência</span><span class="tag">Confiabilidade</span><span class="tag rev">Lentidão</span></div>
+      <div class="card-body">Cavaleiro em cavalo parado, focado na moeda. O mais lento dos cavaleiros, mas o mais confiável. Trabalho duro, rotina produtiva, resultados que levam tempo mas são sólidos.</div>
+    </div>
+
+    <div class="card" data-search data-name="Rainha de Ouros prosperidade terra nutrição praticidade conforto">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">Rainha</span><span class="card-name">Rainha de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Prosperidade</span><span class="tag">Nutrição prática</span><span class="tag">Conforto</span><span class="tag rev">Dependência material</span></div>
+      <div class="card-body">Rainha em jardim florido, próxima à terra. O lar como templo, cuidado com o corpo e o dinheiro, abundância prática. Pode indicar prosperidade chegando ou pessoa muito prática e gerenciadora.</div>
+    </div>
+
+    <div class="card" data-search data-name="Rei de Ouros riqueza liderança empresária estabilidade financeira sucesso">
+      <div class="card-header"><span class="suit-badge suit-ouros">OUROS</span></div>
+      <div class="card-header"><span class="card-num">Rei</span><span class="card-name">Rei de Ouros</span></div>
+      <div class="card-keywords"><span class="tag">Riqueza</span><span class="tag">Liderança</span><span class="tag">Sucesso consolidado</span><span class="tag rev">Materialismo</span></div>
+      <div class="card-body">Rei em trono ornamentado com vinhas e moedas. Sucesso financeiro construído com sabedoria, liderança empresarial, generosidade com quem depende de si. O empreendedor bem-sucedido.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ PAUS ═══════════════ -->
+<section id="paus">
+  <h2 class="section-title"><span class="icon">🌿</span> Arcanos Menores — Paus</h2>
+  <p style="color:var(--text-dim); margin-bottom:1rem; font-style:italic;">Elemento Fogo · Inspiração, paixão, criatividade, ação, energia vital, aventura. Regidos por Marte e Sol.</p>
+  <div class="cards-grid">
+
+    <div class="card" data-search data-name="Ás de Paus inspiração potencial criativo começo ação">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">Ás</span><span class="card-name">Ás de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Inspiração</span><span class="tag">Potencial criativo</span><span class="tag">Ação</span><span class="tag rev">Bloqueio criativo</span></div>
+      <div class="card-body">O cajado florescente. Faísca de inspiração, início cheio de entusiasmo, potencial criativo e sexual, energia vital em seu ápice. A ideia que tudo pode se tornar.</div>
+    </div>
+
+    <div class="card" data-search data-name="2 Dois de Paus planejamento visão futuro decisão expansão">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">2</span><span class="card-name">Dois de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Planejamento</span><span class="tag">Visão de futuro</span><span class="tag">Decisão</span><span class="tag rev">Medo do desconhecido</span></div>
+      <div class="card-body">Figura olhando para o mundo com um globo nas mãos. A visão está clara, mas o passo ainda não foi dado. Planejamento estratégico, expansão, horizonte amplo a conquistar.</div>
+    </div>
+
+    <div class="card" data-search data-name="3 Três de Paus expansão viagem comércio empreendimento resultados">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">3</span><span class="card-name">Três de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Expansão</span><span class="tag">Viagem</span><span class="tag">Resultados chegando</span><span class="tag rev">Obstáculos</span></div>
+      <div class="card-body">Figura vendo navios ao horizonte. O que foi semeado começa a retornar. Expansão de negócios, viagens internacionais, projetos que se alargam além do esperado.</div>
+    </div>
+
+    <div class="card" data-search data-name="4 Quatro de Paus celebração lar comunidade estabilidade casamento">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">4</span><span class="card-name">Quatro de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Celebração</span><span class="tag">Lar feliz</span><span class="tag">Comunidade</span><span class="tag rev">Harmonia perturbada</span></div>
+      <div class="card-body">Dossel festivo com flores. Casamento, housewarming, celebrações de conquistas, harmonia no lar. Um momento de pausa para comemorar o que foi alcançado.</div>
+    </div>
+
+    <div class="card" data-search data-name="5 Cinco de Paus conflito competição caos discordância">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">5</span><span class="card-name">Cinco de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Conflito</span><span class="tag">Competição</span><span class="tag">Caos</span><span class="tag rev">Resolução de conflito</span></div>
+      <div class="card-body">Cinco figuras com cajados cruzados. Competição, discordância, energia dispersa em várias direções. Pode ser saudável (competição que estimula) ou desgastante (conflitos desnecessários).</div>
+    </div>
+
+    <div class="card" data-search data-name="6 Seis de Paus vitória reconhecimento público sucesso triunfo">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">6</span><span class="card-name">Seis de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Vitória</span><span class="tag">Reconhecimento público</span><span class="tag">Sucesso</span><span class="tag rev">Ego inflado</span></div>
+      <div class="card-body">Cavaleiro laureado recebendo aclamação. Triunfo depois de luta, reconhecimento público merecido, notícias de vitória. Momento de colher os louros com humildade.</div>
+    </div>
+
+    <div class="card" data-search data-name="7 Sete de Paus defesa posição perseverança desafio">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">7</span><span class="card-name">Sete de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Defesa</span><span class="tag">Perseverança</span><span class="tag">Posição</span><span class="tag rev">Perseguição excessiva</span></div>
+      <div class="card-body">Figura em posição elevada defendendo-se de seis cajados. Manter-se firme contra adversidades, defender o que acredita, resistência sob pressão. Você tem terreno elevado.</div>
+    </div>
+
+    <div class="card" data-search data-name="8 Oito de Paus movimento velocidade comunicação mensagens chegando">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">8</span><span class="card-name">Oito de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Movimento veloz</span><span class="tag">Comunicação</span><span class="tag">Mensagens</span><span class="tag rev">Atraso</span></div>
+      <div class="card-body">Oito cajados em voo. Tudo acontecendo de uma vez e rápido. Notícias chegando, viagem iminente, comunicações aceleradas, projetos em plena velocidade de cruzeiro.</div>
+    </div>
+
+    <div class="card" data-search data-name="9 Nove de Paus resistência exaustão determinação última batalha">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">9</span><span class="card-name">Nove de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Resistência</span><span class="tag">Exaustão</span><span class="tag">Determinação</span><span class="tag rev">Paranoia</span></div>
+      <div class="card-body">Figura ferida mas de pé. Cansaço profundo mas ainda de pé. Você chegou longe — é hora de reunir as últimas forças para cruzar a linha de chegada.</div>
+    </div>
+
+    <div class="card" data-search data-name="10 Dez de Paus sobrecarga fardo excesso responsabilidade peso">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">10</span><span class="card-name">Dez de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Sobrecarga</span><span class="tag">Fardo excessivo</span><span class="tag">Responsabilidade</span><span class="tag rev">Delegação</span></div>
+      <div class="card-body">Figura curvada carregando dez cajados. Você está carregando mais do que deve. Sobrecarga, responsabilidades que não são suas, hora de delegar ou largar o que não pertence a você.</div>
+    </div>
+
+    <div class="card" data-search data-name="Valete Página de Paus entusiasmo jovem energia mensagem aventura">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">Valete</span><span class="card-name">Valete de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Entusiasmo</span><span class="tag">Aventura</span><span class="tag">Energia criativa</span><span class="tag rev">Impulsividade</span></div>
+      <div class="card-body">Jovem com cajado florido olhando para horizonte. Mensagem de boas notícias, energia adventurosa, começo de algo novo com muito entusiasmo. A faísca que precisa ser canalizada.</div>
+    </div>
+
+    <div class="card" data-search data-name="Cavaleiro de Paus aventura paixão ação impulsiva energia fogo">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">Cavaleiro</span><span class="card-name">Cavaleiro de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Aventura</span><span class="tag">Paixão</span><span class="tag">Ação impulsiva</span><span class="tag rev">Inconstância</span></div>
+      <div class="card-body">Cavaleiro em cavalo encabritado. O mais aventureiro de todos. Energia irresistível, sedutor, apaixonado — mas difícil de segurar. Mudanças de rumo frequentes.</div>
+    </div>
+
+    <div class="card" data-search data-name="Rainha de Paus confiança liderança carismática independente criativa solar">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">Rainha</span><span class="card-name">Rainha de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Confiança</span><span class="tag">Carisma</span><span class="tag">Liderança natural</span><span class="tag rev">Ciúme</span></div>
+      <div class="card-body">Rainha com girassol — solar, exuberante, confiante. A líder que inspira pelo exemplo, mulher de presença magnética, criatividade e paixão de vida irresistíveis.</div>
+    </div>
+
+    <div class="card" data-search data-name="Rei de Paus visão empreendedorismo inspiração liderança carismática">
+      <div class="card-header"><span class="suit-badge suit-paus">PAUS</span></div>
+      <div class="card-header"><span class="card-num">Rei</span><span class="card-name">Rei de Paus</span></div>
+      <div class="card-keywords"><span class="tag">Visão</span><span class="tag">Empreendedorismo</span><span class="tag">Liderança inspiradora</span><span class="tag rev">Arrogância</span></div>
+      <div class="card-body">Rei com salamandra no manto — o fogo que não queima. Líder visionário, empreendedor nato, pessoa que inspira multidões pela força da visão. O fundador, o inventor, o guia.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ COMBINAÇÕES ═══════════════ -->
+<section id="combinacoes">
+  <h2 class="section-title"><span class="icon">🔗</span> Significado de Cartas Juntas (Combinações)</h2>
+  <p style="color:var(--text-dim); margin-bottom:1rem; font-style:italic;">Quando cartas aparecem juntas, seus significados se mesclam, amplificam ou tensionam. Aqui estão as combinações mais significativas:</p>
+
+  <div class="combo-list" data-search>
+    <div class="combo-item"><div class="combo-cards">Amantes + Dois de Copas</div><div class="combo-meaning">Escolha amorosa muito clara; relacionamento com profundo potencial de parceria. Pode indicar decisão de comprometimento.</div></div>
+    <div class="combo-item"><div class="combo-cards">Torre + Julgamento</div><div class="combo-meaning">Destruição total seguida de renascimento — um ciclo de vida se encerra de forma dramática para que um novo propósito emerja. Transformação radical e inevitável.</div></div>
+    <div class="combo-item"><div class="combo-cards">Morte + Temperança</div><div class="combo-meaning">Transformação profunda ocorrendo de maneira gradual e alquímica. A mudança é certa, mas acontecerá com paciência e integração.</div></div>
+    <div class="combo-item"><div class="combo-cards">Sol + Estrela</div><div class="combo-meaning">Um dos melhores pares do baralho. Alegria plena com esperança renovada — fase de bênçãos, sucessos e conexão espiritual simultâneos.</div></div>
+    <div class="combo-item"><div class="combo-cards">Diabo + Torre</div><div class="combo-meaning">Padrão viciante ou situação tóxica que está prestes a colapsar. Pode ser doloroso mas é necessário para libertação.</div></div>
+    <div class="combo-item"><div class="combo-cards">Mago + Sacerdotisa</div><div class="combo-meaning">Equilíbrio perfeito entre ação e intuição, masculino e feminino. A sabedoria em sua forma mais completa — sabe e age.</div></div>
+    <div class="combo-item"><div class="combo-cards">Eremita + Lua</div><div class="combo-meaning">Fase de introspecção profunda onde segredos do inconsciente são revelados. Retiro espiritual, sonhos com mensagens, meditação que traz respostas.</div></div>
+    <div class="combo-item"><div class="combo-cards">Dez de Espadas + Estrela</div><div class="combo-meaning">Após o pior já ter acontecido, a esperança retorna. A noite mais escura precede o amanhecer — cura após crise.</div></div>
+    <div class="combo-item"><div class="combo-cards">Ás de Paus + Ás de Copas</div><div class="combo-meaning">Começo de algo onde paixão e amor se unem — pode ser um relacionamento novo muito intenso, ou um projeto que toca o coração.</div></div>
+    <div class="combo-item"><div class="combo-cards">Roda da Fortuna + Mundo</div><div class="combo-meaning">Ciclo se completando magnificamente. O giro da roda chega ao topo — realização máxima após muito movimento.</div></div>
+    <div class="combo-item"><div class="combo-cards">Imperatriz + Dez de Ouros</div><div class="combo-meaning">Abundância geracional — prosperidade que nutre família, gravidez (literal ou simbólica), casa e lar florescendo.</div></div>
+    <div class="combo-item"><div class="combo-cards">Sacerdotisa + Lua</div><div class="combo-meaning">O inconsciente falando muito alto. Mensagens nos sonhos, intuição que não pode ser ignorada, segredos que precisam ser revelados.</div></div>
+    <div class="combo-item"><div class="combo-cards">Três de Espadas + Cinco de Copas</div><div class="combo-meaning">Dor de perda ou traição + luto. Período de sofrimento emocional. A mensagem é: permitir o luto para poder seguir em frente.</div></div>
+    <div class="combo-item"><div class="combo-cards">Cavaleiro de Paus + Oito de Paus</div><div class="combo-meaning">Energia em alta velocidade — projetos avançando rapidamente, viagem iminente, alguém apaixonado entrando na vida de forma intensa.</div></div>
+    <div class="combo-item"><div class="combo-cards">Hierofante + Dez de Copas</div><div class="combo-meaning">Casamento ou comprometimento formal de longo prazo. Bênção institucional sobre uma união. Formalização de laços afetivos.</div></div>
+    <div class="combo-item"><div class="combo-cards">Louco + Mago</div><div class="combo-meaning">O potencial puro encontrando as ferramentas para se manifestar. Início de jornada com todos os recursos necessários. Poder criativo total.</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ TIRAGENS ═══════════════ -->
+<section id="tiragens">
+  <h2 class="section-title"><span class="icon">🃏</span> Formas de Tirar e Ler</h2>
+
+  <div class="spread-grid" data-search>
+
+    <div class="spread-card">
+      <h3>1 Carta — Reflexão Diária</h3>
+      <div class="spread-visual"><div class="sv-pos">1</div></div>
+      <p style="font-size:0.88rem; color:var(--text-dim);">A mais simples e poderosa. Toda manhã, retire uma carta como "tema do dia" ou "mensagem para hoje". Ideal para iniciantes. Com o tempo, você começa a ver padrões ao longo das semanas.</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>3 Cartas — Passado / Presente / Futuro</h3>
+      <div class="spread-visual">
+        <div class="sv-pos">1</div><div class="sv-pos">2</div><div class="sv-pos">3</div>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-dim);">A tiragem mais clássica. <strong>1:</strong> O que o passado trouxe. <strong>2:</strong> A situação atual, o que está em jogo. <strong>3:</strong> A energia ou tendência que se desenvolve. Versões alternativas: Mente / Corpo / Espírito — ou Situação / Ação / Resultado.</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>5 Cartas — Cruz Celta Simplificada</h3>
+      <div class="spread-visual" style="position:relative; width:120px; height:110px;">
+        <div class="sv-pos" style="position:absolute; top:30px; left:0">1</div>
+        <div class="sv-pos" style="position:absolute; top:30px; left:42px">2</div>
+        <div class="sv-pos" style="position:absolute; top:0; left:42px; opacity:0.4; transform:rotate(90deg)">×</div>
+        <div class="sv-pos" style="position:absolute; top:30px; left:84px">3</div>
+        <div class="sv-pos" style="position:absolute; top:0; left:42px">4</div>
+        <div class="sv-pos" style="position:absolute; top:64px; left:42px">5</div>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-dim); margin-top:0.5rem;"><strong>1:</strong> Situação. <strong>2 (cruzada):</strong> O que cruza/desafia. <strong>3:</strong> O que está acima (objetivo). <strong>4:</strong> O que está abaixo (base). <strong>5:</strong> Resultado possível.</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>10 Cartas — Cruz Celta Completa</h3>
+      <div class="spread-visual">
+        <div class="sv-pos">1</div><div class="sv-pos">2</div><div class="sv-pos">3</div>
+        <div class="sv-pos">4</div><div class="sv-pos">5</div><div class="sv-pos">6</div>
+        <div class="sv-pos">7</div><div class="sv-pos">8</div><div class="sv-pos">9</div>
+        <div class="sv-pos">10</div>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-dim);">A tiragem mais famosa e completa, criada por A.E. Waite. Cobre: situação atual, obstáculo, passado, futuro, consciente, inconsciente, influências externas, esperanças/medos, e resultado. Use para questões profundas.</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>4 Cartas — Tirada do Ano (Aniversário)</h3>
+      <div class="spread-visual">
+        <div class="sv-pos">1</div><div class="sv-pos">2</div><div class="sv-pos">3</div><div class="sv-pos">4</div>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-dim);"><strong>1:</strong> Tema central do seu novo ciclo anual. <strong>2:</strong> O que abandonar do ciclo anterior. <strong>3:</strong> O que cultivar este ano. <strong>4:</strong> Mensagem da sua alma para o ano.</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>7 Cartas — Tirada da Lua Nova</h3>
+      <div class="spread-visual">
+        <div class="sv-pos">1</div><div class="sv-pos">2</div><div class="sv-pos">3</div>
+        <div class="sv-pos">4</div><div class="sv-pos">5</div><div class="sv-pos">6</div><div class="sv-pos">7</div>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-dim);">Ideal para fazer na lua nova de cada mês. <strong>1:</strong> Tema geral do mês. <strong>2:</strong> O que plantar. <strong>3:</strong> O que regar. <strong>4:</strong> O que podar. <strong>5:</strong> Desafio. <strong>6:</strong> Apoio. <strong>7:</strong> Colheita esperada.</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>3 Cartas — Amor e Relacionamento</h3>
+      <div class="spread-visual">
+        <div class="sv-pos">1</div><div class="sv-pos">2</div><div class="sv-pos">3</div>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-dim);"><strong>1:</strong> Como eu estou nessa relação. <strong>2:</strong> Como o outro está. <strong>3:</strong> O que rege a dinâmica entre nós. Alternativa: Você / A outra pessoa / A conexão.</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>Carta Diretriz — Como Ler</h3>
+      <div class="spread-visual"><div class="sv-pos">?</div></div>
+      <p style="font-size:0.88rem; color:var(--text-dim);">Para qualquer tiragem: <strong>1°</strong> observe a imagem sem pensar. Que sentimento ela evoca? <strong>2°</strong> Olhe os símbolos: cores, personagens, direção dos olhares. <strong>3°</strong> Conecte com a pergunta. <strong>4°</strong> Confie no que vier antes de buscar o significado no livro.</p>
+    </div>
+
+  </div>
+
+  <div class="info-block" style="margin-top:1.5rem;" data-search>
+    <h3>Como Ler uma Tiragem — Método Intuitivo</h3>
+    <ol style="padding-left:1.3rem;">
+      <li style="margin-bottom:0.5rem;"><strong>Primeira impressão:</strong> Olhe todas as cartas juntas sem analisá-las individualmente. Qual a "cor emocional" da tiragem? Muitas copas? Muitos arcanos maiores?</li>
+      <li style="margin-bottom:0.5rem;"><strong>Padrões de naipes:</strong> Muitas Espadas = conflito mental. Muitas Copas = questão emocional. Muitos Ouros = situação material. Muitos Paus = energia e movimento.</li>
+      <li style="margin-bottom:0.5rem;"><strong>Arcanos Maiores:</strong> 3 ou mais = tema maior, destino, forças além do controle individual.</li>
+      <li style="margin-bottom:0.5rem;"><strong>Numerologia:</strong> Muitos números iguais (ex: três "cincos") amplificam a energia daquele número: 5 = mudança, conflito.</li>
+      <li style="margin-bottom:0.5rem;"><strong>Figuras de corte:</strong> Para onde os personagens olham? Olhar para dentro da tiragem = comunicação entre as cartas. Olhar para fora = algo externo à situação.</li>
+      <li><strong>A carta central:</strong> Em qualquer tiragem, a carta central tende a ser o núcleo da mensagem — construa ao redor dela.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ═══════════════ O QUE APRENDER ═══════════════ -->
+<section id="aprender">
+  <h2 class="section-title"><span class="icon">📚</span> O Que Aprender — Roteiro de Estudos</h2>
+
+  <div class="tips-grid" data-search>
+    <div class="tip-card">
+      <h4>📖 Fase 1 — Os Fundamentos (1–3 meses)</h4>
+      <p>Estude os Arcanos Maiores em profundidade, um por semana. Leia "O Tarot Completo" de Rachel Pollack. Mantenha diário. Faça tiragens de 1 carta por dia.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🌊 Fase 2 — Os Naipes (2–4 meses)</h4>
+      <p>Estude os Arcanos Menores por naipe. Aprenda a numerologia básica (Ás ao 10). Comece tiragens de 3 cartas. Leia "Tarot para Principiantes" de Barbara Moore.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🔗 Fase 3 — Combinações e Contexto (em curso)</h4>
+      <p>Estude como cartas se falam. Leia "Tarot Reversals" de Mary K. Greer (sobre inversas). Faça leituras para amigos próximos como prática.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🌙 Astrologia e Tarot</h4>
+      <p>Cada arcano maior corresponde a um signo ou planeta. A Sacerdotisa é a Lua, O Hierofante é Touro, Os Amantes é Gêmeos. Aprender astrologia básica aprofunda muito o tarot.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🔢 Numerologia</h4>
+      <p>Números 1–10 têm significados universais. 1 = início, 2 = dualidade, 3 = expressão, 4 = estabilidade, 5 = mudança, 6 = harmonia, 7 = espírito, 8 = poder, 9 = conclusão, 10 = completude.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🌿 Cabala e Tarot</h4>
+      <p>O sistema Hermético associa os 22 Arcanos Maiores às 22 letras hebraicas e aos caminhos da Árvore da Vida. Leitura: "The Mystical Qabalah" de Dion Fortune.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🎨 Diferentes Baralhos</h4>
+      <p>Após dominar o Rider-Waite-Smith (o mais tradicional), explore: Thoth Tarot (mais hermético), Marseille Tarot (o mais antigo), Wild Unknown (muito intuitivo).</p>
+    </div>
+    <div class="tip-card">
+      <h4>🧘 Meditação com Tarot</h4>
+      <p>Escolha uma carta e feche os olhos. Visualize-se entrando na imagem. Converse com os personagens. É uma das formas mais profundas de aprender os arquétipos de dentro para fora.</p>
+    </div>
+    <div class="tip-card">
+      <h4>📚 Leituras Recomendadas</h4>
+      <p>"Noventa e Oito Cartas" de Alejandro Jodorowsky. "Learning the Tarot" de Joan Bunning (gratuito online). "Tarot: Mirror of the Soul" de Gerd Ziegler. "Tarot e Psicologia" de Arthur Rosengarten.</p>
+    </div>
+    <div class="tip-card">
+      <h4>🌀 Psicologia Junguiana</h4>
+      <p>Carl Jung nunca leu tarot, mas seus arquétipos (Sombra, Anima, Self, Persona) estão em cada carta. Entender Jung é entender o tarot em profundidade.</p>
+    </div>
+    <div class="tip-card">
+      <h4>✍️ Journaling Profundo</h4>
+      <p>Para cada carta que sair em tiragens importantes, escreva: O que ela significa para mim hoje? O que na minha vida reflete esse arquétipo? Que padrão ela ilumina?</p>
+    </div>
+    <div class="tip-card">
+      <h4>🤝 Comunidade</h4>
+      <p>Busque grupos de tarot locais ou online para trocar leituras. Ler para outros é a forma mais rápida de aprender. Cada pessoa traz à tona facetas das cartas que você não veria sozinha.</p>
+    </div>
+  </div>
+
+  <div class="info-block" style="margin-top:1.5rem;" data-search>
+    <h3>A Ética da Leitora de Tarot</h3>
+    <ul>
+      <li>Nunca faça leituras sobre terceiros sem a permissão deles — leia sobre a <em>relação</em> com eles, não sobre eles.</li>
+      <li>Não faça profecias de morte ou doom — o futuro é sempre uma tendência, não uma sentença.</li>
+      <li>Direcione sempre para o empoderamento: "O que posso fazer com essa energia?" em vez de "O que vai acontecer comigo?"</li>
+      <li>Reconheça seus limites: tarot não substitui terapia, medicina ou aconselhamento jurídico.</li>
+      <li>A intenção importa tanto quanto o conhecimento.</li>
+    </ul>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Sinais de Que Você Está Progredindo</h3>
+    <ul>
+      <li>Você começa a "sentir" as cartas antes de consultar o livro</li>
+      <li>As cartas que saem coincidem de forma notável com os eventos da semana</li>
+      <li>Você percebe as cartas "conversando" entre si nas tiragens</li>
+      <li>A mesma carta aparece repetidamente — até que você entenda a lição</li>
+      <li>Você começa a ver os arquétipos do tarot nas pessoas e situações do dia a dia</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+</div><!-- /page-body -->
+
+<footer style="background:var(--bg2); border-top:1px solid var(--border); padding:1.5rem; text-align:center; color:var(--text-dim); font-style:italic; font-size:0.88rem;">
+  "O tarot não revela o futuro — ele revela quem você é."
+  <span style="display:block; margin-top:0.4rem; font-size:0.78rem; color:var(--gold-dim);">Guia Completo de Tarot · Tradições Ancestrais</span>
+</footer>
+
+<script>
+  // ── ACTIVE NAV LINK on scroll ──
+  const navLinks = document.querySelectorAll('#sidebar a[data-section]');
+  const sectionEls = document.querySelectorAll('section[id]');
+
+  // auto-scroll o link ativo para o centro da barra horizontal no mobile
+  function scrollNavToActive(link) {
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth <= 768 && sidebar && link) {
+      const linkLeft = link.offsetLeft;
+      const linkWidth = link.offsetWidth;
+      const sidebarWidth = sidebar.offsetWidth;
+      sidebar.scrollTo({ left: linkLeft - sidebarWidth / 2 + linkWidth / 2, behavior: 'smooth' });
+    }
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => {
+          const isActive = a.dataset.section === entry.target.id;
+          a.classList.toggle('active', isActive);
+          if (isActive) scrollNavToActive(a);
+        });
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+
+  sectionEls.forEach(sec => observer.observe(sec));
+
+  navLinks.forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.getElementById(a.dataset.section);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      navLinks.forEach(l => l.classList.remove('active'));
+      a.classList.add('active');
+      scrollNavToActive(a);
+    });
+  });
+
+  const searchEl = document.getElementById('search');
+  const countEl = document.getElementById('search-count');
+  const noResults = document.getElementById('no-results');
+
+  function escapeRE(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll('.highlight').forEach(el => {
+      const parent = el.parentNode;
+      parent.replaceChild(document.createTextNode(el.textContent), el);
+      parent.normalize();
+    });
+  }
+
+  function highlightText(node, re) {
+    if (node.nodeType === 3) {
+      const text = node.textContent;
+      const match = re.exec(text);
+      if (!match) return false;
+      const span = document.createElement('mark');
+      span.className = 'highlight';
+      const before = document.createTextNode(text.slice(0, match.index));
+      const after = document.createTextNode(text.slice(match.index + match[0].length));
+      span.textContent = match[0];
+      const frag = document.createDocumentFragment();
+      frag.appendChild(before);
+      frag.appendChild(span);
+      frag.appendChild(after);
+      node.parentNode.replaceChild(frag, node);
+      return true;
+    }
+    if (node.nodeType === 1 && !['SCRIPT','STYLE','MARK'].includes(node.tagName)) {
+      [...node.childNodes].forEach(child => highlightText(child, re));
+    }
+    return false;
+  }
+
+  searchEl.addEventListener('input', () => {
+    const q = searchEl.value.trim();
+    clearHighlights();
+
+    const sections = document.querySelectorAll('section');
+    const searchableCards = document.querySelectorAll('[data-search]');
+
+    if (!q) {
+      searchableCards.forEach(el => el.closest('.card, .combo-list, .tips-grid, .spread-grid, .info-block, [data-search]') && el.classList.remove('hidden'));
+      sections.forEach(s => s.classList.remove('hidden'));
+      document.querySelectorAll('.arcana-label').forEach(el => el.classList.remove('hidden'));
+      countEl.textContent = '';
+      noResults.style.display = 'none';
+      return;
+    }
+
+    const re = new RegExp(escapeRE(q), 'gi');
+    let total = 0;
+
+    // show/hide individual cards
+    document.querySelectorAll('.card[data-search]').forEach(card => {
+      const text = (card.getAttribute('data-name') || '') + ' ' + card.textContent;
+      if (re.test(text)) {
+        card.classList.remove('hidden');
+        total++;
+        re.lastIndex = 0;
+        highlightText(card, re);
+      } else {
+        card.classList.add('hidden');
+      }
+      re.lastIndex = 0;
+    });
+
+    // combo items
+    document.querySelectorAll('.combo-item').forEach(item => {
+      const text = item.textContent;
+      if (re.test(text)) {
+        item.classList.remove('hidden');
+        total++;
+        re.lastIndex = 0;
+        highlightText(item, re);
+      } else {
+        item.classList.add('hidden');
+      }
+      re.lastIndex = 0;
+    });
+
+    // tip cards
+    document.querySelectorAll('.tip-card').forEach(tc => {
+      const text = tc.textContent;
+      if (re.test(text)) {
+        tc.classList.remove('hidden');
+        total++;
+        re.lastIndex = 0;
+        highlightText(tc, re);
+      } else {
+        tc.classList.add('hidden');
+      }
+      re.lastIndex = 0;
+    });
+
+    // info-blocks, spread-cards, ritual steps
+    document.querySelectorAll('.info-block[data-search], .spread-card[data-search]').forEach(el => {
+      const text = el.textContent;
+      if (re.test(text)) {
+        el.classList.remove('hidden');
+        total++;
+        re.lastIndex = 0;
+        highlightText(el, re);
+      } else {
+        el.classList.add('hidden');
+      }
+      re.lastIndex = 0;
+    });
+
+    // hide empty sections (check for visible children)
+    sections.forEach(sec => {
+      const visible = sec.querySelectorAll('.card:not(.hidden), .combo-item:not(.hidden), .tip-card:not(.hidden), .info-block:not(.hidden), .spread-card:not(.hidden)');
+      if (visible.length === 0) {
+        // check if section itself has direct text match
+        const sText = sec.textContent;
+        if (re.test(sText)) {
+          sec.classList.remove('hidden');
+          re.lastIndex = 0;
+        } else {
+          sec.classList.add('hidden');
+          re.lastIndex = 0;
+        }
+      } else {
+        sec.classList.remove('hidden');
+      }
+    });
+
+    countEl.textContent = total > 0 ? `${total} resultado${total !== 1 ? 's' : ''}` : '';
+    noResults.style.display = total === 0 ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>

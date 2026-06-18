@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário de Tiragens · Tarot</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #0e0b1a;
+    --bg2: #15102a;
+    --bg3: #1e1638;
+    --gold: #c9a84c;
+    --gold-light: #e8cc7a;
+    --gold-dim: #7a6230;
+    --purple: #6b3fa0;
+    --purple-light: #9b6fd0;
+    --rose: #c05070;
+    --text: #e8e0d0;
+    --text-dim: #a09880;
+    --border: #2e2450;
+    --card-bg: #120d24;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(180deg, #080514 0%, var(--bg2) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 2rem 1.6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(107,63,160,0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-symbol { font-size: 2.5rem; display: block; margin-bottom: 0.4rem; filter: drop-shadow(0 0 10px var(--rose)); }
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.1em;
+  }
+  header p { color: var(--text-dim); font-style: italic; margin-top: 0.3rem; font-size: 0.95rem; }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--gold-dim);
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    margin-top: 0.8rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--gold); }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--text-dim); }
+
+  /* ── NOVA ENTRADA ── */
+  .new-entry-toggle {
+    width: 100%;
+    background: linear-gradient(135deg, var(--purple), #4a2870);
+    border: none;
+    border-radius: 10px;
+    padding: 1rem;
+    color: var(--text);
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .new-entry-toggle:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .new-entry-form {
+    background: var(--bg2);
+    border: 1px solid var(--purple);
+    border-radius: 12px;
+    padding: 1.6rem;
+    margin-bottom: 2rem;
+    display: none;
+  }
+  .new-entry-form.open { display: block; }
+
+  .form-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: var(--gold-light);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .form-row { margin-bottom: 1rem; }
+  .form-row label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+  .form-row input,
+  .form-row textarea,
+  .form-row select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0.65rem 0.9rem;
+    color: var(--text);
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .form-row input:focus,
+  .form-row textarea:focus,
+  .form-row select:focus { border-color: var(--purple-light); }
+  .form-row textarea { min-height: 120px; }
+  .form-row input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); }
+
+  .cards-input-help {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 0.25rem;
+  }
+
+  /* tags de cartas */
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    min-height: 36px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0.5rem 0.7rem;
+    margin-top: 0.35rem;
+    cursor: text;
+  }
+  .card-tag {
+    background: rgba(107,63,160,0.3);
+    border: 1px solid rgba(107,63,160,0.5);
+    border-radius: 20px;
+    padding: 0.1rem 0.7rem;
+    font-size: 0.82rem;
+    color: var(--purple-light);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .card-tag button {
+    background: none;
+    border: none;
+    color: var(--rose);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;
+  }
+  .card-tag-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Crimson Text', serif;
+    font-size: 0.9rem;
+    min-width: 120px;
+    flex: 1;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+    justify-content: flex-end;
+  }
+  .btn-cancel {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0.6rem 1.2rem;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .btn-cancel:hover { border-color: var(--text-dim); }
+  .btn-save {
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    border: none;
+    border-radius: 7px;
+    padding: 0.6rem 1.4rem;
+    color: #0e0b1a;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-save:hover { opacity: 0.85; }
+
+  /* ── FILTRO / BUSCA ── */
+  .filter-bar {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-bar input {
+    flex: 1;
+    min-width: 180px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.55rem 0.9rem;
+    color: var(--text);
+    font-family: 'Crimson Text', serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .filter-bar input:focus { border-color: var(--gold-dim); }
+  .filter-bar input::placeholder { color: var(--text-dim); }
+  .entry-count { color: var(--text-dim); font-size: 0.82rem; white-space: nowrap; }
+
+  /* ── HISTÓRICO ── */
+  .history-empty {
+    text-align: center;
+    color: var(--text-dim);
+    font-style: italic;
+    padding: 3rem 1rem;
+    background: var(--bg2);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+  }
+  .history-empty span { font-size: 2.5rem; display: block; margin-bottom: 0.7rem; opacity: 0.5; }
+
+  .entry {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .entry:hover { border-color: var(--gold-dim); }
+
+  .entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.3rem;
+    cursor: pointer;
+    gap: 1rem;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+    user-select: none;
+  }
+  .entry.open .entry-header { border-bottom-color: var(--border); }
+
+  .entry-date-wrap { display: flex; flex-direction: column; gap: 0.1rem; min-width: 80px; }
+  .entry-date {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .entry-weekday { font-size: 0.72rem; color: var(--text-dim); }
+
+  .entry-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    flex: 1;
+  }
+  .entry-card-badge {
+    background: rgba(107,63,160,0.2);
+    border: 1px solid rgba(107,63,160,0.35);
+    border-radius: 20px;
+    padding: 0.1rem 0.6rem;
+    font-size: 0.75rem;
+    color: var(--purple-light);
+  }
+  .entry-card-badge.invertida { 
+    background: rgba(192,80,112,0.15); 
+    color: #e08090; 
+    border-color: rgba(192,80,112,0.3); 
+  }
+
+  .entry-chevron {
+    color: var(--gold-dim);
+    font-size: 0.8rem;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .entry.open .entry-chevron { transform: rotate(180deg); }
+
+  .entry-body {
+    display: none;
+    padding: 1.2rem 1.3rem 1.4rem;
+  }
+  .entry.open .entry-body { display: block; }
+
+  .entry-section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .entry-analysis {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    margin-bottom: 1rem;
+  }
+  .entry-notes {
+    background: var(--bg3);
+    border-left: 2px solid var(--gold-dim);
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    font-style: italic;
+    border-radius: 0 6px 6px 0;
+    white-space: pre-wrap;
+  }
+  .entry-notes:empty { display: none; }
+
+  .entry-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    justify-content: flex-end;
+  }
+  .btn-edit, .btn-delete {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-edit { color: var(--gold-dim); }
+  .btn-edit:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .btn-delete { color: var(--rose); }
+  .btn-delete:hover { border-color: var(--rose); }
+
+  /* ── LINHA DO TEMPO ── */
+  .timeline-month {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    padding: 0.5rem 0;
+    margin-bottom: 0.6rem;
+    margin-top: 0.8rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .timeline-month::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ── MODAL CONFIRMAR DELETE ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(8,5,20,0.85);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--rose);
+    border-radius: 12px;
+    padding: 1.8rem;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+  }
+  .modal h3 { font-family: 'Cinzel', serif; color: var(--rose); margin-bottom: 0.7rem; }
+  .modal p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.4rem; }
+  .modal-actions { display: flex; gap: 0.8rem; justify-content: center; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--bg3);
+    border: 1px solid var(--gold-dim);
+    border-radius: 8px;
+    padding: 0.7rem 1.4rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--gold-light);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+    z-index: 9999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+  @media (max-width: 600px) {
+    .stats-bar { gap: 0.6rem; }
+    .stat { padding: 0.6rem 0.8rem; }
+    .stat-num { font-size: 1.3rem; }
+    .form-actions { flex-direction: column-reverse; }
+    .btn-cancel, .btn-save { width: 100%; text-align: center; padding: 0.7rem; }
+    .entry-header { flex-wrap: wrap; gap: 0.6rem; }
+    .entry-cards { order: 3; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-symbol">📖</span>
+  <h1>Diário de Tiragens</h1>
+  <p>Registro das mensagens do oráculo ao longo do tempo</p>
+  <a href="index.html" class="back-link">← Voltar ao Guia</a>
+</header>
+
+<div class="page">
+
+  <!-- STATS -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat"><span class="stat-num" id="stat-total">0</span><span class="stat-label">tiragens registradas</span></div>
+    <div class="stat"><span class="stat-num" id="stat-streak">0</span><span class="stat-label">dias seguidos</span></div>
+    <div class="stat"><span class="stat-num" id="stat-month">0</span><span class="stat-label">esse mês</span></div>
+    <div class="stat"><span class="stat-num" id="stat-card">—</span><span class="stat-label">carta mais frequente</span></div>
+  </div>
+
+  <!-- BOTÃO NOVA ENTRADA -->
+  <button class="new-entry-toggle" id="toggle-form">
+    <span>✦</span> Registrar Tiragem de Hoje
+  </button>
+
+  <!-- FORMULÁRIO -->
+  <div class="new-entry-form" id="entry-form">
+    <div class="form-title">✦ Nova Entrada</div>
+
+    <div class="form-row">
+      <label>Data</label>
+      <input type="date" id="f-date">
+    </div>
+
+    <div class="form-row">
+      <label>Cartas da Tiragem <span style="color:var(--text-dim); font-family:serif; text-transform:none; letter-spacing:0;">(digite e pressione Enter para adicionar — adicione ↩ ao final para marcar como invertida)</span></label>
+      <div class="card-tags" id="card-tags-wrap" onclick="document.getElementById('card-tag-input').focus()">
+        <input type="text" id="card-tag-input" class="card-tag-input" placeholder="Ex: O Sol, invertida com ↩...">
+      </div>
+      <input type="hidden" id="f-cards">
+    </div>
+
+    <div class="form-row">
+      <label>Análise (cole a resposta do chat aqui)</label>
+      <textarea id="f-analysis" placeholder="Cole aqui a análise da tiragem..."></textarea>
+    </div>
+
+    <div class="form-row">
+      <label>Notas pessoais (opcional)</label>
+      <textarea id="f-notes" style="min-height:80px" placeholder="O que você sentiu ao ver as cartas? O que aconteceu no dia?"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-cancel" id="cancel-form">Cancelar</button>
+      <button class="btn-save" id="save-entry">Salvar no Diário ✦</button>
+    </div>
+  </div>
+
+  <!-- FILTRO -->
+  <div class="filter-bar" id="filter-bar" style="display:none">
+    <input type="text" id="filter-input" placeholder="🔍  Buscar por carta ou palavra...">
+    <span class="entry-count" id="entry-count"></span>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div id="history"></div>
+
+</div><!-- /page -->
+
+<!-- MODAL DELETE -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3>Remover entrada?</h3>
+    <p>Essa tiragem será apagada permanentemente do seu diário.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancel-delete">Cancelar</button>
+      <button class="btn-save" style="background:var(--rose); color:#fff;" id="confirm-delete">Apagar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<footer style="background:var(--bg2); border-top:1px solid var(--border); padding:1.2rem; text-align:center; color:var(--text-dim); font-style:italic; font-size:0.82rem; margin-top:2rem;">
+  "Cada carta é uma conversa entre você e o invisível."
+</footer>
+
+<script>
+// ── STORAGE ──
+const STORAGE_KEY = 'tarot_diary_v1';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+function save(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+// ── STATE ──
+let entries = load();
+let editingId = null;
+let deleteTargetId = null;
+let cardTags = [];
+
+// ── HELPERS ──
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function formatDate(iso) {
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+function weekday(iso) {
+  const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const d = new Date(iso + 'T12:00:00');
+  return days[d.getDay()];
+}
+function monthLabel(iso) {
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const [y, m] = iso.split('-');
+  return `${months[parseInt(m)-1]} ${y}`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── CARD TAGS ──
+const tagsWrap = document.getElementById('card-tags-wrap');
+const tagInput = document.getElementById('card-tag-input');
+
+function renderTags() {
+  // remove tags existentes (mantém o input)
+  tagsWrap.querySelectorAll('.card-tag').forEach(el => el.remove());
+  cardTags.forEach((tag, i) => {
+    const div = document.createElement('div');
+    div.className = 'card-tag' + (tag.inv ? ' invertida' : '');
+    div.innerHTML = `${tag.name}${tag.inv ? ' ↩' : ''} <button onclick="removeTag(${i})">×</button>`;
+    tagsWrap.insertBefore(div, tagInput);
+  });
+  document.getElementById('f-cards').value = JSON.stringify(cardTags);
+}
+
+window.removeTag = function(i) {
+  cardTags.splice(i, 1);
+  renderTags();
+};
+
+tagInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = tagInput.value.trim().replace(/,$/,'').trim();
+    if (!val) return;
+    const inv = val.endsWith('↩') || val.toLowerCase().endsWith('invertida') || val.toLowerCase().endsWith('inversa');
+    const name = val.replace(/↩|invertida|inversa/gi,'').replace(/,$/,'').trim();
+    if (name) { cardTags.push({ name, inv }); renderTags(); tagInput.value = ''; }
+  }
+  if (e.key === 'Backspace' && tagInput.value === '' && cardTags.length > 0) {
+    cardTags.pop(); renderTags();
+  }
+});
+
+// ── FORM TOGGLE ──
+const form = document.getElementById('entry-form');
+const toggleBtn = document.getElementById('toggle-form');
+
+toggleBtn.addEventListener('click', () => {
+  const isOpen = form.classList.contains('open');
+  if (isOpen) {
+    resetForm();
+  } else {
+    form.classList.add('open');
+    toggleBtn.textContent = '✕ Fechar';
+    // auto preenche data de hoje
+    if (!editingId) {
+      const today = new Date();
+      const iso = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+      document.getElementById('f-date').value = iso;
+    }
+  }
+});
+
+document.getElementById('cancel-form').addEventListener('click', resetForm);
+
+function resetForm() {
+  form.classList.remove('open');
+  toggleBtn.innerHTML = '<span>✦</span> Registrar Tiragem de Hoje';
+  document.getElementById('f-date').value = '';
+  document.getElementById('f-analysis').value = '';
+  document.getElementById('f-notes').value = '';
+  cardTags = [];
+  tagInput.value = '';
+  renderTags();
+  editingId = null;
+}
+
+// ── SALVAR ──
+document.getElementById('save-entry').addEventListener('click', () => {
+  const date = document.getElementById('f-date').value;
+  const analysis = document.getElementById('f-analysis').value.trim();
+
+  if (!date) { showToast('⚠ Informe a data da tiragem'); return; }
+  if (cardTags.length === 0 && !tagInput.value.trim()) { showToast('⚠ Adicione ao menos uma carta'); return; }
+
+  // finaliza tag digitada sem Enter
+  const leftover = tagInput.value.trim();
+  if (leftover) {
+    const inv = leftover.endsWith('↩') || leftover.toLowerCase().includes('invert');
+    const name = leftover.replace(/↩|invertida|inversa/gi,'').trim();
+    if (name) cardTags.push({ name, inv });
+    tagInput.value = '';
+  }
+
+  const entry = {
+    id: editingId || genId(),
+    date,
+    cards: [...cardTags],
+    analysis,
+    notes: document.getElementById('f-notes').value.trim(),
+    createdAt: editingId ? (entries.find(e=>e.id===editingId)?.createdAt || Date.now()) : Date.now()
+  };
+
+  if (editingId) {
+    const idx = entries.findIndex(e => e.id === editingId);
+    if (idx !== -1) entries[idx] = entry;
+  } else {
+    entries.unshift(entry);
+  }
+
+  save(entries);
+  resetForm();
+  render();
+  showToast(editingId ? '✦ Entrada atualizada' : '✦ Tiragem salva no diário');
+});
+
+// ── DELETE ──
+document.getElementById('cancel-delete').addEventListener('click', () => {
+  document.getElementById('delete-modal').classList.remove('open');
+  deleteTargetId = null;
+});
+document.getElementById('confirm-delete').addEventListener('click', () => {
+  entries = entries.filter(e => e.id !== deleteTargetId);
+  save(entries);
+  document.getElementById('delete-modal').classList.remove('open');
+  deleteTargetId = null;
+  render();
+  showToast('Entrada removida');
+});
+
+window.deleteEntry = function(id) {
+  deleteTargetId = id;
+  document.getElementById('delete-modal').classList.open = false;
+  document.getElementById('delete-modal').classList.add('open');
+};
+
+window.editEntry = function(id) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  editingId = id;
+  document.getElementById('f-date').value = e.date;
+  document.getElementById('f-analysis').value = e.analysis;
+  document.getElementById('f-notes').value = e.notes || '';
+  cardTags = [...e.cards];
+  renderTags();
+  form.classList.add('open');
+  toggleBtn.textContent = '✕ Fechar';
+  form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+window.toggleEntry = function(id) {
+  const el = document.getElementById('entry-' + id);
+  if (el) el.classList.toggle('open');
+};
+
+// ── FILTRO ──
+document.getElementById('filter-input')?.addEventListener('input', render);
+
+// ── STATS ──
+function updateStats() {
+  const total = entries.length;
+  document.getElementById('stat-total').textContent = total;
+
+  // streak (dias consecutivos até hoje)
+  let streak = 0;
+  if (total > 0) {
+    const sorted = [...entries].sort((a,b) => b.date.localeCompare(a.date));
+    const today = new Date();
+    let check = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    for (const e of sorted) {
+      const ed = new Date(e.date + 'T12:00:00');
+      const diff = (check - ed) / 86400000;
+      if (diff <= 1) { streak++; check = ed; }
+      else break;
+    }
+  }
+  document.getElementById('stat-streak').textContent = streak;
+
+  // esse mês
+  const now = new Date();
+  const thisMonth = entries.filter(e => {
+    const [y,m] = e.date.split('-');
+    return parseInt(y) === now.getFullYear() && parseInt(m) === now.getMonth()+1;
+  }).length;
+  document.getElementById('stat-month').textContent = thisMonth;
+
+  // carta mais frequente
+  const freq = {};
+  entries.forEach(e => e.cards.forEach(c => { freq[c.name] = (freq[c.name]||0)+1; }));
+  const top = Object.entries(freq).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('stat-card').textContent = top ? top[0].split(' ').slice(-2).join(' ') : '—';
+}
+
+// ── RENDER ──
+function render() {
+  const q = (document.getElementById('filter-input')?.value || '').toLowerCase().trim();
+  const filtered = q
+    ? entries.filter(e =>
+        e.cards.some(c => c.name.toLowerCase().includes(q)) ||
+        e.analysis.toLowerCase().includes(q) ||
+        (e.notes||'').toLowerCase().includes(q)
+      )
+    : entries;
+
+  const fb = document.getElementById('filter-bar');
+  if (entries.length > 0) fb.style.display = 'flex';
+  document.getElementById('entry-count').textContent = q
+    ? `${filtered.length} de ${entries.length} entrada${entries.length!==1?'s':''}`
+    : `${entries.length} entrada${entries.length!==1?'s':''}`;
+
+  updateStats();
+
+  const hist = document.getElementById('history');
+  if (entries.length === 0) {
+    hist.innerHTML = `<div class="history-empty"><span>🌙</span>Ainda não há tiragens registradas.<br>Clique em <em>Registrar Tiragem de Hoje</em> para começar seu diário.</div>`;
+    return;
+  }
+  if (filtered.length === 0) {
+    hist.innerHTML = `<div class="history-empty"><span>🔍</span>Nenhuma tiragem encontrada para "<strong>${q}</strong>".</div>`;
+    return;
+  }
+
+  // agrupar por mês
+  let lastMonth = '';
+  let html = '';
+  const sorted = [...filtered].sort((a,b) => b.date.localeCompare(a.date));
+
+  sorted.forEach(e => {
+    const m = monthLabel(e.date);
+    if (m !== lastMonth) {
+      html += `<div class="timeline-month">${m}</div>`;
+      lastMonth = m;
+    }
+
+    const cardBadges = e.cards.map(c =>
+      `<span class="entry-card-badge${c.inv?' invertida':''}">${c.name}${c.inv?' ↩':''}</span>`
+    ).join('');
+
+    const analysisEsc = e.analysis.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const notesEsc = (e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    html += `
+    <div class="entry" id="entry-${e.id}">
+      <div class="entry-header" onclick="toggleEntry('${e.id}')">
+        <div class="entry-date-wrap">
+          <span class="entry-date">${formatDate(e.date)}</span>
+          <span class="entry-weekday">${weekday(e.date)}-feira</span>
+        </div>
+        <div class="entry-cards">${cardBadges || '<span style="color:var(--text-dim);font-size:0.8rem;font-style:italic;">sem cartas</span>'}</div>
+        <span class="entry-chevron">▼</span>
+      </div>
+      <div class="entry-body">
+        ${e.analysis ? `
+          <div class="entry-section-label">Análise</div>
+          <div class="entry-analysis">${analysisEsc}</div>
+        ` : ''}
+        ${e.notes ? `
+          <div class="entry-section-label">Notas pessoais</div>
+          <div class="entry-notes">${notesEsc}</div>
+        ` : ''}
+        <div class="entry-actions">
+          <button class="btn-edit" onclick="editEntry('${e.id}')">✎ Editar</button>
+          <button class="btn-delete" onclick="deleteEntry('${e.id}')">✕ Apagar</button>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  hist.innerHTML = html;
+}
+
+// ── INIT ──
+render();
+</script>
+</body>
+</html>
