@@ -105,7 +105,94 @@
   .entry-notes{background:var(--bg3);border-left:2px solid var(--gold-dim);padding:.7rem 1rem;font-size:.9rem;color:var(--text-dim);font-style:italic;border-radius:0 6px 6px 0;white-space:pre-wrap}
   .entry-notes:empty{display:none}
 
-  /* FOTO */
+  /* CARD PREVIEW (formulário) */
+  .card-preview-panel {
+    background: var(--bg3);
+    border: 1px solid var(--purple);
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+    margin-top: 0.7rem;
+    font-size: 0.88rem;
+    display: none;
+    animation: fadeIn .2s ease;
+  }
+  .card-preview-panel.visible { display: block; }
+  .cp-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: var(--gold-light);
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .cp-keywords { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.5rem; }
+  .cp-kw {
+    background: rgba(107,63,160,.25);
+    border: 1px solid rgba(107,63,160,.4);
+    border-radius: 20px;
+    padding: .1rem .55rem;
+    font-size: .72rem;
+    color: var(--purple-light);
+  }
+  .cp-meaning { color: var(--text-dim); line-height: 1.6; }
+
+  /* POPUP (histórico) */
+  .card-popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(8,5,20,.7);
+    z-index: 5000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .card-popup-overlay.open { display: flex; }
+  .card-popup {
+    background: var(--bg2);
+    border: 1px solid var(--purple);
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 420px;
+    width: 100%;
+    position: relative;
+  }
+  .card-popup-close {
+    position: absolute;
+    top: .8rem; right: .8rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    color: var(--text-dim);
+    font-size: .9rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-popup h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: var(--gold-light);
+    margin-bottom: .8rem;
+    padding-right: 2rem;
+  }
+  .card-popup .cp-meaning { margin-top: .5rem; font-size: .92rem; }
+
+  .oracle-pill {
+    display: inline-flex; align-items: center; gap: .25rem;
+    font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .08em;
+    border-radius: 20px; padding: .15rem .55rem;
+  }
+  .oracle-pill.sim    { background:rgba(60,160,80,.18);  color:#70dc90; border:1px solid rgba(60,160,80,.35); }
+  .oracle-pill.nao    { background:rgba(192,80,112,.18); color:#e888a0; border:1px solid rgba(192,80,112,.35); }
+  .oracle-pill.talvez { background:rgba(201,168,76,.15); color:var(--gold); border:1px solid rgba(201,168,76,.3); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+
+  /* badges clicáveis no histórico */
+  .entry-card-badge { cursor: pointer; transition: opacity .15s; }
+  .entry-card-badge:hover { opacity: .75; }
   .photo-upload-area{border:2px dashed var(--border);border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
   .photo-upload-area:hover{border-color:var(--purple-light);background:rgba(122,78,184,.06)}
   .photo-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -227,6 +314,7 @@
       <div class="card-tags" id="card-tags-wrap" onclick="document.getElementById('card-tag-input').focus()">
         <input type="text" id="card-tag-input" class="card-tag-input" placeholder="Ex: O Sol...">
       </div>
+      <div class="card-preview-panel" id="card-preview-panel"></div>
     </div>
     <div class="form-row">
       <label>Análise</label>
@@ -267,6 +355,15 @@
 </div>
 </div>
 
+<div class="card-popup-overlay" id="card-popup-overlay">
+  <div class="card-popup">
+    <button class="card-popup-close" id="card-popup-close">×</button>
+    <h3 id="popup-name"></h3>
+    <div class="cp-keywords" id="popup-keywords"></div>
+    <div class="cp-meaning" id="popup-meaning"></div>
+  </div>
+</div>
+
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightbox-close">×</button>
   <img id="lightbox-img" src="" alt="Tiragem">
@@ -294,6 +391,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="tarot-cards.js"></script>
 
 <script>
 // ══════════════════════════════════════════
@@ -358,6 +456,50 @@ document.getElementById('photo-remove').addEventListener('click',()=>{
   document.getElementById('photo-preview').src='';
   document.getElementById('photo-preview-wrap').style.display='none';
   document.getElementById('photo-upload-label').style.display='';
+});
+
+// ── CARD PREVIEW (formulário) ──
+const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
+
+function findCard(input) {
+  if (!window.TAROT_CARDS) return null;
+  const q = input.trim().replace(/inverti.*|inversa.*/i,'').trim().toLowerCase();
+  return Object.entries(TAROT_CARDS).find(([name]) => name.toLowerCase().includes(q) && q.length >= 3)?.[0] || null;
+}
+
+function showCardPreview(cardName) {
+  const panel = document.getElementById('card-preview-panel');
+  if (!cardName || !window.TAROT_CARDS) { panel.classList.remove('visible'); return; }
+  const data = TAROT_CARDS[cardName];
+  if (!data) { panel.classList.remove('visible'); return; }
+  const oracle = data.oracle || '';
+  panel.innerHTML = `
+    <div class="cp-name">
+      ${cardName}
+      ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}
+    </div>
+    <div class="cp-keywords">${(data.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('')}</div>
+    <div class="cp-meaning">${data.meaning||''}</div>`;
+  panel.classList.add('visible');
+}
+
+// ── POPUP (histórico) ──
+window.showCardPopup = function(name) {
+  if (!window.TAROT_CARDS) return;
+  const data = TAROT_CARDS[name];
+  if (!data) return;
+  const oracle = data.oracle || '';
+  document.getElementById('popup-name').innerHTML =
+    `${name} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}`;
+  document.getElementById('popup-keywords').innerHTML =
+    (data.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
+  document.getElementById('popup-meaning').textContent = data.meaning || '';
+  document.getElementById('card-popup-overlay').classList.add('open');
+};
+document.getElementById('card-popup-close').addEventListener('click', ()=>
+  document.getElementById('card-popup-overlay').classList.remove('open'));
+document.getElementById('card-popup-overlay').addEventListener('click', e=>{
+  if (e.target===e.currentTarget) e.currentTarget.classList.remove('open');
 });
 
 // ── LIGHTBOX ──
@@ -495,9 +637,14 @@ tagInput.addEventListener('keydown',e=>{
     if(!val) return;
     const inv=val.endsWith('↩')||/inverti|inversa/i.test(val);
     const name=val.replace(/↩|invertida|inversa/gi,'').replace(/,$/,'').trim();
-    if(name){ cardTags.push({name,inv}); renderTags(); tagInput.value='' }
+    if(name){ cardTags.push({name,inv}); renderTags(); tagInput.value='';
+      document.getElementById('card-preview-panel').classList.remove('visible'); }
   }
   if(e.key==='Backspace'&&tagInput.value===''&&cardTags.length>0){ cardTags.pop(); renderTags() }
+});
+tagInput.addEventListener('input', ()=>{
+  const match = findCard(tagInput.value);
+  showCardPreview(match);
 });
 
 // ── FORM ──
@@ -628,7 +775,7 @@ function render(){
   [...filtered].sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
     const m=monthLabel(e.date);
     if(m!==lastMonth){ html+=`<div class="timeline-month">${m}</div>`; lastMonth=m }
-    const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}">${c.name}${c.inv?' ↩':''}</span>`).join('');
+    const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}')"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
     const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     html+=`
