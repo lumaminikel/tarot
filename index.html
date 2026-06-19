@@ -394,7 +394,7 @@
   .ritual-steps li::before {
     content: counter(step);
     font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     background: linear-gradient(135deg, var(--gold-dim), var(--gold));
     color: #0e0b1a;
     width: 28px;
@@ -407,6 +407,31 @@
     font-weight: 700;
     margin-top: 2px;
   }
+  .ritual-steps li > span {
+    min-width: 0;
+    hyphens: none;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+
+  /* ── BADGE ORÁCULO ── */
+  .oracle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    border-radius: 20px;
+    padding: 0.15rem 0.55rem;
+    margin-left: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
+    align-self: center;
+  }
+  .oracle-sim   { background: rgba(60,160,80,0.18);  color: #70dc90; border: 1px solid rgba(60,160,80,0.35); }
+  .oracle-nao   { background: rgba(192,80,112,0.18); color: #e888a0; border: 1px solid rgba(192,80,112,0.35); }
+  .oracle-talvez{ background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
 
   /* ── SPREAD LAYOUTS ── */
   .spread-grid {
@@ -595,14 +620,14 @@
     <h3>Ritual de Limpeza e Consagração — Passo a Passo</h3>
     <p><em>Escolha uma noite de lua cheia ou lua nova para maior potência.</em></p>
     <ol class="ritual-steps">
-      <li><strong>Prepare o espaço.</strong> Limpe o ambiente fisicamente e acenda incenso de sândalo, mirra ou arruda. Apague as luzes deixando apenas velas brancas ou lilás. Coloque uma toalha de tecido natural (linho, seda ou algodão) sobre a mesa — esta será a "toalha do oráculo".</li>
-      <li><strong>Centre-se.</strong> Sente-se, feche os olhos, respire fundo três vezes. Visualize uma luz branca ou dourada descendo pela coroa da cabeça até os pés, enraizando-o à terra.</li>
-      <li><strong>Primeira limpeza — Fumaça.</strong> Passe o baralho (ainda embrulhado ou fechado) sobre a fumaça do incenso em movimentos circulares no sentido anti-horário, pedindo mentalmente que todas as energias alheias sejam dissolvidas.</li>
-      <li><strong>Segunda limpeza — Som.</strong> Bata três vezes com os nós dos dedos sobre o baralho, ou use um sino/tingsha. O som quebra padrões energéticos estagnados.</li>
-      <li><strong>Apresente-se ao baralho.</strong> Segure o deck com as duas mãos ao coração e diga em voz alta ou mentalmente: <em>"Eu [seu nome] consagro este baralho como meu instrumento de sabedoria. Que ele sirva à luz, à verdade e ao bem maior de todos que consultarem este oráculo."</em></li>
-      <li><strong>Permita que o baralho o conheça.</strong> Durma com o deck sob seu travesseiro por três noites consecutivas. Isso cria um vínculo energético entre você e as cartas.</li>
-      <li><strong>Primeira tiragem de apresentação.</strong> Na quarta noite, embaralhe pedindo: <em>"Quem és tu para mim?"</em> e retire três cartas. Não interprete com regras — apenas sinta o que cada imagem comunica.</li>
-      <li><strong>Limpeza após cada uso.</strong> Após cada sessão de leitura, passe as cartas na fumaça de palo santo ou bata novamente três vezes. Guarde sempre na toalha ou em uma bolsinha de tecido natural.</li>
+      <li><span><strong>Prepare o espaço.</strong> Limpe o ambiente fisicamente e acenda incenso de sândalo, mirra ou arruda. Apague as luzes deixando apenas velas brancas ou lilás. Coloque uma toalha de tecido natural (linho, seda ou algodão) sobre a mesa — esta será a "toalha do oráculo".</span></li>
+      <li><span><strong>Centre-se.</strong> Sente-se, feche os olhos, respire fundo três vezes. Visualize uma luz branca ou dourada descendo pela coroa da cabeça até os pés, enraizando-o à terra.</span></li>
+      <li><span><strong>Primeira limpeza — Fumaça.</strong> Passe o baralho (ainda embrulhado ou fechado) sobre a fumaça do incenso em movimentos circulares no sentido anti-horário, pedindo mentalmente que todas as energias alheias sejam dissolvidas.</span></li>
+      <li><span><strong>Segunda limpeza — Som.</strong> Bata três vezes com os nós dos dedos sobre o baralho, ou use um sino/tingsha. O som quebra padrões energéticos estagnados.</span></li>
+      <li><span><strong>Apresente-se ao baralho.</strong> Segure o deck com as duas mãos ao coração e diga em voz alta ou mentalmente: <em>"Eu [seu nome] consagro este baralho como meu instrumento de sabedoria. Que ele sirva à luz, à verdade e ao bem maior de todos que consultarem este oráculo."</em></span></li>
+      <li><span><strong>Permita que o baralho o conheça.</strong> Durma com o deck sob seu travesseiro por três noites consecutivas. Isso cria um vínculo energético entre você e as cartas.</span></li>
+      <li><span><strong>Primeira tiragem de apresentação.</strong> Na quarta noite, embaralhe pedindo: <em>"Quem és tu para mim?"</em> e retire três cartas. Não interprete com regras — apenas sinta o que cada imagem comunica.</span></li>
+      <li><span><strong>Limpeza após cada uso.</strong> Após cada sessão de leitura, passe as cartas na fumaça de palo santo ou bata novamente três vezes. Guarde sempre na toalha ou em uma bolsinha de tecido natural.</span></li>
     </ol>
   </div>
 
@@ -1747,7 +1772,109 @@
     });
   });
 
-  const searchEl = document.getElementById('search');
+// ── ORACLE BADGES ──
+const oracleMap = {
+  // Arcanos Maiores
+  'O Louco':            'talvez',
+  'O Mago':             'sim',
+  'A Sacerdotisa':      'talvez',
+  'A Imperatriz':       'sim',
+  'O Imperador':        'sim',
+  'O Hierofante':       'talvez',
+  'Os Amantes':         'sim',
+  'O Carro':            'sim',
+  'A Força':            'sim',
+  'O Eremita':          'talvez',
+  'Roda da Fortuna':    'sim',
+  'A Justiça':          'talvez',
+  'O Enforcado':        'nao',
+  'A Morte':            'talvez',
+  'A Temperança':       'talvez',
+  'O Diabo':            'nao',
+  'A Torre':            'nao',
+  'A Estrela':          'sim',
+  'A Lua':              'nao',
+  'O Sol':              'sim',
+  'O Julgamento':       'sim',
+  'O Mundo':            'sim',
+  // Copas
+  'Ás de Copas':        'sim',
+  'Dois de Copas':      'sim',
+  'Três de Copas':      'sim',
+  'Quatro de Copas':    'nao',
+  'Cinco de Copas':     'nao',
+  'Seis de Copas':      'talvez',
+  'Sete de Copas':      'nao',
+  'Oito de Copas':      'nao',
+  'Nove de Copas':      'sim',
+  'Dez de Copas':       'sim',
+  'Valete de Copas':    'talvez',
+  'Cavaleiro de Copas': 'sim',
+  'Rainha de Copas':    'sim',
+  'Rei de Copas':       'sim',
+  // Espadas
+  'Ás de Espadas':        'sim',
+  'Dois de Espadas':      'nao',
+  'Três de Espadas':      'nao',
+  'Quatro de Espadas':    'talvez',
+  'Cinco de Espadas':     'nao',
+  'Seis de Espadas':      'talvez',
+  'Sete de Espadas':      'nao',
+  'Oito de Espadas':      'nao',
+  'Nove de Espadas':      'nao',
+  'Dez de Espadas':       'nao',
+  'Valete de Espadas':    'talvez',
+  'Cavaleiro de Espadas': 'sim',
+  'Rainha de Espadas':    'talvez',
+  'Rei de Espadas':       'sim',
+  // Ouros
+  'Ás de Ouros':        'sim',
+  'Dois de Ouros':      'talvez',
+  'Três de Ouros':      'sim',
+  'Quatro de Ouros':    'nao',
+  'Cinco de Ouros':     'nao',
+  'Seis de Ouros':      'sim',
+  'Sete de Ouros':      'talvez',
+  'Oito de Ouros':      'sim',
+  'Nove de Ouros':      'sim',
+  'Dez de Ouros':       'sim',
+  'Valete de Ouros':    'talvez',
+  'Cavaleiro de Ouros': 'talvez',
+  'Rainha de Ouros':    'sim',
+  'Rei de Ouros':       'sim',
+  // Paus
+  'Ás de Paus':        'sim',
+  'Dois de Paus':      'talvez',
+  'Três de Paus':      'sim',
+  'Quatro de Paus':    'sim',
+  'Cinco de Paus':     'nao',
+  'Seis de Paus':      'sim',
+  'Sete de Paus':      'talvez',
+  'Oito de Paus':      'sim',
+  'Nove de Paus':      'talvez',
+  'Dez de Paus':       'nao',
+  'Valete de Paus':    'sim',
+  'Cavaleiro de Paus': 'sim',
+  'Rainha de Paus':    'sim',
+  'Rei de Paus':       'sim',
+};
+
+const labels = { sim: '✓ Sim', nao: '✗ Não', talvez: '◈ Talvez' };
+
+document.querySelectorAll('.card[data-search]').forEach(card => {
+  const nameEl = card.querySelector('.card-name');
+  if (!nameEl) return;
+  const name = nameEl.textContent.trim();
+  const oracle = oracleMap[name];
+  if (!oracle) return;
+  const badge = document.createElement('span');
+  badge.className = `oracle-badge oracle-${oracle}`;
+  badge.textContent = labels[oracle];
+  const header = card.querySelector('.card-header:last-of-type');
+  if (header) header.appendChild(badge);
+});
+
+
   const countEl = document.getElementById('search-count');
   const noResults = document.getElementById('no-results');
 
