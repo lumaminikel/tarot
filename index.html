@@ -272,7 +272,7 @@
 
   .card-header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 0.7rem;
     margin-bottom: 0.5rem;
   }
@@ -1870,7 +1870,7 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
   const badge = document.createElement('span');
   badge.className = `oracle-badge oracle-${oracle}`;
   badge.textContent = labels[oracle];
-  const header = card.querySelector('.card-header:last-of-type');
+  const header = nameEl.closest('.card-header');
   if (header) header.appendChild(badge);
 });
 
