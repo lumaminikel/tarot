@@ -106,7 +106,54 @@
   .entry-notes{background:var(--bg3);border-left:2px solid var(--gold-dim);padding:.7rem 1rem;font-size:.9rem;color:var(--text-dim);font-style:italic;border-radius:0 6px 6px 0;white-space:pre-wrap}
   .entry-notes:empty{display:none}
 
-  /* CARD PREVIEW (formulário) */
+  /* COMBINAÇÕES DETECTADAS */
+  .combos-panel {
+    margin-top: .7rem;
+    display: none;
+  }
+  .combos-panel.visible { display: block; }
+  .combos-panel-title {
+    font-family: 'Cinzel', serif;
+    font-size: .68rem;
+    letter-spacing: .15em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+  .combo-detected {
+    background: rgba(201,168,76,.08);
+    border: 1px solid rgba(201,168,76,.25);
+    border-left: 3px solid var(--gold-dim);
+    border-radius: 0 8px 8px 0;
+    padding: .6rem .9rem;
+    margin-bottom: .5rem;
+    font-size: .88rem;
+  }
+  .combo-detected-cards {
+    font-family: 'Cinzel', serif;
+    font-size: .72rem;
+    color: var(--gold);
+    margin-bottom: .25rem;
+  }
+  .combo-detected-meaning { color: var(--text-dim); line-height: 1.55; }
+
+  /* no histórico */
+  .entry-combos { margin-top: .8rem; }
+  .entry-combo-item {
+    background: rgba(201,168,76,.06);
+    border-left: 2px solid var(--gold-dim);
+    padding: .5rem .8rem;
+    margin-bottom: .4rem;
+    border-radius: 0 6px 6px 0;
+    font-size: .85rem;
+  }
+  .entry-combo-cards {
+    font-family: 'Cinzel', serif;
+    font-size: .68rem;
+    color: var(--gold);
+    margin-bottom: .2rem;
+  }
+  .entry-combo-meaning { color: var(--text-dim); }
   .card-preview-panel {
     background: var(--bg3);
     border: 1px solid var(--purple);
@@ -311,11 +358,18 @@
       <input type="date" id="f-date">
     </div>
     <div class="form-row">
-      <label>Cartas <span style="color:var(--text-dim);font-family:serif;text-transform:none;letter-spacing:0;font-size:.85rem">(Enter para adicionar · escreva "invertida" para marcar)</span></label>
-      <div class="card-tags" id="card-tags-wrap" onclick="document.getElementById('card-tag-input').focus()">
-        <input type="text" id="card-tag-input" class="card-tag-input" placeholder="Ex: O Sol...">
+      <label>Cartas <span style="color:var(--text-dim);font-family:serif;text-transform:none;letter-spacing:0;font-size:.85rem">(escreva o nome e toque em + · acrescente "invertida" para marcar)</span></label>
+      <div style="display:flex;gap:.5rem;align-items:flex-start">
+        <div class="card-tags" id="card-tags-wrap" style="flex:1" onclick="document.getElementById('card-tag-input').focus()">
+          <input type="text" id="card-tag-input" class="card-tag-input" placeholder="Ex: O Sol..." autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+        <button type="button" id="add-card-btn" style="background:var(--purple);border:none;border-radius:7px;width:40px;height:40px;color:#fff;font-size:1.4rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:.35rem">+</button>
       </div>
       <div class="card-preview-panel" id="card-preview-panel"></div>
+      <div class="combos-panel" id="combos-panel">
+        <div class="combos-panel-title">🔗 Combinações detectadas</div>
+        <div id="combos-list"></div>
+      </div>
     </div>
     <div class="form-row">
       <label>Análise</label>
@@ -324,7 +378,7 @@
     <div class="form-row">
       <label>Foto da Tiragem (opcional)</label>
       <div class="photo-upload-area" id="photo-upload-area">
-        <input type="file" id="f-photo" accept="image/*" capture="environment">
+        <input type="file" id="f-photo" accept="image/*">
         <div class="photo-upload-label" id="photo-upload-label">
           <span>📷</span>Fotografar ou escolher da galeria
         </div>
@@ -388,11 +442,93 @@
   "Cada carta é uma conversa entre você e o invisível."
 </footer>
 
+<script>
+const TAROT_CARDS = {
+  'A Louca':         {oracle:'talvez',keywords:['Começos','Liberdade','Fé cega'],        meaning:'Novo começo, salto de fé, espontaneidade. No seu baralho ela fecha o ciclo como carta 22 — a jornada completa que renasce com leveza.'},
+  'O Mago':          {oracle:'sim',   keywords:['Manifestação','Vontade','Habilidade'],   meaning:'Poder de manifestar, criatividade ativa. Você tem todas as ferramentas necessárias.'},
+  'A Sacerdotisa':   {oracle:'talvez',keywords:['Intuição','Mistério','Sabedoria'],       meaning:'O mundo interior fala. Silêncio, espera e confiança na voz interna.'},
+  'A Imperatriz':    {oracle:'sim',   keywords:['Fertilidade','Abundância','Natureza'],   meaning:'Criatividade fértil, abundância, maternidade. Nutrir e deixar florescer.'},
+  'O Imperador':     {oracle:'sim',   keywords:['Autoridade','Estrutura','Disciplina'],   meaning:'Liderança, ordem e estabilidade. Construir com firmeza sobre bases sólidas.'},
+  'O Hierofante':    {oracle:'talvez',keywords:['Tradição','Espiritualidade','Ensino'],   meaning:'Tradição, mentor espiritual, comprometimento formal. Respeitar o processo.'},
+  'Os Amantes':      {oracle:'sim',   keywords:['Escolha','Amor','Valores'],              meaning:'Decisão consciente, alinhamento de valores, união dos opostos.'},
+  'O Carro':         {oracle:'sim',   keywords:['Vitória','Controle','Movimento'],        meaning:'Triunfo pela força de vontade. Manter o foco enquanto o mundo gira.'},
+  'A Força':         {oracle:'sim',   keywords:['Coragem','Compaixão','Força interior'],  meaning:'Domesticar os instintos com amor, não repressão. Coragem que vem do coração.'},
+  'O Eremita':       {oracle:'talvez',keywords:['Solidão','Sabedoria','Introspecção'],    meaning:'Recolhimento necessário, busca interior. A lanterna ilumina só o próximo passo.'},
+  'Roda da Fortuna': {oracle:'sim',   keywords:['Ciclos','Destino','Karma'],              meaning:'A roda gira sempre. Reconheça em que ponto está e flua com o movimento.'},
+  'A Justiça':       {oracle:'talvez',keywords:['Equilíbrio','Verdade','Causa e efeito'], meaning:'Verdade objetiva, causa e efeito, honestidade radical consigo mesma.'},
+  'O Enforcado':     {oracle:'nao',   keywords:['Sacrifício','Pausa','Nova perspectiva'], meaning:'Entrega voluntária, ver de outro ângulo. Parar de lutar para enxergar mais.'},
+  'A Morte':         {oracle:'talvez',keywords:['Transformação','Fim de ciclo','Renovação'],meaning:'Metamorfose radical. O que deve morrer para que você viva mais plenamente?'},
+  'A Temperança':    {oracle:'talvez',keywords:['Equilíbrio','Alquimia','Moderação'],     meaning:'Mistura gradual, paciência como virtude. A cura que não pode ser apressada.'},
+  'O Diabo':         {oracle:'nao',   keywords:['Sombra','Vício','Apego'],                meaning:'As correntes que criamos nós mesmos. O que você se recusa a soltar?'},
+  'A Torre':         {oracle:'nao',   keywords:['Ruptura','Revelação','Libertação'],      meaning:'Destrói só o que estava podre. Dolorosa mas necessária libertação.'},
+  'A Estrela':       {oracle:'sim',   keywords:['Esperança','Cura','Renovação'],          meaning:'Após toda destruição, a beleza retorna. Fase de graça e conexão com o divino.'},
+  'A Lua':           {oracle:'nao',   keywords:['Ilusão','Inconsciente','Medo'],          meaning:'As coisas não são como parecem. Enfrente os medos antes de agir.'},
+  'O Sol':           {oracle:'sim',   keywords:['Alegria','Sucesso','Vitalidade'],        meaning:'Clareza plena, celebração, sucesso. A consciência que ilumina tudo.'},
+  'O Julgamento':    {oracle:'sim',   keywords:['Renascimento','Chamado','Despertar'],    meaning:'Chamado ao propósito. Está vivendo de acordo com o que sua alma veio fazer?'},
+  'O Mundo':         {oracle:'sim',   keywords:['Completude','Realização','Integração'],  meaning:'Ciclo completo com honra. Tornar-se quem verdadeiramente se é.'},
+  'Ás de Copas':        {oracle:'sim',   keywords:['Novo amor','Abertura emocional'],        meaning:'Coração aberto e abundante. Novo começo emocional, amor que surge.'},
+  'Dois de Copas':      {oracle:'sim',   keywords:['União','Parceria','Reciprocidade'],       meaning:'Dar e receber em igual medida. O amor mais equilibrado do baralho.'},
+  'Três de Copas':      {oracle:'sim',   keywords:['Celebração','Amizade','Comunidade'],      meaning:'Alegria compartilhada, encontros felizes, conquistas celebradas juntas.'},
+  'Quatro de Copas':    {oracle:'nao',   keywords:['Contemplação','Tédio','Indiferença'],      meaning:'A bênção está sendo ignorada. Aprecie o que já existe antes de pedir mais.'},
+  'Cinco de Copas':     {oracle:'nao',   keywords:['Perda','Luto','Tristeza'],                 meaning:'Virar-se para o que restou em vez de só lamentar o que se perdeu.'},
+  'Seis de Copas':      {oracle:'talvez',keywords:['Nostalgia','Infância','Passado'],           meaning:'Memórias doces, reencontros, inocência. Cuidado com idealização do passado.'},
+  'Sete de Copas':      {oracle:'nao',   keywords:['Ilusões','Muitas escolhas','Fantasia'],     meaning:'Excesso de possibilidades paralisa. Discernimento entre o real e o fantasioso.'},
+  'Oito de Copas':      {oracle:'nao',   keywords:['Partida','Busca espiritual','Deixar ir'],   meaning:'Abandono voluntário em busca de algo mais profundo. Coragem de deixar para trás.'},
+  'Nove de Copas':      {oracle:'sim',   keywords:['Satisfação','Desejo realizado','Prazer'],   meaning:'A carta dos desejos. Realização emocional genuína, contentamento pleno.'},
+  'Dez de Copas':       {oracle:'sim',   keywords:['Família','Harmonia','Felicidade'],           meaning:'O lar ideal, amor familiar completo, paz duradoura. Realização emocional máxima.'},
+  'Valete de Copas':    {oracle:'talvez',keywords:['Mensagem emocional','Jovem sensitivo'],      meaning:'Mensagens do mundo espiritual, intuição em desenvolvimento, sonhos.'},
+  'Cavaleiro de Copas': {oracle:'sim',   keywords:['Romance','Proposta','Mensageiro'],           meaning:'Propostas românticas, convites, mensagens de amor. Energia suave e poética.'},
+  'Rainha de Copas':    {oracle:'sim',   keywords:['Empatia','Intuição madura','Cuidado'],       meaning:'Cuidado profundo, psíquico desenvolvido, amor maduro e curador.'},
+  'Rei de Copas':       {oracle:'sim',   keywords:['Sabedoria emocional','Equilíbrio'],          meaning:'Sentir tudo sem ser arrastado. Líder que usa o coração como bússola.'},
+  'Ás de Espadas':        {oracle:'sim',   keywords:['Clareza','Verdade','Breakthrough'],          meaning:'A espada da verdade corta toda ilusão. Clareza mental repentina, decisão firme.'},
+  'Dois de Espadas':      {oracle:'nao',   keywords:['Impasse','Decisão difícil','Evitação'],      meaning:'Recusa de ver a realidade. Decisão adiada que precisa ser tomada.'},
+  'Três de Espadas':      {oracle:'nao',   keywords:['Dor','Traição','Separação'],                 meaning:'A dor que não pode ser evitada. Separação, traição, desgosto — mas passa.'},
+  'Quatro de Espadas':    {oracle:'talvez',keywords:['Descanso','Recuperação','Pausa'],            meaning:'Após batalhas mentais, descansar. O guerreiro que não repousa perde a próxima.'},
+  'Cinco de Espadas':     {oracle:'nao',   keywords:['Conflito','Derrota','Vitória vazia'],        meaning:'Vencer a qualquer custo tem consequências. Conflitos sem vencedores reais.'},
+  'Seis de Espadas':      {oracle:'talvez',keywords:['Transição','Afastamento','Calmaria'],        meaning:'Transição difícil mas necessária para águas mais calmas.'},
+  'Sete de Espadas':      {oracle:'nao',   keywords:['Estratégia','Desonestidade','Furtividade'],  meaning:'Cuidado com quem ou o que não é o que parece. Traição ou estratégia necessária.'},
+  'Oito de Espadas':      {oracle:'nao',   keywords:['Aprisionamento mental','Limitação'],         meaning:'A prisão é mental. Crenças limitantes, ansiedade — a venda pode ser tirada.'},
+  'Nove de Espadas':      {oracle:'nao',   keywords:['Ansiedade','Pesadelo','Angústia'],           meaning:'Pensamentos catastróficos às 3 da manhã. A situação é menos grave do que parece.'},
+  'Dez de Espadas':       {oracle:'nao',   keywords:['Fim doloroso','Toque do fundo'],             meaning:'O pior já passou. Fim inevitável, mas o amanhecer começa no horizonte.'},
+  'Valete de Espadas':    {oracle:'talvez',keywords:['Curiosidade','Vigilância','Notícias'],       meaning:'Notícias chegando, pensamento crítico, perspicácia aguçada.'},
+  'Cavaleiro de Espadas': {oracle:'sim',   keywords:['Velocidade','Ação direta','Impulsividade'],  meaning:'Decisões rápidas, comunicação direta. Energia que resolve mas pode atropelar.'},
+  'Rainha de Espadas':    {oracle:'talvez',keywords:['Clareza','Independência','Percepção'],       meaning:'Mulher que passou por dor e tornou-se sábia. Pede a verdade antes da gentileza.'},
+  'Rei de Espadas':       {oracle:'sim',   keywords:['Autoridade intelectual','Razão'],            meaning:'Julgamento claro, mente superior. Autoridade que usa a lógica com justiça.'},
+  'Ás de Ouros':        {oracle:'sim',   keywords:['Prosperidade','Nova oportunidade'],            meaning:'Semente de abundância. Nova oportunidade financeira ou material surgindo.'},
+  'Dois de Ouros':      {oracle:'talvez',keywords:['Malabarismo','Equilíbrio','Flexibilidade'],    meaning:'Múltiplas responsabilidades em equilíbrio. Adaptação com humor e destreza.'},
+  'Três de Ouros':      {oracle:'sim',   keywords:['Trabalho em equipe','Habilidade','Reconhecimento'],meaning:'Colaboração, aprendizado de um ofício, trabalho reconhecido.'},
+  'Quatro de Ouros':    {oracle:'nao',   keywords:['Controle','Apego','Possessividade'],           meaning:'Apego ao dinheiro, medo de perder o que se tem. O que você se recusa a soltar?'},
+  'Cinco de Ouros':     {oracle:'nao',   keywords:['Dificuldade financeira','Exclusão'],           meaning:'Dificuldades materiais. A luz (ajuda) está mais perto do que parece — peça.'},
+  'Seis de Ouros':      {oracle:'sim',   keywords:['Generosidade','Dar e receber','Equilíbrio'],   meaning:'Equilíbrio entre dar e receber. Caridade genuína, pagamentos chegando.'},
+  'Sete de Ouros':      {oracle:'talvez',keywords:['Paciência','Investimento','Avaliação'],        meaning:'O trabalho foi feito — aguarde os frutos. Vale o esforço o retorno?'},
+  'Oito de Ouros':      {oracle:'sim',   keywords:['Dedicação','Aperfeiçoamento','Aprendizado'],   meaning:'Maestria que vem com a prática. Dedicação ao trabalho, melhoria contínua.'},
+  'Nove de Ouros':      {oracle:'sim',   keywords:['Abundância','Autossuficiência','Prazer'],      meaning:'Independência financeira conquistada. Prosperidade e luxo merecidos.'},
+  'Dez de Ouros':       {oracle:'sim',   keywords:['Herança','Legado','Segurança familiar'],       meaning:'Riqueza que se perpetua. Herança, investimentos de longo prazo, segurança.'},
+  'Valete de Ouros':    {oracle:'talvez',keywords:['Estudante','Novo projeto','Prático'],          meaning:'Aprendizado prático, novo projeto em estágio inicial. Jovem confiável.'},
+  'Cavaleiro de Ouros': {oracle:'talvez',keywords:['Responsabilidade','Diligência','Confiabilidade'],meaning:'O mais lento dos cavaleiros, mas o mais confiável. Resultados sólidos.'},
+  'Rainha de Ouros':    {oracle:'sim',   keywords:['Prosperidade','Nutrição prática','Conforto'],  meaning:'O lar como templo, cuidado com o corpo e o dinheiro. Abundância prática.'},
+  'Rei de Ouros':       {oracle:'sim',   keywords:['Riqueza','Liderança','Sucesso consolidado'],   meaning:'Sucesso financeiro com sabedoria. O empreendedor generoso e bem-sucedido.'},
+  'Ás de Paus':        {oracle:'sim',   keywords:['Inspiração','Potencial criativo','Ação'],       meaning:'Faísca de inspiração, início cheio de entusiasmo, energia vital em seu ápice.'},
+  'Dois de Paus':      {oracle:'talvez',keywords:['Planejamento','Visão de futuro','Decisão'],     meaning:'Visão clara, mas o passo ainda não foi dado. Hora de planejar com estratégia.'},
+  'Três de Paus':      {oracle:'sim',   keywords:['Expansão','Viagem','Resultados chegando'],      meaning:'O que foi semeado começa a retornar. Expansão de projetos e horizontes.'},
+  'Quatro de Paus':    {oracle:'sim',   keywords:['Celebração','Lar feliz','Comunidade'],          meaning:'Casamento, celebrações, harmonia no lar. Pausa para comemorar conquistas.'},
+  'Cinco de Paus':     {oracle:'nao',   keywords:['Conflito','Competição','Caos'],                 meaning:'Energia dispersa em várias direções. Competição que pode desgastar.'},
+  'Seis de Paus':      {oracle:'sim',   keywords:['Vitória','Reconhecimento público','Sucesso'],   meaning:'Triunfo reconhecido. Colher os louros com humildade após longa luta.'},
+  'Sete de Paus':      {oracle:'talvez',keywords:['Defesa','Perseverança','Posição'],              meaning:'Manter-se firme contra adversidades. Você tem terreno elevado — defenda-o.'},
+  'Oito de Paus':      {oracle:'sim',   keywords:['Movimento veloz','Comunicação','Mensagens'],    meaning:'Tudo acontecendo de uma vez e rápido. Notícias chegando, viagem iminente.'},
+  'Nove de Paus':      {oracle:'talvez',keywords:['Resistência','Exaustão','Determinação'],        meaning:'Cansaço profundo mas ainda de pé. Reúna as últimas forças para cruzar a linha.'},
+  'Dez de Paus':       {oracle:'nao',   keywords:['Sobrecarga','Fardo excessivo','Responsabilidade'],meaning:'Você carrega mais do que deve. Hora de delegar ou largar o que não é seu.'},
+  'Valete de Paus':    {oracle:'sim',   keywords:['Entusiasmo','Aventura','Energia criativa'],     meaning:'Boas notícias, energia adventurosa. A faísca que precisa ser canalizada.'},
+  'Cavaleiro de Paus': {oracle:'sim',   keywords:['Aventura','Paixão','Ação impulsiva'],           meaning:'Energia irresistível, sedutor, apaixonado. Mudanças de rumo frequentes.'},
+  'Rainha de Paus':    {oracle:'sim',   keywords:['Confiança','Carisma','Liderança natural'],      meaning:'Solar, exuberante, confiante. Criatividade e paixão de vida irresistíveis.'},
+  'Rei de Paus':       {oracle:'sim',   keywords:['Visão','Empreendedorismo','Liderança'],         meaning:'Líder visionário, empreendedor nato. Inspira pelo fogo da visão.'},
+};
+</script>
+
 <!-- Firebase v9 compat -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="tarot-cards.js"></script>
 
 <script>
 // ══════════════════════════════════════════
@@ -458,6 +594,87 @@ document.getElementById('photo-remove').addEventListener('click',()=>{
   document.getElementById('photo-preview-wrap').style.display='none';
   document.getElementById('photo-upload-label').style.display='';
 });
+
+// ── COMBINATIONS ──
+const COMBINATIONS = [
+  {cards:['O Sol','A Estrela'],           meaning:'Fase de bênçãos, sucesso e conexão espiritual simultâneos. Um dos melhores pares do baralho.'},
+  {cards:['O Sol','O Mundo'],             meaning:'Grande realização com alegria plena. Sucesso consolidado que merece ser celebrado.'},
+  {cards:['O Sol','A Imperatriz'],        meaning:'Florescimento criativo e abundância. Período de fertilidade, beleza e prosperidade em expansão.'},
+  {cards:['O Sol','Dez de Copas'],        meaning:'Felicidade familiar e alegria plena. Um período de luz e plenitude em casa e nos afetos.'},
+  {cards:['O Mago','A Sacerdotisa'],      meaning:'Equilíbrio perfeito entre ação e intuição. Sabe o que quer e age com discernimento total.'},
+  {cards:['A Torre','O Julgamento'],      meaning:'Destruição seguida de renascimento. Colapso que abre espaço para um propósito mais verdadeiro.'},
+  {cards:['A Torre','A Morte'],           meaning:'Transformação radical e súbita. O que precisava acabar acabou de vez — espaço para vida nova.'},
+  {cards:['O Diabo','A Torre'],           meaning:'Situação tóxica que colapsa. Doloroso, mas é a libertação necessária de correntes que você criou.'},
+  {cards:['A Morte','A Temperança'],      meaning:'Transformação gradual e alquímica. A mudança é certa, mas se dará com paciência e integração.'},
+  {cards:['A Morte','O Julgamento'],      meaning:'Renascimento completo após morte simbólica. O velho self se vai, o chamado mais verdadeiro emerge.'},
+  {cards:['O Eremita','A Lua'],           meaning:'Introspecção profunda com segredos do inconsciente vindo à tona. Retiro que traz revelações.'},
+  {cards:['A Sacerdotisa','A Lua'],       meaning:'O inconsciente falando alto. Intuição que não pode ser ignorada, segredos a serem revelados.'},
+  {cards:['A Justiça','Roda da Fortuna'],  meaning:'Karma em plena ação — o que foi semeado está retornando agora com exatidão.'},
+  {cards:['Roda da Fortuna','O Mundo'],   meaning:'Ciclo completando magnificamente. Realização máxima após muito movimento e transformação.'},
+  {cards:['O Hierofante','Os Amantes'],   meaning:'Tensão entre tradição e coração. Escolha entre o que a sociedade espera e o que você quer.'},
+  {cards:['O Hierofante','Dez de Copas'], meaning:'Casamento ou comprometimento formal. Bênção institucional sobre uma união duradoura.'},
+  {cards:['A Louca','O Mago'],            meaning:'Potencial puro encontrando as ferramentas. Início de jornada com todos os recursos necessários.'},
+  {cards:['A Louca','O Mundo'],           meaning:'O ciclo completo se fecha e recomeça. Após a realização, o espírito escolhe recomeçar com leveza.'},
+  {cards:['A Imperatriz','Dez de Ouros'], meaning:'Abundância geracional — prosperidade que nutre família, lar florescendo com riqueza e amor.'},
+  {cards:['O Diabo','Os Amantes'],        meaning:'Escolha baseada em obsessão, não amor real. Relação que parece paixão mas tem correntes ocultas.'},
+  {cards:['A Estrela','O Julgamento'],    meaning:'Renovação espiritual profunda. Um chamado genuíno chega num momento de graça — ouça.'},
+  {cards:['A Força','O Carro'],           meaning:'Poder interior que se manifesta em vitória. Dominar os instintos com amor traz triunfo externo.'},
+  {cards:['Os Amantes','Dois de Copas'],  meaning:'Decisão de comprometimento num relacionamento com profundo potencial de parceria.'},
+  {cards:['Dois de Copas','Ás de Copas'], meaning:'Início de relacionamento com grande potencial emocional. Amor que começa com coração aberto.'},
+  {cards:['Três de Copas','Dez de Copas'],meaning:'Alegria que se expande para plenitude familiar. Amor celebrado em comunidade.'},
+  {cards:['Rainha de Copas','Rei de Copas'],meaning:'Casal emocionalmente maduro. União onde ambos sentem profundamente sem perder o equilíbrio.'},
+  {cards:['Rainha de Paus','Rei de Paus'], meaning:'Casal apaixonado e criativo. Muita atração e energia — precisam de espaço para não se consumir.'},
+  {cards:['O Diabo','Dois de Copas'],     meaning:'Relacionamento com dependência ou vício afetivo. Os laços existem, mas com correntes a examinar.'},
+  {cards:['Três de Espadas','Cinco de Copas'],meaning:'Dor de traição seguida de luto. Permita o sofrimento completamente para poder seguir em frente.'},
+  {cards:['Cinco de Copas','Oito de Copas'],meaning:'Luto que leva à partida. Após a perda, chega o momento de ir buscar algo mais verdadeiro.'},
+  {cards:['Ás de Paus','Ás de Copas'],   meaning:'Paixão e amor nascendo juntos. Pode ser relação intensa ou projeto que genuinamente toca o coração.'},
+  {cards:['Ás de Espadas','Ás de Ouros'], meaning:'Nova ideia com potencial financeiro real. O pensamento se torna matéria — clareza que abre portas.'},
+  {cards:['Oito de Ouros','Três de Ouros'],meaning:'Maestria reconhecida. Dedicação gerando colaboração e visibilidade — o trabalho começa a ser visto.'},
+  {cards:['Seis de Paus','Dez de Ouros'], meaning:'Sucesso que se converte em prosperidade duradoura. Vitória que cria legado com raízes profundas.'},
+  {cards:['Nove de Ouros','Nove de Copas'],meaning:'Satisfação plena em duas frentes. Fase rara de contentamento genuíno material e emocional.'},
+  {cards:['Dez de Ouros','Dez de Copas'], meaning:'Plenitude total — abundância material e emocional ao mesmo tempo. Celebre e seja grata.'},
+  {cards:['Cavaleiro de Paus','Oito de Paus'],meaning:'Velocidade máxima — projetos avançando, viagem iminente. Aproveite o impulso agora.'},
+  {cards:['Cinco de Ouros','Seis de Ouros'],meaning:'Dificuldade que se resolve com ajuda. Após a escassez, a generosidade restaura o equilíbrio.'},
+  {cards:['Valete de Ouros','Oito de Ouros'],meaning:'Início de aprendizado que vira maestria. O estudante dedicado que com o tempo se tornará mestre.'},
+  {cards:['Dez de Espadas','A Estrela'],  meaning:'Após o pior já ter acontecido, a esperança retorna. A noite mais escura precede o amanhecer.'},
+  {cards:['Dez de Espadas','O Julgamento'],meaning:'Renascimento após colapso total. O que morreu era necessário — vem um chamado à vida nova.'},
+  {cards:['Oito de Espadas','O Diabo'],   meaning:'Aprisionamento mental e padrões viciantes juntos. Prisão dupla — mas ambas as correntes se quebram.'},
+  {cards:['Nove de Espadas','A Lua'],     meaning:'Ansiedade alimentada por ilusões. O que aterroriza à noite pode não ser real — veja à luz do dia.'},
+  {cards:['Quatro de Espadas','Oito de Copas'],meaning:'Necessidade urgente de retirada e descanso antes de partir em nova direção.'},
+  {cards:['Dez de Paus','Nove de Paus'],  meaning:'Sobrecarga no limite da resistência. Você carrega mais do que pode — solte algo antes de cair.'},
+  {cards:['A Torre','Cinco de Copas'],    meaning:'Colapso seguido de luto. Algo caiu e a dor é real. Sinta a perda antes de tentar reconstruir.'},
+  {cards:['Dois de Espadas','Sete de Copas'],meaning:'Paralisia por excesso de opções e ilusões. Tire a venda antes de tentar escolher.'},
+  {cards:['Três de Espadas','Oito de Espadas'],meaning:'Dor emocional virando aprisionamento mental. A ferida justifica limitações — cure para se libertar.'},
+  {cards:['A Sacerdotisa','O Eremita'],   meaning:'Sabedoria interior profunda. Chamado ao silêncio, meditação e estudo — fase de grande aprendizado interno.'},
+  {cards:['A Estrela','A Temperança'],    meaning:'Cura gradual com esperança renovada. A restauração acontece no tempo certo — confie no ritmo.'},
+  {cards:['O Mundo','O Julgamento'],      meaning:'Completude seguida de chamado. Após realizar um ciclo, a alma é convocada para o próximo nível.'},
+  {cards:['O Enforcado','O Eremita'],     meaning:'Pausa profunda e solitária para grandes revelações. Rendição e recolhimento que transformam a visão.'},
+  {cards:['A Lua','A Temperança'],        meaning:'Navegando com paciência pelas ilusões. A alquimia do inconsciente acontece — confie sem ver o resultado.'},
+  {cards:['Seis de Copas','Os Amantes'], meaning:'Amor do passado ressurgindo ou decisão guiada por saudade. Examine se é amor real ou romantização.'},
+  {cards:['O Julgamento','Ás de Paus'],   meaning:'Chamado ao propósito que vira ação criativa. Uma nova missão começa com fogo e clareza de direção.'},
+];
+
+function detectCombinations(tags) {
+  if (!tags || tags.length < 2) return [];
+  const names = tags.map(t => t.name);
+  return COMBINATIONS.filter(combo =>
+    combo.cards.every(c => names.some(n => n.toLowerCase().includes(c.toLowerCase()) || c.toLowerCase().includes(n.toLowerCase())))
+  );
+}
+
+function renderCombosPanel(tags) {
+  const panel = document.getElementById('combos-panel');
+  const list  = document.getElementById('combos-list');
+  const found = detectCombinations(tags);
+  if (!found.length) { panel.classList.remove('visible'); return; }
+  list.innerHTML = found.map(c =>
+    `<div class="combo-detected">
+      <div class="combo-detected-cards">${c.cards.join(' + ')}</div>
+      <div class="combo-detected-meaning">${c.meaning}</div>
+    </div>`
+  ).join('');
+  panel.classList.add('visible');
+}
 
 // ── CARD PREVIEW (formulário) ──
 const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
@@ -628,21 +845,43 @@ function renderTags(){
     div.innerHTML=`${tag.name}${tag.inv?' ↩':''} <button onclick="removeTag(${i})">×</button>`;
     tagsWrap.insertBefore(div,tagInput);
   });
+  renderCombosPanel(cardTags);
 }
 window.removeTag=function(i){ cardTags.splice(i,1); renderTags() };
 
-tagInput.addEventListener('keydown',e=>{
+function addCardFromInput(){
+  const val = tagInput.value.trim().replace(/,$/,'').trim();
+  if(!val) return;
+  const inv = val.endsWith('↩') || /inverti|inversa/i.test(val);
+  const name = val.replace(/↩|invertida|inversa/gi,'').replace(/,$/,'').trim();
+  if(name){
+    cardTags.push({name, inv});
+    renderTags();
+    tagInput.value='';
+    document.getElementById('card-preview-panel').classList.remove('visible');
+    tagInput.focus();
+  }
+}
+
+// Enter no desktop, Go/Search no mobile (keyup é mais confiável)
+tagInput.addEventListener('keydown', e=>{
   if(e.key==='Enter'||e.key===','){
     e.preventDefault();
-    const val=tagInput.value.trim().replace(/,$/,'').trim();
-    if(!val) return;
-    const inv=val.endsWith('↩')||/inverti|inversa/i.test(val);
-    const name=val.replace(/↩|invertida|inversa/gi,'').replace(/,$/,'').trim();
-    if(name){ cardTags.push({name,inv}); renderTags(); tagInput.value='';
-      document.getElementById('card-preview-panel').classList.remove('visible'); }
+    addCardFromInput();
   }
-  if(e.key==='Backspace'&&tagInput.value===''&&cardTags.length>0){ cardTags.pop(); renderTags() }
+  if(e.key==='Backspace' && tagInput.value==='' && cardTags.length>0){
+    cardTags.pop(); renderTags();
+  }
 });
+// fallback para teclados mobile que disparam keyup mas não keydown corretamente
+tagInput.addEventListener('keyup', e=>{
+  if(e.key==='Enter'||e.key==='Go'||e.key==='Search'||e.keyCode===13){
+    addCardFromInput();
+  }
+});
+
+document.getElementById('add-card-btn').addEventListener('click', addCardFromInput);
+
 tagInput.addEventListener('input', ()=>{
   const match = findCard(tagInput.value);
   showCardPreview(match);
@@ -792,6 +1031,13 @@ function render(){
         ${e.photo?`<div class="entry-section-label">Tiragem</div><img class="entry-photo" src="${e.photo}" alt="Foto da tiragem" onclick="openLightbox('${e.photo}')">`:''} 
         ${an?`<div class="entry-section-label">Análise</div><div class="entry-analysis">${an}</div>`:''}
         ${nt?`<div class="entry-section-label">Notas pessoais</div><div class="entry-notes">${nt}</div>`:''}
+        ${(()=>{
+          const combos=detectCombinations(e.cards);
+          if(!combos.length) return '';
+          return '<div class="entry-section-label" style="margin-top:.8rem">🔗 Combinações</div><div class="entry-combos">'
+            +combos.map(c=>`<div class="entry-combo-item"><div class="entry-combo-cards">${c.cards.join(' + ')}</div><div class="entry-combo-meaning">${c.meaning}</div></div>`).join('')
+            +'</div>';
+        })()}
         <div class="entry-actions">
           <button class="btn-edit" onclick="editEntry('${e.id}')">✎ Editar</button>
           <button class="btn-delete" onclick="deleteEntry('${e.id}')">✕ Apagar</button>
