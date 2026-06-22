@@ -613,6 +613,7 @@
     <h3 id="popup-name"></h3>
     <div class="cp-keywords" id="popup-keywords"></div>
     <div class="cp-meaning" id="popup-meaning"></div>
+    <div class="custom-note-in-popup" id="popup-custom-note" style="display:none"></div>
   </div>
 </div>
 
@@ -953,21 +954,27 @@ window.deleteCustomCombo = async function(id) {
 };
 
 // ── POPUP: incluir nota personalizada ──
+const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
+
 window.showCardPopup = function(name) {
+  if (!name) return;
   const data = TAROT_CARDS[name] || {};
   const oracle = data.oracle || '';
   document.getElementById('popup-name').innerHTML =
     `${name} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}`;
   document.getElementById('popup-keywords').innerHTML =
     (data.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
-  document.getElementById('popup-meaning').textContent = data.meaning || '';
-  // nota personalizada
+  document.getElementById('popup-meaning').textContent = data.meaning || (data ? '' : 'Carta não encontrada no guia.');
   const noteArea = document.getElementById('popup-custom-note');
   const customNote = customNotes[name];
-  if (customNote && noteArea) {
-    noteArea.innerHTML = `<div class="custom-note-in-popup-label">Minha anotação</div><div class="custom-note-in-popup-text">${customNote}</div>`;
-    noteArea.style.display = 'block';
-  } else if (noteArea) { noteArea.style.display = 'none'; }
+  if (noteArea) {
+    if (customNote) {
+      noteArea.innerHTML = `<div class="custom-note-in-popup-label">Minha anotação</div><div class="custom-note-in-popup-text">${customNote}</div>`;
+      noteArea.style.display = 'block';
+    } else {
+      noteArea.style.display = 'none';
+    }
+  }
   document.getElementById('card-popup-overlay').classList.add('open');
 };
 const COMBINATIONS = [
@@ -1077,18 +1084,16 @@ function renderCombosPanel(tags) {
   panel.classList.add('visible');
 }
 
-// ── CARD PREVIEW (formulário) ──
-const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
 
+// ── CARD PREVIEW (formulário) ──
 function findCard(input) {
-  if (!window.TAROT_CARDS) return null;
   const q = input.trim().replace(/inverti.*|inversa.*/i,'').trim().toLowerCase();
   return Object.entries(TAROT_CARDS).find(([name]) => name.toLowerCase().includes(q) && q.length >= 3)?.[0] || null;
 }
 
 function showCardPreview(cardName) {
   const panel = document.getElementById('card-preview-panel');
-  if (!cardName || !window.TAROT_CARDS) { panel.classList.remove('visible'); return; }
+  if (!cardName) { panel.classList.remove('visible'); return; }
   const data = TAROT_CARDS[cardName];
   if (!data) { panel.classList.remove('visible'); return; }
   const oracle = data.oracle || '';
@@ -1102,19 +1107,6 @@ function showCardPreview(cardName) {
   panel.classList.add('visible');
 }
 
-// ── POPUP (histórico) ──
-window.showCardPopup = function(name) {
-  if (!window.TAROT_CARDS) return;
-  const data = TAROT_CARDS[name];
-  if (!data) return;
-  const oracle = data.oracle || '';
-  document.getElementById('popup-name').innerHTML =
-    `${name} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}`;
-  document.getElementById('popup-keywords').innerHTML =
-    (data.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
-  document.getElementById('popup-meaning').textContent = data.meaning || '';
-  document.getElementById('card-popup-overlay').classList.add('open');
-};
 document.getElementById('card-popup-close').addEventListener('click', ()=>
   document.getElementById('card-popup-overlay').classList.remove('open'));
 document.getElementById('card-popup-overlay').addEventListener('click', e=>{
@@ -1209,6 +1201,7 @@ auth.onAuthStateChanged(user => {
       document.getElementById('header-bottom').appendChild(ub);
     }
     loadEntries();
+    loadCustomData().then(()=>{ renderCustomCombosList(); });
   } else {
     document.getElementById('login-screen').style.display  = '';
     document.getElementById('main-screen').style.display   = 'none';
