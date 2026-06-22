@@ -241,6 +241,142 @@
   /* badges clicáveis no histórico */
   .entry-card-badge { cursor: pointer; transition: opacity .15s; }
   .entry-card-badge:hover { opacity: .75; }
+
+  /* ── PERSONALIZAR ── */
+  .custom-toggle {
+    width: 100%; background: none;
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: .85rem 1.2rem; color: var(--text-dim);
+    font-family: 'Cinzel', serif; font-size: .78rem;
+    letter-spacing: .1em; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem; transition: border-color .2s, color .2s;
+  }
+  .custom-toggle:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .custom-toggle .ct-arrow { transition: transform .25s; font-size: .7rem; }
+  .custom-toggle.open .ct-arrow { transform: rotate(180deg); }
+
+  .custom-panel {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.4rem;
+    margin-bottom: 2rem; display: none;
+  }
+  .custom-panel.open { display: block; }
+
+  .custom-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.2rem; }
+  .custom-tab {
+    flex: 1; background: none; border: none;
+    padding: .6rem; font-family: 'Cinzel', serif;
+    font-size: .72rem; letter-spacing: .08em;
+    color: var(--text-dim); cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all .2s;
+  }
+  .custom-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .custom-pane { display: none; }
+  .custom-pane.active { display: block; }
+
+  /* anotações por carta */
+  .card-search-wrap { position: relative; margin-bottom: .8rem; }
+  .card-search-wrap input {
+    width: 100%; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 7px;
+    padding: .6rem .9rem; color: var(--text);
+    font-family: 'Crimson Text', serif; font-size: .95rem; outline: none;
+  }
+  .card-search-wrap input:focus { border-color: var(--purple-light); }
+  .card-suggestions {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-top: none; border-radius: 0 0 7px 7px;
+    max-height: 180px; overflow-y: auto; z-index: 100;
+    display: none;
+  }
+  .card-suggestions.open { display: block; }
+  .card-suggestion-item {
+    padding: .5rem .9rem; cursor: pointer;
+    font-size: .9rem; color: var(--text-dim);
+    transition: background .15s;
+  }
+  .card-suggestion-item:hover { background: rgba(122,78,184,.2); color: var(--text); }
+
+  .custom-note-editor { display: none; animation: fadeIn .2s ease; }
+  .custom-note-editor.open { display: block; }
+  .custom-note-card-name {
+    font-family: 'Cinzel', serif; font-size: .9rem;
+    color: var(--gold-light); margin-bottom: .6rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .custom-note-default {
+    font-size: .85rem; color: var(--text-dim);
+    font-style: italic; border-left: 2px solid var(--border);
+    padding-left: .8rem; margin-bottom: .8rem; line-height: 1.5;
+  }
+  .custom-note-label {
+    font-family: 'Cinzel', serif; font-size: .68rem;
+    letter-spacing: .12em; color: var(--gold-dim);
+    text-transform: uppercase; margin-bottom: .35rem;
+  }
+  .custom-existing-note {
+    background: rgba(201,168,76,.08); border-left: 2px solid var(--gold-dim);
+    padding: .6rem .8rem; border-radius: 0 6px 6px 0;
+    font-size: .88rem; color: var(--text-dim); margin-bottom: .8rem;
+  }
+
+  /* combinações personalizadas */
+  .custom-combos-list { margin-bottom: 1rem; }
+  .custom-combo-item {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: .8rem 1rem;
+    margin-bottom: .6rem; display: flex;
+    align-items: flex-start; gap: .8rem;
+  }
+  .custom-combo-body { flex: 1; min-width: 0; }
+  .custom-combo-cards {
+    font-family: 'Cinzel', serif; font-size: .72rem;
+    color: var(--gold); margin-bottom: .25rem;
+  }
+  .custom-combo-meaning { font-size: .85rem; color: var(--text-dim); }
+  .custom-combo-del {
+    background: none; border: 1px solid var(--border);
+    border-radius: 6px; padding: .25rem .5rem;
+    color: var(--rose); cursor: pointer; font-size: .75rem;
+    flex-shrink: 0; transition: border-color .2s;
+  }
+  .custom-combo-del:hover { border-color: var(--rose); }
+
+  .combo-cards-input-wrap { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .8rem; }
+  .combo-card-row { display: flex; gap: .5rem; align-items: center; }
+  .combo-card-row input {
+    flex: 1; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 7px; padding: .55rem .8rem; color: var(--text);
+    font-family: 'Crimson Text', serif; font-size: .9rem; outline: none;
+  }
+  .combo-card-row input:focus { border-color: var(--purple-light); }
+  .btn-add-card-row {
+    background: none; border: 1px solid var(--border);
+    border-radius: 7px; padding: .4rem .7rem;
+    color: var(--text-dim); cursor: pointer; font-size: .85rem;
+    transition: all .2s; white-space: nowrap;
+  }
+  .btn-add-card-row:hover { border-color: var(--purple-light); color: var(--text); }
+  .btn-remove-row {
+    background: none; border: none; color: var(--rose);
+    cursor: pointer; font-size: 1rem; padding: 0 .3rem; line-height: 1;
+  }
+
+  /* nota personalizada no popup */
+  .custom-note-in-popup {
+    margin-top: .8rem; padding-top: .8rem;
+    border-top: 1px solid var(--border);
+    font-size: .88rem;
+  }
+  .custom-note-in-popup-label {
+    font-family: 'Cinzel', serif; font-size: .65rem;
+    letter-spacing: .12em; color: var(--gold-dim);
+    text-transform: uppercase; margin-bottom: .3rem;
+  }
+  .custom-note-in-popup-text { color: var(--text-dim); font-style: italic; line-height: 1.6; }
   .photo-upload-area{border:2px dashed var(--border);border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
   .photo-upload-area:hover{border-color:var(--purple-light);background:rgba(122,78,184,.06)}
   .photo-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -401,6 +537,67 @@
   <div class="filter-bar" id="filter-bar" style="display:none">
     <input type="text" id="filter-input" placeholder="🔍  Buscar por carta ou palavra...">
     <span class="entry-count" id="entry-count"></span>
+  </div>
+
+  <!-- PERSONALIZAR -->
+  <button class="custom-toggle" id="custom-toggle">
+    <span>✦ Personalizar Cartas e Combinações</span>
+    <span class="ct-arrow">▼</span>
+  </button>
+  <div class="custom-panel" id="custom-panel">
+    <div class="custom-tabs">
+      <button class="custom-tab active" id="tab-cards-custom" onclick="switchCustomTab('cards')">📝 Anotações por Carta</button>
+      <button class="custom-tab" id="tab-combos-custom" onclick="switchCustomTab('combos')">🔗 Minhas Combinações</button>
+    </div>
+
+    <!-- PANE: ANOTAÇÕES POR CARTA -->
+    <div class="custom-pane active" id="pane-cards">
+      <div class="card-search-wrap">
+        <input type="text" id="card-search-input" placeholder="Buscar carta... ex: O Sol" autocomplete="off">
+        <div class="card-suggestions" id="card-suggestions"></div>
+      </div>
+      <div class="custom-note-editor" id="custom-note-editor">
+        <div class="custom-note-card-name">
+          <span id="editor-card-name"></span>
+          <button class="btn-remove-row" id="clear-card-selection" title="Fechar">×</button>
+        </div>
+        <div class="custom-note-label">Significado padrão</div>
+        <div class="custom-note-default" id="editor-default-meaning"></div>
+        <div class="custom-note-label">Minha anotação pessoal</div>
+        <div class="custom-existing-note" id="editor-existing-note" style="display:none"></div>
+        <textarea id="custom-note-text" style="width:100%;min-height:90px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical" placeholder="O que essa carta significa pra você? Vivências, intuições, simbolismos pessoais..."></textarea>
+        <div style="display:flex;gap:.6rem;margin-top:.7rem;justify-content:flex-end">
+          <button class="btn-cancel" id="delete-note-btn" style="color:var(--rose);display:none">Apagar nota</button>
+          <button class="btn-save" id="save-note-btn">Salvar ✦</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE: MINHAS COMBINAÇÕES -->
+    <div class="custom-pane" id="pane-combos">
+      <div class="custom-combos-list" id="custom-combos-list"></div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.1rem">
+        <div class="custom-note-label" style="margin-bottom:.6rem">Nova Combinação</div>
+        <div class="combo-cards-input-wrap" id="combo-cards-inputs">
+          <div class="combo-card-row">
+            <input type="text" placeholder="Carta 1 (ex: O Sol)" class="combo-card-field">
+            <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
+          </div>
+          <div class="combo-card-row">
+            <input type="text" placeholder="Carta 2 (ex: A Estrela)" class="combo-card-field">
+            <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
+          </div>
+        </div>
+        <button class="btn-add-card-row" id="add-combo-row-btn" onclick="addComboRow()">+ Adicionar mais uma carta</button>
+        <div class="form-row" style="margin-top:.8rem">
+          <label>Significado da combinação</label>
+          <textarea id="custom-combo-meaning" style="min-height:80px;width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical;margin-top:.35rem" placeholder="O que essas cartas significam juntas pra você?"></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:.7rem">
+          <button class="btn-save" id="save-combo-btn">Salvar Combinação ✦</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="history">
@@ -595,7 +792,184 @@ document.getElementById('photo-remove').addEventListener('click',()=>{
   document.getElementById('photo-upload-label').style.display='';
 });
 
-// ── COMBINATIONS ──
+// ── CUSTOM DATA ──
+let customNotes = {};    // {cardName: noteText}
+let customCombos = [];   // [{id, cards:[], meaning}]
+
+async function loadCustomData() {
+  if (!currentUser) return;
+  try {
+    const docNotes  = await db.collection('users').doc(currentUser.uid).collection('custom').doc('notes').get();
+    const docCombos = await db.collection('users').doc(currentUser.uid).collection('custom').doc('combos').get();
+    if (docNotes.exists)  customNotes  = docNotes.data().data  || {};
+    if (docCombos.exists) customCombos = docCombos.data().list || [];
+  } catch(e) { console.warn('Custom data load error', e); }
+}
+
+async function saveCustomNotes()  { await db.collection('users').doc(currentUser.uid).collection('custom').doc('notes').set({data: customNotes}); }
+async function saveCustomCombos() { await db.collection('users').doc(currentUser.uid).collection('custom').doc('combos').set({list: customCombos}); }
+
+// ── PERSONALIZAR TOGGLE ──
+document.getElementById('custom-toggle').addEventListener('click', ()=>{
+  const btn   = document.getElementById('custom-toggle');
+  const panel = document.getElementById('custom-panel');
+  btn.classList.toggle('open');
+  panel.classList.toggle('open');
+});
+
+window.switchCustomTab = function(tab) {
+  document.querySelectorAll('.custom-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.custom-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+tab+'-custom').classList.add('active');
+  document.getElementById('pane-'+tab).classList.add('active');
+};
+
+// ── ANOTAÇÕES POR CARTA ──
+const cardNames = Object.keys(TAROT_CARDS);
+const cardSearchInput = document.getElementById('card-search-input');
+const cardSuggestions = document.getElementById('card-suggestions');
+let selectedCardName = null;
+
+cardSearchInput.addEventListener('input', ()=>{
+  const q = cardSearchInput.value.trim().toLowerCase();
+  if (!q) { cardSuggestions.classList.remove('open'); return; }
+  const matches = cardNames.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length) { cardSuggestions.classList.remove('open'); return; }
+  cardSuggestions.innerHTML = matches.map(n =>
+    `<div class="card-suggestion-item" onclick="selectCardForNote('${n.replace(/'/g,"\\'")}')">${n}</div>`
+  ).join('');
+  cardSuggestions.classList.add('open');
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.card-search-wrap')) cardSuggestions.classList.remove('open');
+});
+
+window.selectCardForNote = function(name) {
+  selectedCardName = name;
+  cardSearchInput.value = name;
+  cardSuggestions.classList.remove('open');
+  const data = TAROT_CARDS[name] || {};
+  document.getElementById('editor-card-name').textContent = name;
+  document.getElementById('editor-default-meaning').textContent = data.meaning || '';
+  const existing = customNotes[name];
+  const existingEl = document.getElementById('editor-existing-note');
+  const deleteBtn  = document.getElementById('delete-note-btn');
+  if (existing) {
+    existingEl.textContent = existing;
+    existingEl.style.display = 'block';
+    document.getElementById('custom-note-text').value = existing;
+    deleteBtn.style.display = '';
+  } else {
+    existingEl.style.display = 'none';
+    document.getElementById('custom-note-text').value = '';
+    deleteBtn.style.display = 'none';
+  }
+  document.getElementById('custom-note-editor').classList.add('open');
+};
+
+document.getElementById('clear-card-selection').addEventListener('click', ()=>{
+  document.getElementById('custom-note-editor').classList.remove('open');
+  cardSearchInput.value = '';
+  selectedCardName = null;
+});
+
+document.getElementById('save-note-btn').addEventListener('click', async ()=>{
+  if (!selectedCardName) return;
+  const text = document.getElementById('custom-note-text').value.trim();
+  if (!text) { showToast('⚠ Escreva algo antes de salvar'); return; }
+  customNotes[selectedCardName] = text;
+  await saveCustomNotes();
+  document.getElementById('editor-existing-note').textContent = text;
+  document.getElementById('editor-existing-note').style.display = 'block';
+  document.getElementById('delete-note-btn').style.display = '';
+  showToast('✦ Anotação salva!');
+});
+
+document.getElementById('delete-note-btn').addEventListener('click', async ()=>{
+  if (!selectedCardName) return;
+  delete customNotes[selectedCardName];
+  await saveCustomNotes();
+  document.getElementById('editor-existing-note').style.display = 'none';
+  document.getElementById('custom-note-text').value = '';
+  document.getElementById('delete-note-btn').style.display = 'none';
+  showToast('Anotação removida');
+});
+
+// ── COMBINAÇÕES PERSONALIZADAS ──
+function renderCustomCombosList() {
+  const el = document.getElementById('custom-combos-list');
+  if (!customCombos.length) { el.innerHTML = '<p style="color:var(--text-dim);font-size:.85rem;font-style:italic;margin-bottom:.8rem">Nenhuma combinação personalizada ainda.</p>'; return; }
+  el.innerHTML = customCombos.map(c => `
+    <div class="custom-combo-item">
+      <div class="custom-combo-body">
+        <div class="custom-combo-cards">${c.cards.join(' + ')}</div>
+        <div class="custom-combo-meaning">${c.meaning}</div>
+      </div>
+      <button class="custom-combo-del" onclick="deleteCustomCombo('${c.id}')">✕</button>
+    </div>`).join('');
+}
+
+window.addComboRow = function() {
+  const wrap = document.getElementById('combo-cards-inputs');
+  const rows = wrap.querySelectorAll('.combo-card-row');
+  const row = document.createElement('div');
+  row.className = 'combo-card-row';
+  row.innerHTML = `<input type="text" placeholder="Carta ${rows.length+1}" class="combo-card-field"><button class="btn-remove-row" onclick="removeComboRow(this)">×</button>`;
+  wrap.appendChild(row);
+  // mostrar botões de remover em todas se tiver 3+
+  if (wrap.querySelectorAll('.combo-card-row').length >= 3)
+    wrap.querySelectorAll('.btn-remove-row').forEach(b => b.style.display='');
+};
+
+window.removeComboRow = function(btn) {
+  const wrap = document.getElementById('combo-cards-inputs');
+  if (wrap.querySelectorAll('.combo-card-row').length <= 2) return;
+  btn.closest('.combo-card-row').remove();
+  if (wrap.querySelectorAll('.combo-card-row').length <= 2)
+    wrap.querySelectorAll('.btn-remove-row').forEach(b => b.style.display='none');
+};
+
+document.getElementById('save-combo-btn').addEventListener('click', async ()=>{
+  const cards = [...document.querySelectorAll('.combo-card-field')]
+    .map(i => i.value.trim()).filter(Boolean);
+  const meaning = document.getElementById('custom-combo-meaning').value.trim();
+  if (cards.length < 2) { showToast('⚠ Adicione ao menos 2 cartas'); return; }
+  if (!meaning) { showToast('⚠ Escreva o significado'); return; }
+  customCombos.push({ id: genId(), cards, meaning });
+  await saveCustomCombos();
+  renderCustomCombosList();
+  // limpar form
+  document.querySelectorAll('.combo-card-field').forEach(i => i.value='');
+  document.getElementById('custom-combo-meaning').value = '';
+  showToast('✦ Combinação salva!');
+});
+
+window.deleteCustomCombo = async function(id) {
+  customCombos = customCombos.filter(c => c.id !== id);
+  await saveCustomCombos();
+  renderCustomCombosList();
+  showToast('Combinação removida');
+};
+
+// ── POPUP: incluir nota personalizada ──
+window.showCardPopup = function(name) {
+  const data = TAROT_CARDS[name] || {};
+  const oracle = data.oracle || '';
+  document.getElementById('popup-name').innerHTML =
+    `${name} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}`;
+  document.getElementById('popup-keywords').innerHTML =
+    (data.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
+  document.getElementById('popup-meaning').textContent = data.meaning || '';
+  // nota personalizada
+  const noteArea = document.getElementById('popup-custom-note');
+  const customNote = customNotes[name];
+  if (customNote && noteArea) {
+    noteArea.innerHTML = `<div class="custom-note-in-popup-label">Minha anotação</div><div class="custom-note-in-popup-text">${customNote}</div>`;
+    noteArea.style.display = 'block';
+  } else if (noteArea) { noteArea.style.display = 'none'; }
+  document.getElementById('card-popup-overlay').classList.add('open');
+};
 const COMBINATIONS = [
   {cards:['O Sol','A Estrela'],           meaning:'Fase de bênçãos, sucesso e conexão espiritual simultâneos. Um dos melhores pares do baralho.'},
   {cards:['O Sol','O Mundo'],             meaning:'Grande realização com alegria plena. Sucesso consolidado que merece ser celebrado.'},
@@ -656,10 +1030,36 @@ const COMBINATIONS = [
 
 function detectCombinations(tags) {
   if (!tags || tags.length < 2) return [];
-  const names = tags.map(t => t.name);
-  return COMBINATIONS.filter(combo =>
-    combo.cards.every(c => names.some(n => n.toLowerCase().includes(c.toLowerCase()) || c.toLowerCase().includes(n.toLowerCase())))
-  );
+  // limpa o nome caso venha com "invertida" (entradas antigas)
+  const cleanName = n => n.replace(/inverti.*|inversa.*/gi,'').trim();
+  const names = tags.map(t => cleanName(t.name).toLowerCase());
+
+  return COMBINATIONS
+    .filter(combo =>
+      combo.cards.every(c =>
+        names.some(n => n.includes(c.toLowerCase()) || c.toLowerCase().includes(n))
+      )
+    )
+    .map(combo => {
+      // descobre quais cartas desta combinação estão invertidas
+      const invertidas = combo.cards.filter(c =>
+        tags.some(t =>
+          cleanName(t.name).toLowerCase().includes(c.toLowerCase()) ||
+          c.toLowerCase().includes(cleanName(t.name).toLowerCase())
+        ) && tags.find(t =>
+          cleanName(t.name).toLowerCase().includes(c.toLowerCase()) ||
+          c.toLowerCase().includes(cleanName(t.name).toLowerCase())
+        )?.inv
+      );
+      return { ...combo, invertidas };
+    });
+}
+
+function invNote(invertidas) {
+  if (!invertidas || !invertidas.length) return '';
+  return `<div style="margin-top:.4rem;font-size:.8rem;color:var(--rose);font-style:italic">
+    ↩ ${invertidas.join(', ')} ${invertidas.length > 1 ? 'estão invertidas' : 'está invertida'} — a energia pode estar bloqueada, internalizada ou em processo de transformação.
+  </div>`;
 }
 
 function renderCombosPanel(tags) {
@@ -669,8 +1069,9 @@ function renderCombosPanel(tags) {
   if (!found.length) { panel.classList.remove('visible'); return; }
   list.innerHTML = found.map(c =>
     `<div class="combo-detected">
-      <div class="combo-detected-cards">${c.cards.join(' + ')}</div>
+      <div class="combo-detected-cards">${c.cards.join(' + ')}${c.invertidas?.length ? ' <span style="color:var(--rose);font-size:.7rem">↩</span>' : ''}</div>
       <div class="combo-detected-meaning">${c.meaning}</div>
+      ${invNote(c.invertidas)}
     </div>`
   ).join('');
   panel.classList.add('visible');
@@ -1035,7 +1436,11 @@ function render(){
           const combos=detectCombinations(e.cards);
           if(!combos.length) return '';
           return '<div class="entry-section-label" style="margin-top:.8rem">🔗 Combinações</div><div class="entry-combos">'
-            +combos.map(c=>`<div class="entry-combo-item"><div class="entry-combo-cards">${c.cards.join(' + ')}</div><div class="entry-combo-meaning">${c.meaning}</div></div>`).join('')
+            +combos.map(c=>`<div class="entry-combo-item">
+              <div class="entry-combo-cards">${c.cards.join(' + ')}${c.invertidas?.length?' <span style="color:var(--rose);font-size:.7rem">↩</span>':''}</div>
+              <div class="entry-combo-meaning">${c.meaning}</div>
+              ${invNote(c.invertidas)}
+            </div>`).join('')
             +'</div>';
         })()}
         <div class="entry-actions">
