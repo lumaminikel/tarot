@@ -956,17 +956,37 @@ window.deleteCustomCombo = async function(id) {
 // ── POPUP: incluir nota personalizada ──
 const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
 
+function findCardExact(name) {
+  if (!name) return null;
+  // 1. match exato
+  if (TAROT_CARDS[name]) return name;
+  // 2. case-insensitive
+  const lower = name.trim().toLowerCase();
+  const exact = Object.keys(TAROT_CARDS).find(k => k.toLowerCase() === lower);
+  if (exact) return exact;
+  // 3. busca parcial (remove "invertida" e espaços extras)
+  const clean = lower.replace(/inverti.*|inversa.*/gi,'').trim();
+  return Object.keys(TAROT_CARDS).find(k =>
+    k.toLowerCase().includes(clean) || clean.includes(k.toLowerCase())
+  ) || null;
+}
+
 window.showCardPopup = function(name) {
   if (!name) return;
-  const data = TAROT_CARDS[name] || {};
-  const oracle = data.oracle || '';
+  const resolvedName = findCardExact(name);
+  const data = resolvedName ? TAROT_CARDS[resolvedName] : null;
+  const displayName = resolvedName || name;
+  const oracle = data?.oracle || '';
+
   document.getElementById('popup-name').innerHTML =
-    `${name} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}`;
+    `${displayName} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}`;
   document.getElementById('popup-keywords').innerHTML =
-    (data.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
-  document.getElementById('popup-meaning').textContent = data.meaning || (data ? '' : 'Carta não encontrada no guia.');
+    (data?.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
+  document.getElementById('popup-meaning').textContent =
+    data?.meaning || 'Carta não encontrada no guia. Você pode adicionar uma anotação personalizada na seção ✦ Personalizar.';
+
   const noteArea = document.getElementById('popup-custom-note');
-  const customNote = customNotes[name];
+  const customNote = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
   if (noteArea) {
     if (customNote) {
       noteArea.innerHTML = `<div class="custom-note-in-popup-label">Minha anotação</div><div class="custom-note-in-popup-text">${customNote}</div>`;
