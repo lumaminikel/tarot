@@ -655,6 +655,7 @@ const TAROT_CARDS = {
   'Roda da Fortuna': {oracle:'sim',   keywords:['Ciclos','Destino','Karma'],              meaning:'A roda gira sempre. Reconheça em que ponto está e flua com o movimento.'},
   'A Justiça':       {oracle:'talvez',keywords:['Equilíbrio','Verdade','Causa e efeito'], meaning:'Verdade objetiva, causa e efeito, honestidade radical consigo mesma.'},
   'O Enforcado':     {oracle:'nao',   keywords:['Sacrifício','Pausa','Nova perspectiva'], meaning:'Entrega voluntária, ver de outro ângulo. Parar de lutar para enxergar mais.'},
+  'A Enforcada':     {oracle:'nao',   keywords:['Sacrifício','Pausa','Nova perspectiva'], meaning:'Entrega voluntária, ver de outro ângulo. Parar de lutar para enxergar mais.'},
   'A Morte':         {oracle:'talvez',keywords:['Transformação','Fim de ciclo','Renovação'],meaning:'Metamorfose radical. O que deve morrer para que você viva mais plenamente?'},
   'A Temperança':    {oracle:'talvez',keywords:['Equilíbrio','Alquimia','Moderação'],     meaning:'Mistura gradual, paciência como virtude. A cura que não pode ser apressada.'},
   'O Diabo':         {oracle:'nao',   keywords:['Sombra','Vício','Apego'],                meaning:'As correntes que criamos nós mesmos. O que você se recusa a soltar?'},
@@ -958,17 +959,28 @@ const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
 
 function findCardExact(name) {
   if (!name) return null;
+  // normaliza: remove acentos, lowercase, trim
+  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const clean = norm(name.replace(/inverti.*|inversa.*/gi,'').trim());
+
   // 1. match exato
   if (TAROT_CARDS[name]) return name;
-  // 2. case-insensitive
-  const lower = name.trim().toLowerCase();
-  const exact = Object.keys(TAROT_CARDS).find(k => k.toLowerCase() === lower);
-  if (exact) return exact;
-  // 3. busca parcial (remove "invertida" e espaços extras)
-  const clean = lower.replace(/inverti.*|inversa.*/gi,'').trim();
-  return Object.keys(TAROT_CARDS).find(k =>
-    k.toLowerCase().includes(clean) || clean.includes(k.toLowerCase())
-  ) || null;
+
+  // 2. match normalizado (resolve problema de acentos)
+  const keys = Object.keys(TAROT_CARDS);
+  const byNorm = keys.find(k => norm(k) === clean);
+  if (byNorm) return byNorm;
+
+  // 3. match parcial normalizado
+  const byPartial = keys.find(k => norm(k).includes(clean) || clean.includes(norm(k)));
+  if (byPartial) return byPartial;
+
+  // 4. match por raiz (primeiros 6 chars de cada palavra)
+  const stem = s => norm(s).split(' ').map(w => w.slice(0,6)).join(' ');
+  const byStem = keys.find(k => stem(k) === stem(clean));
+  if (byStem) return byStem;
+
+  return null;
 }
 
 window.showCardPopup = function(name) {
@@ -1107,8 +1119,13 @@ function renderCombosPanel(tags) {
 
 // ── CARD PREVIEW (formulário) ──
 function findCard(input) {
-  const q = input.trim().replace(/inverti.*|inversa.*/i,'').trim().toLowerCase();
-  return Object.entries(TAROT_CARDS).find(([name]) => name.toLowerCase().includes(q) && q.length >= 3)?.[0] || null;
+  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const clean = norm(input.replace(/inverti.*|inversa.*/gi,'').trim());
+  if (clean.length < 3) return null;
+  const keys = Object.keys(TAROT_CARDS);
+  return keys.find(k => norm(k) === clean)
+      || keys.find(k => norm(k).includes(clean) || clean.includes(norm(k)))
+      || null;
 }
 
 function showCardPreview(cardName) {
