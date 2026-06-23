@@ -421,8 +421,95 @@
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
   ::-webkit-scrollbar-thumb:hover{background:var(--gold-dim)}
 
+  /* ── CONSULTAR CARTA ── */
+  .consult-btn {
+    width: 100%; background: none;
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: .85rem 1.2rem; color: var(--text-dim);
+    font-family: 'Cinzel', serif; font-size: .78rem;
+    letter-spacing: .1em; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: .6rem;
+    margin-bottom: 1.5rem; transition: border-color .2s, color .2s;
+  }
+  .consult-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+  .consult-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(8,5,20,.9); z-index: 6000;
+    align-items: flex-start; justify-content: center;
+    padding: 1rem; overflow-y: auto;
+  }
+  .consult-overlay.open { display: flex; }
+  .consult-box {
+    background: var(--bg2); border: 1px solid var(--purple);
+    border-radius: 14px; width: 100%; max-width: 500px;
+    margin: 2rem auto; overflow: hidden; animation: fadeIn .2s ease;
+    display: flex; flex-direction: column; max-height: 88vh;
+  }
+  .consult-header {
+    padding: 1rem 1.2rem .8rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .consult-header h3 {
+    font-family: 'Cinzel', serif; font-size: .95rem;
+    color: var(--gold-light); letter-spacing: .08em;
+  }
+  .consult-close {
+    background: none; border: 1px solid var(--border); border-radius: 50%;
+    width: 28px; height: 28px; color: var(--text-dim);
+    cursor: pointer; font-size: .9rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .2s;
+  }
+  .consult-close:hover { border-color: var(--text-dim); }
+  .consult-search-wrap {
+    padding: .7rem 1rem; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .consult-search {
+    width: 100%; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: .6rem .9rem; color: var(--text);
+    font-family: 'Crimson Text', serif; font-size: 1rem; outline: none;
+    transition: border-color .2s;
+  }
+  .consult-search:focus { border-color: var(--purple-light); }
+  .consult-search::placeholder { color: var(--text-dim); }
+  .consult-groups { overflow-y: auto; flex: 1; }
+  .consult-group-label {
+    font-family: 'Cinzel', serif; font-size: .6rem;
+    letter-spacing: .18em; color: var(--gold-dim);
+    text-transform: uppercase; padding: .8rem 1.1rem .3rem;
+    position: sticky; top: 0; background: var(--bg2); z-index: 1;
+    border-bottom: 1px solid rgba(58,46,98,.4);
+  }
+  .consult-card-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .6rem 1.1rem; cursor: pointer;
+    transition: background .15s; border-left: 2px solid transparent;
+  }
+  .consult-card-item:hover {
+    background: rgba(122,78,184,.15);
+    border-left-color: var(--purple);
+  }
+  .consult-card-item.hidden { display: none; }
+  .consult-card-name { font-family: 'Crimson Text', serif; font-size: 1rem; color: var(--text); }
+  .consult-card-meta { display: flex; align-items: center; gap: .5rem; }
+  .consult-card-num { font-family: 'Cinzel', serif; font-size: .62rem; color: var(--text-dim); }
+  .consult-no-results {
+    text-align: center; color: var(--text-dim);
+    font-style: italic; padding: 2rem; display: none;
+  }
+  .oracle-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }
+  .oracle-dot.sim    { background: #70dc90; }
+  .oracle-dot.nao    { background: #e888a0; }
+  .oracle-dot.talvez { background: var(--gold); }
+
   @media(max-width:600px){
-    .stats-bar{gap:.6rem}
+    .consult-box { margin: .5rem auto; max-height: 95vh; }
+  }
     .stat{padding:.6rem .8rem}
     .stat-num{font-size:1.3rem}
     .form-actions{flex-direction:column-reverse}
@@ -534,6 +621,10 @@
     </div>
   </div>
 
+  <button class="consult-btn" id="consult-btn">
+    🔮 Consultar Significado de uma Carta
+  </button>
+
   <div class="filter-bar" id="filter-bar" style="display:none">
     <input type="text" id="filter-input" placeholder="🔍  Buscar por carta ou palavra...">
     <span class="entry-count" id="entry-count"></span>
@@ -605,6 +696,20 @@
   </div>
 
 </div>
+</div>
+
+<!-- CONSULTAR CARTA -->
+<div class="consult-overlay" id="consult-overlay">
+  <div class="consult-box">
+    <div class="consult-header">
+      <h3>🔮 Consultar Carta</h3>
+      <button class="consult-close" id="consult-close">×</button>
+    </div>
+    <div class="consult-search-wrap">
+      <input class="consult-search" id="consult-search" placeholder="🔍  Buscar carta..." autocomplete="off" autocorrect="off">
+    </div>
+    <div class="consult-groups" id="consult-groups"></div>
+  </div>
 </div>
 
 <div class="card-popup-overlay" id="card-popup-overlay">
@@ -1009,6 +1114,79 @@ window.showCardPopup = function(name) {
   }
   document.getElementById('card-popup-overlay').classList.add('open');
 };
+
+// ── CONSULTAR CARTA ──
+const CONSULT_GROUPS = [
+  { label: 'Arcanos Maiores', cards: ['A Louca','O Mago','A Sacerdotisa','A Imperatriz','O Imperador','O Hierofante','Os Amantes','O Carro','A Força','O Eremita','Roda da Fortuna','A Justiça','O Enforcado','A Enforcada','A Morte','A Temperança','O Diabo','A Torre','A Estrela','A Lua','O Sol','O Julgamento','O Mundo'] },
+  { label: 'Copas',   cards: ['Ás de Copas','Dois de Copas','Três de Copas','Quatro de Copas','Cinco de Copas','Seis de Copas','Sete de Copas','Oito de Copas','Nove de Copas','Dez de Copas','Valete de Copas','Cavaleiro de Copas','Rainha de Copas','Rei de Copas'] },
+  { label: 'Espadas', cards: ['Ás de Espadas','Dois de Espadas','Três de Espadas','Quatro de Espadas','Cinco de Espadas','Seis de Espadas','Sete de Espadas','Oito de Espadas','Nove de Espadas','Dez de Espadas','Valete de Espadas','Cavaleiro de Espadas','Rainha de Espadas','Rei de Espadas'] },
+  { label: 'Ouros',   cards: ['Ás de Ouros','Dois de Ouros','Três de Ouros','Quatro de Ouros','Cinco de Ouros','Seis de Ouros','Sete de Ouros','Oito de Ouros','Nove de Ouros','Dez de Ouros','Valete de Ouros','Cavaleiro de Ouros','Rainha de Ouros','Rei de Ouros'] },
+  { label: 'Paus',    cards: ['Ás de Paus','Dois de Paus','Três de Paus','Quatro de Paus','Cinco de Paus','Seis de Paus','Sete de Paus','Oito de Paus','Nove de Paus','Dez de Paus','Valete de Paus','Cavaleiro de Paus','Rainha de Paus','Rei de Paus'] },
+];
+
+function buildConsultList() {
+  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  document.getElementById('consult-groups').innerHTML = CONSULT_GROUPS.map(g => `
+    <div class="consult-group-label" data-group="${g.label}">${g.label}</div>
+    ${g.cards.map(name => {
+      const data = TAROT_CARDS[name] || {};
+      const oracle = data.oracle || '';
+      return `<div class="consult-card-item" data-name="${name}" data-norm="${norm(name)}" onclick="consultCard('${name.replace(/'/g,"\\'")}')">
+        <span class="consult-card-name">${name}</span>
+        ${oracle ? `<span class="oracle-dot ${oracle}" title="${oracleLabels[oracle]}"></span>` : ''}
+      </div>`;
+    }).join('')}
+  `).join('');
+}
+
+function filterConsultList(q) {
+  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const nq = norm(q.trim());
+  let any = false;
+  document.querySelectorAll('.consult-card-item').forEach(item => {
+    const match = !nq || item.dataset.norm.includes(nq);
+    item.classList.toggle('hidden', !match);
+    if (match) any = true;
+  });
+  document.querySelectorAll('.consult-group-label').forEach(label => {
+    const g = CONSULT_GROUPS.find(g => g.label === label.dataset.group);
+    const hasVisible = g?.cards.some(c => {
+      const el = document.querySelector(`.consult-card-item[data-name="${CSS.escape(c)}"]`);
+      return el && !el.classList.contains('hidden');
+    });
+    label.style.display = hasVisible ? '' : 'none';
+  });
+  let noRes = document.getElementById('consult-no-results');
+  if (!noRes) {
+    noRes = document.createElement('div');
+    noRes.id = 'consult-no-results';
+    noRes.className = 'consult-no-results';
+    noRes.textContent = 'Nenhuma carta encontrada.';
+    noRes.style.cssText = 'text-align:center;color:var(--text-dim);font-style:italic;padding:2rem';
+    document.getElementById('consult-groups').appendChild(noRes);
+  }
+  noRes.style.display = any ? 'none' : 'block';
+}
+
+window.consultCard = function(name) {
+  document.getElementById('consult-overlay').classList.remove('open');
+  document.getElementById('consult-search').value = '';
+  showCardPopup(name);
+};
+
+document.getElementById('consult-btn').addEventListener('click', ()=>{
+  buildConsultList();
+  document.getElementById('consult-overlay').classList.add('open');
+  setTimeout(()=> document.getElementById('consult-search').focus(), 150);
+});
+document.getElementById('consult-close').addEventListener('click', ()=>
+  document.getElementById('consult-overlay').classList.remove('open'));
+document.getElementById('consult-overlay').addEventListener('click', e=>{
+  if (e.target===e.currentTarget) e.currentTarget.classList.remove('open');
+});
+document.getElementById('consult-search').addEventListener('input', e=>
+  filterConsultList(e.target.value));
+
 const COMBINATIONS = [
   {cards:['O Sol','A Estrela'],           meaning:'Fase de bênçãos, sucesso e conexão espiritual simultâneos. Um dos melhores pares do baralho.'},
   {cards:['O Sol','O Mundo'],             meaning:'Grande realização com alegria plena. Sucesso consolidado que merece ser celebrado.'},
