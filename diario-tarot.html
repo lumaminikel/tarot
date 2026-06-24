@@ -202,14 +202,16 @@
     border: 1px solid var(--purple);
     border-radius: 12px;
     padding: 1.5rem;
-    max-width: 420px;
+    max-width: 460px;
     width: 100%;
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
   }
   .card-popup-close {
     position: absolute;
     top: .8rem; right: .8rem;
-    background: none;
+    background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 50%;
     width: 28px; height: 28px;
@@ -217,6 +219,7 @@
     font-size: .9rem;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
+    z-index: 2;
   }
   .card-popup h3 {
     font-family: 'Cinzel', serif;
@@ -226,6 +229,42 @@
     padding-right: 2rem;
   }
   .card-popup .cp-meaning { margin-top: .5rem; font-size: .92rem; }
+
+  /* imagem da carta no popup */
+  .popup-card-img-wrap {
+    display: flex; justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .popup-card-img {
+    width: 130px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,.5);
+    display: block;
+    transition: opacity .3s;
+  }
+  .popup-card-img.inv {
+    transform: rotate(180deg);
+    border-color: var(--rose);
+  }
+  .popup-card-img-placeholder {
+    width: 130px; height: 220px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim); font-size: 2rem;
+  }
+
+  /* thumbnail na lista de consulta */
+  .consult-card-thumb {
+    width: 32px; height: 54px;
+    border-radius: 4px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg3);
+  }
 
   .oracle-pill {
     display: inline-flex; align-items: center; gap: .25rem;
@@ -716,6 +755,7 @@
   <div class="card-popup">
     <button class="card-popup-close" id="card-popup-close">×</button>
     <h3 id="popup-name"></h3>
+    <div class="popup-card-img-wrap" id="popup-img-wrap"></div>
     <div class="cp-keywords" id="popup-keywords"></div>
     <div class="cp-meaning" id="popup-meaning"></div>
     <div class="custom-note-in-popup" id="popup-custom-note" style="display:none"></div>
@@ -1059,6 +1099,95 @@ window.deleteCustomCombo = async function(id) {
   showToast('Combinação removida');
 };
 
+// ── CARD IMAGES (Rider-Waite, domínio público via Wikimedia Commons) ──
+const W = 'https://upload.wikimedia.org/wikipedia/commons/';
+const CARD_IMAGES = {
+  // Arcanos Maiores
+  'A Louca':         W+'9/90/RWS_Tarot_00_Fool.jpg',
+  'O Mago':          W+'d/de/RWS_Tarot_01_Magician.jpg',
+  'A Sacerdotisa':   W+'8/88/RWS_Tarot_02_High_Priestess.jpg',
+  'A Imperatriz':    W+'d/d2/RWS_Tarot_03_Empress.jpg',
+  'O Imperador':     W+'c/c3/RWS_Tarot_04_Emperor.jpg',
+  'O Hierofante':    W+'8/8d/RWS_Tarot_05_Hierophant.jpg',
+  'Os Amantes':      W+'3/3a/TheLovers.jpg',
+  'O Carro':         W+'9/9b/RWS_Tarot_07_Chariot.jpg',
+  'A Força':         W+'f/f5/RWS_Tarot_08_Strength.jpg',
+  'O Eremita':       W+'4/4d/RWS_Tarot_09_Hermit.jpg',
+  'Roda da Fortuna': W+'3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg',
+  'A Justiça':       W+'e/e0/RWS_Tarot_11_Justice.jpg',
+  'O Enforcado':     W+'2/2b/RWS_Tarot_12_Hanged_Man.jpg',
+  'A Enforcada':     W+'2/2b/RWS_Tarot_12_Hanged_Man.jpg',
+  'A Morte':         W+'d/d7/RWS_Tarot_13_Death.jpg',
+  'A Temperança':    W+'f/f8/RWS_Tarot_14_Temperance.jpg',
+  'O Diabo':         W+'5/55/RWS_Tarot_15_Devil.jpg',
+  'A Torre':         W+'5/53/RWS_Tarot_16_Tower.jpg',
+  'A Estrela':       W+'d/db/RWS_Tarot_17_Star.jpg',
+  'A Lua':           W+'7/7f/RWS_Tarot_18_Moon.jpg',
+  'O Sol':           W+'1/17/RWS_Tarot_19_Sun.jpg',
+  'O Julgamento':    W+'d/dd/RWS_Tarot_20_Judgement.jpg',
+  'O Mundo':         W+'f/ff/RWS_Tarot_21_World.jpg',
+  // Copas
+  'Ás de Copas':        W+'3/36/Cups01.jpg',
+  'Dois de Copas':      W+'f/f8/Cups02.jpg',
+  'Três de Copas':      W+'7/7a/Cups03.jpg',
+  'Quatro de Copas':    W+'3/35/Cups04.jpg',
+  'Cinco de Copas':     W+'d/d7/Cups05.jpg',
+  'Seis de Copas':      W+'1/17/Cups06.jpg',
+  'Sete de Copas':      W+'a/ae/Cups07.jpg',
+  'Oito de Copas':      W+'6/60/Cups08.jpg',
+  'Nove de Copas':      W+'2/24/Cups09.jpg',
+  'Dez de Copas':       W+'8/84/Cups10.jpg',
+  'Valete de Copas':    W+'a/ad/Cups11.jpg',
+  'Cavaleiro de Copas': W+'f/fa/Cups12.jpg',
+  'Rainha de Copas':    W+'6/62/Cups13.jpg',
+  'Rei de Copas':       W+'0/04/Cups14.jpg',
+  // Espadas
+  'Ás de Espadas':        W+'1/1a/Swords01.jpg',
+  'Dois de Espadas':      W+'9/9e/Swords02.jpg',
+  'Três de Espadas':      W+'0/02/Swords03.jpg',
+  'Quatro de Espadas':    W+'b/bf/Swords04.jpg',
+  'Cinco de Espadas':     W+'2/23/Swords05.jpg',
+  'Seis de Espadas':      W+'2/29/Swords06.jpg',
+  'Sete de Espadas':      W+'3/34/Swords07.jpg',
+  'Oito de Espadas':      W+'a/a7/Swords08.jpg',
+  'Nove de Espadas':      W+'2/2f/Swords09.jpg',
+  'Dez de Espadas':       W+'d/d4/Swords10.jpg',
+  'Valete de Espadas':    W+'4/4c/Swords11.jpg',
+  'Cavaleiro de Espadas': W+'b/b0/Swords12.jpg',
+  'Rainha de Espadas':    W+'d/d4/Swords13.jpg',
+  'Rei de Espadas':       W+'3/33/Swords14.jpg',
+  // Ouros
+  'Ás de Ouros':        W+'f/fd/Pents01.jpg',
+  'Dois de Ouros':      W+'9/9f/Pents02.jpg',
+  'Três de Ouros':      W+'4/42/Pents03.jpg',
+  'Quatro de Ouros':    W+'3/35/Pents04.jpg',
+  'Cinco de Ouros':     W+'9/96/Pents05.jpg',
+  'Seis de Ouros':      W+'a/a6/Pents06.jpg',
+  'Sete de Ouros':      W+'6/6a/Pents07.jpg',
+  'Oito de Ouros':      W+'4/49/Pents08.jpg',
+  'Nove de Ouros':      W+'f/f0/Pents09.jpg',
+  'Dez de Ouros':       W+'4/42/Pents10.jpg',
+  'Valete de Ouros':    W+'e/ec/Pents11.jpg',
+  'Cavaleiro de Ouros': W+'d/d5/Pents12.jpg',
+  'Rainha de Ouros':    W+'8/88/Pents13.jpg',
+  'Rei de Ouros':       W+'1/1c/Pents14.jpg',
+  // Paus
+  'Ás de Paus':        W+'1/11/Wands01.jpg',
+  'Dois de Paus':      W+'0/0f/Wands02.jpg',
+  'Três de Paus':      W+'f/ff/Wands03.jpg',
+  'Quatro de Paus':    W+'a/a4/Wands04.jpg',
+  'Cinco de Paus':     W+'9/9d/Wands05.jpg',
+  'Seis de Paus':      W+'3/3b/Wands06.jpg',
+  'Sete de Paus':      W+'e/e4/Wands07.jpg',
+  'Oito de Paus':      W+'6/6b/Wands08.jpg',
+  'Nove de Paus':      W+'e/e0/Wands09.jpg',
+  'Dez de Paus':       W+'0/0b/Wands10.jpg',
+  'Valete de Paus':    W+'6/6d/Wands11.jpg',
+  'Cavaleiro de Paus': W+'1/16/Wands12.jpg',
+  'Rainha de Paus':    W+'0/0d/Wands13.jpg',
+  'Rei de Paus':       W+'c/ce/Wands14.jpg',
+};
+
 // ── POPUP: incluir nota personalizada ──
 const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
 
@@ -1088,19 +1217,33 @@ function findCardExact(name) {
   return null;
 }
 
-window.showCardPopup = function(name) {
+window.showCardPopup = function(name, isInv) {
   if (!name) return;
   const resolvedName = findCardExact(name);
   const data = resolvedName ? TAROT_CARDS[resolvedName] : null;
   const displayName = resolvedName || name;
   const oracle = data?.oracle || '';
+  const imgUrl = CARD_IMAGES[resolvedName] || CARD_IMAGES[name] || null;
 
   document.getElementById('popup-name').innerHTML =
-    `${displayName} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}`;
+    `${displayName} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}
+     ${isInv ? '<span style="color:var(--rose);font-size:.75rem;font-family:serif">↩ invertida</span>' : ''}`;
+
+  const imgWrap = document.getElementById('popup-img-wrap');
+  if (imgWrap) {
+    if (imgUrl) {
+      imgWrap.innerHTML = `<img class="popup-card-img${isInv?' inv':''}" src="${imgUrl}"
+        alt="${displayName}" loading="lazy"
+        onerror="this.parentElement.innerHTML='<div class=\\'popup-card-img-placeholder\\'>🃏</div>'">`;
+    } else {
+      imgWrap.innerHTML = '<div class="popup-card-img-placeholder">🃏</div>';
+    }
+  }
+
   document.getElementById('popup-keywords').innerHTML =
     (data?.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
   document.getElementById('popup-meaning').textContent =
-    data?.meaning || 'Carta não encontrada no guia. Você pode adicionar uma anotação personalizada na seção ✦ Personalizar.';
+    data?.meaning || 'Carta não encontrada no guia. Você pode adicionar uma anotação na seção ✦ Personalizar.';
 
   const noteArea = document.getElementById('popup-custom-note');
   const customNote = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
@@ -1108,9 +1251,7 @@ window.showCardPopup = function(name) {
     if (customNote) {
       noteArea.innerHTML = `<div class="custom-note-in-popup-label">Minha anotação</div><div class="custom-note-in-popup-text">${customNote}</div>`;
       noteArea.style.display = 'block';
-    } else {
-      noteArea.style.display = 'none';
-    }
+    } else { noteArea.style.display = 'none'; }
   }
   document.getElementById('card-popup-overlay').classList.add('open');
 };
@@ -1131,7 +1272,9 @@ function buildConsultList() {
     ${g.cards.map(name => {
       const data = TAROT_CARDS[name] || {};
       const oracle = data.oracle || '';
+      const img = CARD_IMAGES[name] || '';
       return `<div class="consult-card-item" data-name="${name}" data-norm="${norm(name)}" onclick="consultCard('${name.replace(/'/g,"\\'")}')">
+        ${img ? `<img class="consult-card-thumb" src="${img}" alt="${name}" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:32px;flex-shrink:0"></div>'}
         <span class="consult-card-name">${name}</span>
         ${oracle ? `<span class="oracle-dot ${oracle}" title="${oracleLabels[oracle]}"></span>` : ''}
       </div>`;
@@ -1626,7 +1769,7 @@ function render(){
   [...filtered].sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
     const m=monthLabel(e.date);
     if(m!==lastMonth){ html+=`<div class="timeline-month">${m}</div>`; lastMonth=m }
-    const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}')"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
+    const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv?'true':'false'})"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
     const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     html+=`

@@ -2067,6 +2067,58 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     countEl.textContent = total > 0 ? `${total} resultado${total !== 1 ? 's' : ''}` : '';
     noResults.style.display = total === 0 ? 'block' : 'none';
   });
+
+  // ── IMAGENS DAS CARTAS NO GUIA (Rider-Waite, Wikimedia Commons) ──
+  const W = 'https://upload.wikimedia.org/wikipedia/commons/';
+  const GUIDE_IMAGES = {
+    'A Louca':W+'9/90/RWS_Tarot_00_Fool.jpg','O Mago':W+'d/de/RWS_Tarot_01_Magician.jpg',
+    'A Sacerdotisa':W+'8/88/RWS_Tarot_02_High_Priestess.jpg','A Imperatriz':W+'d/d2/RWS_Tarot_03_Empress.jpg',
+    'O Imperador':W+'c/c3/RWS_Tarot_04_Emperor.jpg','O Hierofante':W+'8/8d/RWS_Tarot_05_Hierophant.jpg',
+    'Os Amantes':W+'3/3a/TheLovers.jpg','O Carro':W+'9/9b/RWS_Tarot_07_Chariot.jpg',
+    'A Força':W+'f/f5/RWS_Tarot_08_Strength.jpg','O Eremita':W+'4/4d/RWS_Tarot_09_Hermit.jpg',
+    'Roda da Fortuna':W+'3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg','A Justiça':W+'e/e0/RWS_Tarot_11_Justice.jpg',
+    'O Enforcado':W+'2/2b/RWS_Tarot_12_Hanged_Man.jpg','A Morte':W+'d/d7/RWS_Tarot_13_Death.jpg',
+    'A Temperança':W+'f/f8/RWS_Tarot_14_Temperance.jpg','O Diabo':W+'5/55/RWS_Tarot_15_Devil.jpg',
+    'A Torre':W+'5/53/RWS_Tarot_16_Tower.jpg','A Estrela':W+'d/db/RWS_Tarot_17_Star.jpg',
+    'A Lua':W+'7/7f/RWS_Tarot_18_Moon.jpg','O Sol':W+'1/17/RWS_Tarot_19_Sun.jpg',
+    'O Julgamento':W+'d/dd/RWS_Tarot_20_Judgement.jpg','O Mundo':W+'f/ff/RWS_Tarot_21_World.jpg',
+    'Ás de Copas':W+'3/36/Cups01.jpg','Dois de Copas':W+'f/f8/Cups02.jpg','Três de Copas':W+'7/7a/Cups03.jpg',
+    'Quatro de Copas':W+'3/35/Cups04.jpg','Cinco de Copas':W+'d/d7/Cups05.jpg','Seis de Copas':W+'1/17/Cups06.jpg',
+    'Sete de Copas':W+'a/ae/Cups07.jpg','Oito de Copas':W+'6/60/Cups08.jpg','Nove de Copas':W+'2/24/Cups09.jpg',
+    'Dez de Copas':W+'8/84/Cups10.jpg','Valete de Copas':W+'a/ad/Cups11.jpg','Cavaleiro de Copas':W+'f/fa/Cups12.jpg',
+    'Rainha de Copas':W+'6/62/Cups13.jpg','Rei de Copas':W+'0/04/Cups14.jpg',
+    'Ás de Espadas':W+'1/1a/Swords01.jpg','Dois de Espadas':W+'9/9e/Swords02.jpg','Três de Espadas':W+'0/02/Swords03.jpg',
+    'Quatro de Espadas':W+'b/bf/Swords04.jpg','Cinco de Espadas':W+'2/23/Swords05.jpg','Seis de Espadas':W+'2/29/Swords06.jpg',
+    'Sete de Espadas':W+'3/34/Swords07.jpg','Oito de Espadas':W+'a/a7/Swords08.jpg','Nove de Espadas':W+'2/2f/Swords09.jpg',
+    'Dez de Espadas':W+'d/d4/Swords10.jpg','Valete de Espadas':W+'4/4c/Swords11.jpg','Cavaleiro de Espadas':W+'b/b0/Swords12.jpg',
+    'Rainha de Espadas':W+'d/d4/Swords13.jpg','Rei de Espadas':W+'3/33/Swords14.jpg',
+    'Ás de Ouros':W+'f/fd/Pents01.jpg','Dois de Ouros':W+'9/9f/Pents02.jpg','Três de Ouros':W+'4/42/Pents03.jpg',
+    'Quatro de Ouros':W+'3/35/Pents04.jpg','Cinco de Ouros':W+'9/96/Pents05.jpg','Seis de Ouros':W+'a/a6/Pents06.jpg',
+    'Sete de Ouros':W+'6/6a/Pents07.jpg','Oito de Ouros':W+'4/49/Pents08.jpg','Nove de Ouros':W+'f/f0/Pents09.jpg',
+    'Dez de Ouros':W+'4/42/Pents10.jpg','Valete de Ouros':W+'e/ec/Pents11.jpg','Cavaleiro de Ouros':W+'d/d5/Pents12.jpg',
+    'Rainha de Ouros':W+'8/88/Pents13.jpg','Rei de Ouros':W+'1/1c/Pents14.jpg',
+    'Ás de Paus':W+'1/11/Wands01.jpg','Dois de Paus':W+'0/0f/Wands02.jpg','Três de Paus':W+'f/ff/Wands03.jpg',
+    'Quatro de Paus':W+'a/a4/Wands04.jpg','Cinco de Paus':W+'9/9d/Wands05.jpg','Seis de Paus':W+'3/3b/Wands06.jpg',
+    'Sete de Paus':W+'e/e4/Wands07.jpg','Oito de Paus':W+'6/6b/Wands08.jpg','Nove de Paus':W+'e/e0/Wands09.jpg',
+    'Dez de Paus':W+'0/0b/Wands10.jpg','Valete de Paus':W+'6/6d/Wands11.jpg','Cavaleiro de Paus':W+'1/16/Wands12.jpg',
+    'Rainha de Paus':W+'0/0d/Wands13.jpg','Rei de Paus':W+'c/ce/Wands14.jpg',
+  };
+
+  // injeta imagem no topo de cada card do guia
+  document.querySelectorAll('.card[data-search]').forEach(card => {
+    const nameEl = card.querySelector('.card-name');
+    if (!nameEl) return;
+    const name = nameEl.textContent.trim();
+    const url = GUIDE_IMAGES[name];
+    if (!url) return;
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = name;
+    img.loading = 'lazy';
+    img.style.cssText = 'width:100%;max-height:160px;object-fit:contain;border-radius:6px;margin-bottom:.7rem;border:1px solid var(--border);background:#080514';
+    img.onerror = () => img.remove();
+    card.insertBefore(img, card.firstChild);
+  });
 </script>
 </body>
 </html>
