@@ -426,6 +426,16 @@
     font-family: 'Crimson Text', serif; font-size: .9rem; outline: none;
   }
   .combo-card-row input:focus { border-color: var(--purple-light); }
+  .combo-inv-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 6px; padding: .3rem .55rem;
+    color: var(--text-dim); cursor: pointer; font-size: .85rem;
+    transition: all .2s; flex-shrink: 0;
+  }
+  .combo-inv-btn.active {
+    background: rgba(192,80,112,.2);
+    border-color: var(--rose); color: var(--rose);
+  }
   .btn-add-card-row {
     background: none; border: 1px solid var(--border);
     border-radius: 7px; padding: .4rem .7rem;
@@ -701,13 +711,22 @@
           <span id="editor-card-name"></span>
           <button class="btn-remove-row" id="clear-card-selection" title="Fechar">×</button>
         </div>
+
+        <!-- Normal -->
         <div class="custom-note-label">Significado padrão</div>
         <div class="custom-note-default" id="editor-default-meaning"></div>
-        <div class="custom-note-label">Minha anotação pessoal</div>
+        <div class="custom-note-label" style="margin-top:.8rem">✏️ Minha anotação — Normal</div>
         <div class="custom-existing-note" id="editor-existing-note" style="display:none"></div>
-        <textarea id="custom-note-text" style="width:100%;min-height:90px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical" placeholder="O que essa carta significa pra você? Vivências, intuições, simbolismos pessoais..."></textarea>
-        <div style="display:flex;gap:.6rem;margin-top:.7rem;justify-content:flex-end">
-          <button class="btn-cancel" id="delete-note-btn" style="color:var(--rose);display:none">Apagar nota</button>
+        <textarea id="custom-note-text" style="width:100%;min-height:80px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical" placeholder="O que essa carta significa pra você quando está normal?"></textarea>
+
+        <!-- Invertida -->
+        <div class="custom-note-label" style="margin-top:1rem;color:var(--rose)">↩ Minha anotação — Invertida</div>
+        <div class="custom-existing-note" id="editor-existing-note-inv" style="display:none;border-left-color:var(--rose)"></div>
+        <div class="custom-note-default" id="editor-default-meaning-inv" style="border-left-color:rgba(192,80,112,.4)"></div>
+        <textarea id="custom-note-text-inv" style="width:100%;min-height:80px;background:var(--bg3);border:1px solid rgba(192,80,112,.3);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical;margin-top:.35rem" placeholder="O que essa carta significa pra você quando está invertida?"></textarea>
+
+        <div style="display:flex;gap:.6rem;margin-top:.8rem;justify-content:flex-end;flex-wrap:wrap">
+          <button class="btn-cancel" id="delete-note-btn" style="color:var(--rose);display:none">Apagar notas</button>
           <button class="btn-save" id="save-note-btn">Salvar ✦</button>
         </div>
       </div>
@@ -718,13 +737,16 @@
       <div class="custom-combos-list" id="custom-combos-list"></div>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.1rem">
         <div class="custom-note-label" style="margin-bottom:.6rem">Nova Combinação</div>
+        <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.8rem;font-style:italic">Toque em ↩ para marcar uma carta como invertida nesta combinação.</p>
         <div class="combo-cards-input-wrap" id="combo-cards-inputs">
           <div class="combo-card-row">
             <input type="text" placeholder="Carta 1 (ex: O Sol)" class="combo-card-field">
+            <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)" title="Marcar como invertida">↩</button>
             <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
           </div>
           <div class="combo-card-row">
             <input type="text" placeholder="Carta 2 (ex: A Estrela)" class="combo-card-field">
+            <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)" title="Marcar como invertida">↩</button>
             <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
           </div>
         </div>
@@ -1076,21 +1098,30 @@ window.selectCardForNote = function(name) {
   cardSearchInput.value = name;
   cardSuggestions.classList.remove('open');
   const data = TAROT_CARDS[name] || {};
+
   document.getElementById('editor-card-name').textContent = name;
   document.getElementById('editor-default-meaning').textContent = data.meaning || '';
+  document.getElementById('editor-default-meaning-inv').textContent = data.rev || '(sem significado invertido padrão)';
+
+  // notas existentes — suporta formato antigo (string) e novo ({normal, rev})
   const existing = customNotes[name];
-  const existingEl = document.getElementById('editor-existing-note');
+  const normalNote = typeof existing === 'object' ? existing?.normal || '' : existing || '';
+  const invNote    = typeof existing === 'object' ? existing?.rev    || '' : '';
+
+  const existEl    = document.getElementById('editor-existing-note');
+  const existElInv = document.getElementById('editor-existing-note-inv');
   const deleteBtn  = document.getElementById('delete-note-btn');
-  if (existing) {
-    existingEl.textContent = existing;
-    existingEl.style.display = 'block';
-    document.getElementById('custom-note-text').value = existing;
-    deleteBtn.style.display = '';
-  } else {
-    existingEl.style.display = 'none';
-    document.getElementById('custom-note-text').value = '';
-    deleteBtn.style.display = 'none';
-  }
+
+  if (normalNote) { existEl.textContent = normalNote; existEl.style.display = 'block'; }
+  else existEl.style.display = 'none';
+
+  if (invNote) { existElInv.textContent = invNote; existElInv.style.display = 'block'; }
+  else existElInv.style.display = 'none';
+
+  document.getElementById('custom-note-text').value     = normalNote;
+  document.getElementById('custom-note-text-inv').value = invNote;
+  deleteBtn.style.display = (normalNote || invNote) ? '' : 'none';
+
   document.getElementById('custom-note-editor').classList.add('open');
 };
 
@@ -1102,14 +1133,21 @@ document.getElementById('clear-card-selection').addEventListener('click', ()=>{
 
 document.getElementById('save-note-btn').addEventListener('click', async ()=>{
   if (!selectedCardName) return;
-  const text = document.getElementById('custom-note-text').value.trim();
-  if (!text) { showToast('⚠ Escreva algo antes de salvar'); return; }
-  customNotes[selectedCardName] = text;
+  const normal = document.getElementById('custom-note-text').value.trim();
+  const inv    = document.getElementById('custom-note-text-inv').value.trim();
+  if (!normal && !inv) { showToast('⚠ Escreva pelo menos uma anotação'); return; }
+
+  customNotes[selectedCardName] = { normal, rev: inv };
   await saveCustomNotes();
-  document.getElementById('editor-existing-note').textContent = text;
-  document.getElementById('editor-existing-note').style.display = 'block';
+
+  const existEl    = document.getElementById('editor-existing-note');
+  const existElInv = document.getElementById('editor-existing-note-inv');
+  if (normal) { existEl.textContent = normal; existEl.style.display = 'block'; }
+  else existEl.style.display = 'none';
+  if (inv) { existElInv.textContent = inv; existElInv.style.display = 'block'; }
+  else existElInv.style.display = 'none';
   document.getElementById('delete-note-btn').style.display = '';
-  showToast('✦ Anotação salva!');
+  showToast('✦ Anotações salvas!');
 });
 
 document.getElementById('delete-note-btn').addEventListener('click', async ()=>{
@@ -1117,33 +1155,44 @@ document.getElementById('delete-note-btn').addEventListener('click', async ()=>{
   delete customNotes[selectedCardName];
   await saveCustomNotes();
   document.getElementById('editor-existing-note').style.display = 'none';
+  document.getElementById('editor-existing-note-inv').style.display = 'none';
   document.getElementById('custom-note-text').value = '';
+  document.getElementById('custom-note-text-inv').value = '';
   document.getElementById('delete-note-btn').style.display = 'none';
-  showToast('Anotação removida');
+  showToast('Anotações removidas');
 });
 
 // ── COMBINAÇÕES PERSONALIZADAS ──
 function renderCustomCombosList() {
   const el = document.getElementById('custom-combos-list');
   if (!customCombos.length) { el.innerHTML = '<p style="color:var(--text-dim);font-size:.85rem;font-style:italic;margin-bottom:.8rem">Nenhuma combinação personalizada ainda.</p>'; return; }
-  el.innerHTML = customCombos.map(c => `
-    <div class="custom-combo-item">
+  el.innerHTML = customCombos.map(c => {
+    const cardsLabel = c.cards.map(card => {
+      const n = typeof card === 'object' ? card.name : card;
+      const inv = typeof card === 'object' ? card.inv : false;
+      return inv ? `<span style="color:var(--rose)">${n} ↩</span>` : n;
+    }).join(' + ');
+    return `<div class="custom-combo-item">
       <div class="custom-combo-body">
-        <div class="custom-combo-cards">${c.cards.join(' + ')}</div>
+        <div class="custom-combo-cards">${cardsLabel}</div>
         <div class="custom-combo-meaning">${c.meaning}</div>
       </div>
       <button class="custom-combo-del" onclick="deleteCustomCombo('${c.id}')">✕</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
+
+window.toggleComboInv = function(btn) { btn.classList.toggle('active'); };
 
 window.addComboRow = function() {
   const wrap = document.getElementById('combo-cards-inputs');
-  const rows = wrap.querySelectorAll('.combo-card-row');
+  const n = wrap.querySelectorAll('.combo-card-row').length + 1;
   const row = document.createElement('div');
   row.className = 'combo-card-row';
-  row.innerHTML = `<input type="text" placeholder="Carta ${rows.length+1}" class="combo-card-field"><button class="btn-remove-row" onclick="removeComboRow(this)">×</button>`;
+  row.innerHTML = `<input type="text" placeholder="Carta ${n}" class="combo-card-field">
+    <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)">↩</button>
+    <button class="btn-remove-row" onclick="removeComboRow(this)">×</button>`;
   wrap.appendChild(row);
-  // mostrar botões de remover em todas se tiver 3+
   if (wrap.querySelectorAll('.combo-card-row').length >= 3)
     wrap.querySelectorAll('.btn-remove-row').forEach(b => b.style.display='');
 };
@@ -1157,16 +1206,19 @@ window.removeComboRow = function(btn) {
 };
 
 document.getElementById('save-combo-btn').addEventListener('click', async ()=>{
-  const cards = [...document.querySelectorAll('.combo-card-field')]
-    .map(i => i.value.trim()).filter(Boolean);
+  const rows = [...document.querySelectorAll('#combo-cards-inputs .combo-card-row')];
+  const cards = rows.map(row => ({
+    name: row.querySelector('.combo-card-field').value.trim(),
+    inv:  row.querySelector('.combo-inv-btn')?.classList.contains('active') || false
+  })).filter(c => c.name);
   const meaning = document.getElementById('custom-combo-meaning').value.trim();
   if (cards.length < 2) { showToast('⚠ Adicione ao menos 2 cartas'); return; }
   if (!meaning) { showToast('⚠ Escreva o significado'); return; }
   customCombos.push({ id: genId(), cards, meaning });
   await saveCustomCombos();
   renderCustomCombosList();
-  // limpar form
   document.querySelectorAll('.combo-card-field').forEach(i => i.value='');
+  document.querySelectorAll('.combo-inv-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('custom-combo-meaning').value = '';
   showToast('✦ Combinação salva!');
 });
@@ -1328,8 +1380,11 @@ window.showCardPopup = function(name, isInv) {
   if (meaningLabel) meaningLabel.textContent = isInv ? 'Significado invertido' : 'Significado';
   document.getElementById('popup-meaning').textContent = meaningText;
 
+  const rawNote   = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
+  const customNote = isInv
+    ? (typeof rawNote === 'object' ? rawNote?.rev : null)
+    : (typeof rawNote === 'object' ? rawNote?.normal : rawNote);
   const noteArea = document.getElementById('popup-custom-note');
-  const customNote = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
   if (noteArea) {
     if (customNote) {
       noteArea.innerHTML = `<div class="custom-note-in-popup-label">Minha anotação</div><div class="custom-note-in-popup-text">${customNote}</div>`;
