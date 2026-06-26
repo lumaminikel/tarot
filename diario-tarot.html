@@ -767,6 +767,7 @@
     <h3 id="popup-name"></h3>
     <div class="popup-card-img-wrap" id="popup-img-wrap"></div>
     <div class="cp-keywords" id="popup-keywords"></div>
+    <div class="entry-section-label" id="popup-meaning-label" style="margin-top:.6rem;margin-bottom:.3rem">Significado</div>
     <div class="cp-meaning" id="popup-meaning"></div>
     <div class="custom-note-in-popup" id="popup-custom-note" style="display:none"></div>
   </div>
@@ -872,6 +873,96 @@ const TAROT_CARDS = {
   'Rainha de Paus':    {oracle:'sim',   keywords:['Confiança','Carisma','Liderança natural'],      meaning:'Solar, exuberante, confiante. Criatividade e paixão de vida irresistíveis.'},
   'Rei de Paus':       {oracle:'sim',   keywords:['Visão','Empreendedorismo','Liderança'],         meaning:'Líder visionário, empreendedor nato. Inspira pelo fogo da visão.'},
 };
+
+// Significados invertidos — mesclados no TAROT_CARDS
+const REV = {
+  'A Louca':'Impulsividade destrutiva, recusa a crescer, fuga de responsabilidades, decisões sem planejamento.',
+  'O Mago':'Manipulação, uso do poder para fins egoístas, charlatanismo, sabotagem própria.',
+  'A Sacerdotisa':'Informações ocultas que prejudicam, intuição ignorada, segredos que machucam, superficialidade.',
+  'A Imperatriz':'Sufocamento, dependência criativa, bloqueio de fertilidade, negligência consigo mesma.',
+  'O Imperador':'Abuso de poder, controle excessivo, rigidez, pai ausente ou autoritário.',
+  'O Hierofante':'Aprisionamento por dogmas, hipocrisia, quebra necessária de convenções, mentor tóxico.',
+  'Os Amantes':'Escolha evitada, traição, valores desalinhados, relacionamento baseado em dependência.',
+  'O Carro':'Perda de controle, agressividade cega, vitória pela força errada, projeto desmoronando.',
+  'A Força':'Fraqueza disfarçada, medo que paralisa, agressividade reprimida, crueldade.',
+  'O Eremita':'Isolamento patológico, fuga da vida social necessária, recusa de compartilhar sabedoria.',
+  'Roda da Fortuna':'Resistência às mudanças, ciclo negativo que se repete, questões cármicas não resolvidas.',
+  'A Justiça':'Injustiça sofrida ou cometida, fuga da responsabilidade, desonestidade, desequilíbrio.',
+  'O Enforcado':'Martírio sem propósito, recusa a se render ao necessário, procrastinação disfarçada de espera.',
+  'A Enforcada':'Martírio sem propósito, recusa a se render ao necessário, procrastinação disfarçada de espera.',
+  'A Morte':'Resistência à transformação necessária, apego ao que já acabou, medo da mudança.',
+  'A Temperança':'Excessos, impaciência, tentativa de forçar cura ou resultados, desarmonia interna.',
+  'O Diabo':'Libertação de vícios ou padrões tóxicos, tomada de consciência sobre o próprio aprisionamento.',
+  'A Torre':'Colapso adiado que ainda virá, resistência a mudança necessária, explosão internalizada.',
+  'A Estrela':'Perda de fé, desilusão, falta de esperança, desconexão do próprio propósito.',
+  'A Lua':'Ilusões se desfazendo, clareza emergindo após confusão, segredos revelados.',
+  'O Sol':'Ego inflado, otimismo que ignora realidades, alegria superficial, ilusão de grandeza.',
+  'O Julgamento':'Autossabotagem, chamado espiritual ignorado, autojulgamento severo, incapacidade de se perdoar.',
+  'O Mundo':'Ciclo não finalizado, procrastinação que impede conclusão, falta de integração.',
+  // Copas
+  'Ás de Copas':'Bloqueio emocional, coração fechado, amor que não se manifesta, vazio afetivo.',
+  'Dois de Copas':'Desequilíbrio na relação, dar mais do que recebe, afastamento, rompimento próximo.',
+  'Três de Copas':'Fofoca, triângulo amoroso, excesso, isolamento social.',
+  'Quatro de Copas':'Abertura para novas experiências, saindo da letargia, apreciação renovada.',
+  'Cinco de Copas':'Começando a superar perdas, aceitação, voltando a olhar para o que restou.',
+  'Seis de Copas':'Preso no passado, idealização excessiva, recusa em crescer, relação co-dependente.',
+  'Sete de Copas':'Clareza após confusão, decisão tomada, fim de ilusões, foco recuperado.',
+  'Oito de Copas':'Incapacidade de partir, apego ao passado doloroso, retorno ao que foi abandonado.',
+  'Nove de Copas':'Insatisfação apesar das conquistas, desejos não realizados, excessos que trazem vazio.',
+  'Dez de Copas':'Conflitos familiares ocultos, harmonia que é ilusória, ideal que não corresponde à realidade.',
+  'Valete de Copas':'Imaturidade emocional, notícias ruins ou atrasadas, sonhos sem ação.',
+  'Cavaleiro de Copas':'Promessas não cumpridas, romantismo que não se sustenta, idealismo excessivo.',
+  'Rainha de Copas':'Dependência emocional, manipulação afetiva, excesso de sensibilidade, ciúme.',
+  'Rei de Copas':'Repressão emocional, manipulação, instabilidade, não consegue equilibrar sentimentos.',
+  // Espadas
+  'Ás de Espadas':'Confusão mental, clareza bloqueada, decisão precipitada, palavras usadas para ferir.',
+  'Dois de Espadas':'Paralisia total, conflito inevitável que não pode mais ser adiado.',
+  'Três de Espadas':'Início de cura, mas cicatrizes que ficam. Ruminação excessiva, dor que persiste.',
+  'Quatro de Espadas':'Retorno à ação antes do tempo, esgotamento por não ter descansado suficientemente.',
+  'Cinco de Espadas':'Resolução de conflito ou reconciliação, mas rancores guardados.',
+  'Seis de Espadas':'Resistência à mudança necessária, adiamento de uma partida que precisa acontecer.',
+  'Sete de Espadas':'Ser pego em mentira, desonestidade revelada, estratégia que falha.',
+  'Oito de Espadas':'Libertação gradual do aprisionamento mental, mas ainda com medo dos próximos passos.',
+  'Nove de Espadas':'Recuperação da ansiedade, saindo do pior, mas cicatrizes emocionais ainda presentes.',
+  'Dez de Espadas':'Resistência ao fim inevitável, regeneração frágil após colapso.',
+  'Valete de Espadas':'Fofoca, uso da inteligência de forma destrutiva, pensamento disperso.',
+  'Cavaleiro de Espadas':'Agressividade, impulsividade destrutiva, decisões precipitadas que causam dano.',
+  'Rainha de Espadas':'Frieza que machuca, ressentimento, uso da inteligência para manipular.',
+  'Rei de Espadas':'Tirania intelectual, uso do poder para oprimir, julgamento cruel.',
+  // Ouros
+  'Ás de Ouros':'Oportunidade perdida, má gestão financeira, plano sem base sólida.',
+  'Dois de Ouros':'Desorganização, dívidas, incapacidade de equilibrar múltiplas responsabilidades.',
+  'Três de Ouros':'Falta de cooperação, trabalho não reconhecido, conflitos no ambiente de trabalho.',
+  'Quatro de Ouros':'Desperdício, perda financeira, ou finalmente abrindo a mão do que segurava.',
+  'Cinco de Ouros':'Recuperação financeira, saindo de período difícil, ajuda chegando.',
+  'Seis de Ouros':'Caridade com interesse, dependência financeira, desequilíbrio em dar e receber.',
+  'Sete de Ouros':'Impaciência, trabalho sem resultado visível, investimento que não retorna.',
+  'Oito de Ouros':'Perfeccionismo paralisante, trabalho sem qualidade, não termina o que começa.',
+  'Nove de Ouros':'Dependência financeira, sucesso que não satisfaz, solidão no meio da abundância.',
+  'Dez de Ouros':'Problemas familiares com dinheiro, herança disputada, instabilidade financeira.',
+  'Valete de Ouros':'Falta de foco, projetos abandonados, irresponsabilidade com dinheiro.',
+  'Cavaleiro de Ouros':'Lentidão excessiva, estagnação, teimosia, resistência a mudar a rotina.',
+  'Rainha de Ouros':'Negligência doméstica, materialismo excessivo, insegurança financeira.',
+  'Rei de Ouros':'Mau uso do dinheiro, corrupção, ganância, sucesso a qualquer custo.',
+  // Paus
+  'Ás de Paus':'Bloqueio criativo, falta de energia, projeto abandonado no início.',
+  'Dois de Paus':'Medo do desconhecido, planos que não saem do papel, visão que não se concretiza.',
+  'Três de Paus':'Obstáculos inesperados, projetos atrasados, expansão que não acontece como esperado.',
+  'Quatro de Paus':'Harmonia perturbada, conflitos no lar, celebração prematura.',
+  'Cinco de Paus':'Energia dispersa sendo redirecionada, fim de competição, resolução de conflitos.',
+  'Seis de Paus':'Ego inflado, reconhecimento que não vem, vitória que gera mais problemas.',
+  'Sete de Paus':'Paranoia, cansaço de lutar, rendição por exaustão, perseguição excessiva.',
+  'Oito de Paus':'Atraso, comunicações perdidas, projetos paralisados, caos sem direção.',
+  'Nove de Paus':'Paranoia, desistência no último momento, recusa a confiar, forças esgotadas.',
+  'Dez de Paus':'Delegação necessária, finalmente soltando o que era pesado demais.',
+  'Valete de Paus':'Impulsividade, energia criativa sem direção, notícias adiadas.',
+  'Cavaleiro de Paus':'Inconstância, projetos abandonados, promessas vazias, charme sem substância.',
+  'Rainha de Paus':'Ciúme, dominação, energia criativa bloqueada, insegurança disfarçada de força.',
+  'Rei de Paus':'Arrogância, liderança tóxica, visão sem execução, impaciência destrutiva.',
+};
+// injeta campo rev em cada carta
+Object.entries(REV).forEach(([name, rev]) => { if (TAROT_CARDS[name]) TAROT_CARDS[name].rev = rev; });
+
 </script>
 
 <!-- Firebase v9 compat -->
@@ -1168,9 +1259,9 @@ const CARD_IMAGES = {
   'Seis de Paus':      W+'3/3b/Wands06.jpg',
   'Sete de Paus':      W+'e/e4/Wands07.jpg',
   'Oito de Paus':      W+'6/6b/Wands08.jpg',
-  'Nove de Paus':      W+'e/e0/Wands09.jpg',
+  'Nove de Paus':      'https://www.sacred-texts.com/tarot/pkt/img/wawa09.jpg',
   'Dez de Paus':       W+'0/0b/Wands10.jpg',
-  'Valete de Paus':    W+'6/6d/Wands11.jpg',
+  'Valete de Paus':    'https://www.sacred-texts.com/tarot/pkt/img/wawa11.jpg',
   'Cavaleiro de Paus': W+'1/16/Wands12.jpg',
   'Rainha de Paus':    W+'0/0d/Wands13.jpg',
   'Rei de Paus':       W+'c/ce/Wands14.jpg',
@@ -1212,6 +1303,7 @@ window.showCardPopup = function(name, isInv) {
   const displayName = resolvedName || name;
   const oracle = data?.oracle || '';
   const imgUrl = CARD_IMAGES[resolvedName] || CARD_IMAGES[name] || null;
+  const meaningText = isInv && data?.rev ? data.rev : (data?.meaning || 'Carta não encontrada no guia. Você pode adicionar uma anotação na seção ✦ Personalizar.');
 
   document.getElementById('popup-name').innerHTML =
     `${displayName} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}
@@ -1230,8 +1322,11 @@ window.showCardPopup = function(name, isInv) {
 
   document.getElementById('popup-keywords').innerHTML =
     (data?.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
-  document.getElementById('popup-meaning').textContent =
-    data?.meaning || 'Carta não encontrada no guia. Você pode adicionar uma anotação na seção ✦ Personalizar.';
+
+  // label diferente para invertida
+  const meaningLabel = document.getElementById('popup-meaning-label');
+  if (meaningLabel) meaningLabel.textContent = isInv ? 'Significado invertido' : 'Significado';
+  document.getElementById('popup-meaning').textContent = meaningText;
 
   const noteArea = document.getElementById('popup-custom-note');
   const customNote = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
@@ -1437,19 +1532,23 @@ function findCard(input) {
       || null;
 }
 
-function showCardPreview(cardName) {
+function showCardPreview(cardName, isInv) {
   const panel = document.getElementById('card-preview-panel');
   if (!cardName) { panel.classList.remove('visible'); return; }
   const data = TAROT_CARDS[cardName];
   if (!data) { panel.classList.remove('visible'); return; }
   const oracle = data.oracle || '';
+  const meaningText = isInv && data.rev ? data.rev : data.meaning || '';
+  const meaningLabel = isInv ? 'Significado invertido' : 'Significado';
   panel.innerHTML = `
     <div class="cp-name">
       ${cardName}
+      ${isInv ? '<span style="color:var(--rose);font-size:.75rem"> ↩ invertida</span>' : ''}
       ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}
     </div>
     <div class="cp-keywords">${(data.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('')}</div>
-    <div class="cp-meaning">${data.meaning||''}</div>`;
+    <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin:.5rem 0 .2rem">${meaningLabel}</div>
+    <div class="cp-meaning">${meaningText}</div>`;
   panel.classList.add('visible');
 }
 
@@ -1619,8 +1718,10 @@ tagInput.addEventListener('keyup', e=>{
 document.getElementById('add-card-btn').addEventListener('click', addCardFromInput);
 
 tagInput.addEventListener('input', ()=>{
-  const match = findCard(tagInput.value);
-  showCardPreview(match);
+  const val = tagInput.value;
+  const isInv = /inverti|inversa/i.test(val);
+  const match = findCard(val);
+  showCardPreview(match, isInv);
 });
 
 // ── FORM ──
