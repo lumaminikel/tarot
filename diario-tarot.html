@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0e0b1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tarot">
+<link rel="manifest" href="manifest.json">
 <title>Diário de Tiragens · Tarot</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
@@ -491,7 +496,133 @@
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
   ::-webkit-scrollbar-thumb:hover{background:var(--gold-dim)}
 
-  /* ── CONSULTAR CARTA ── */
+  /* ── CARTA DO DIA ── */
+  .card-of-day {
+    background: linear-gradient(135deg, rgba(122,78,184,.2), rgba(201,168,76,.1));
+    border: 1px solid var(--gold-dim); border-radius: 12px;
+    padding: 1.2rem 1.4rem; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1.2rem;
+    cursor: pointer; transition: border-color .2s;
+  }
+  .card-of-day:hover { border-color: var(--gold); }
+  .cod-img {
+    width: 56px; flex-shrink: 0; border-radius: 5px;
+    border: 1px solid var(--border); background: var(--bg3);
+  }
+  .cod-img.inv { transform: rotate(180deg); border-color: var(--rose); }
+  .cod-body { flex: 1; min-width: 0; }
+  .cod-label {
+    font-family: 'Cinzel', serif; font-size: .62rem;
+    letter-spacing: .15em; color: var(--gold-dim);
+    text-transform: uppercase; margin-bottom: .25rem;
+  }
+  .cod-name {
+    font-family: 'Cinzel', serif; font-size: .95rem;
+    color: var(--gold-light); margin-bottom: .2rem;
+  }
+  .cod-meaning { font-size: .82rem; color: var(--text-dim); line-height: 1.5; }
+  .cod-lunar {
+    font-size: .75rem; color: var(--text-dim);
+    margin-top: .4rem; display: flex; align-items: center; gap: .3rem;
+  }
+
+  /* ── TIMER ── */
+  .timer-btn {
+    position: fixed; bottom: 1.5rem; right: 1.2rem;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 50%; width: 52px; height: 52px;
+    font-size: 1.3rem; cursor: pointer; z-index: 500;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,.4);
+    transition: border-color .2s, transform .15s;
+  }
+  .timer-btn:hover { border-color: var(--purple-light); transform: scale(1.08); }
+
+  .timer-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(8,5,20,.88); z-index: 7000;
+    align-items: center; justify-content: center;
+  }
+  .timer-overlay.open { display: flex; }
+  .timer-box {
+    background: var(--bg2); border: 1px solid var(--purple);
+    border-radius: 14px; padding: 2rem; text-align: center;
+    width: 300px; animation: fadeIn .2s ease;
+  }
+  .timer-title {
+    font-family: 'Cinzel', serif; color: var(--gold-light);
+    font-size: .9rem; letter-spacing: .1em; margin-bottom: 1.2rem;
+  }
+  .timer-display {
+    font-family: 'Cinzel', serif; font-size: 3rem;
+    color: var(--text); margin: 1rem 0; letter-spacing: .05em;
+  }
+  .timer-options { display: flex; gap: .6rem; justify-content: center; margin-bottom: 1.2rem; }
+  .timer-opt {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: .5rem 1rem;
+    color: var(--text-dim); font-family: 'Cinzel', serif;
+    font-size: .78rem; cursor: pointer; transition: all .2s;
+  }
+  .timer-opt:hover, .timer-opt.selected { border-color: var(--purple-light); color: var(--purple-light); }
+  .timer-controls { display: flex; gap: .8rem; justify-content: center; }
+  .timer-progress {
+    width: 100%; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 1rem 0; overflow: hidden;
+  }
+  .timer-progress-bar {
+    height: 100%; background: linear-gradient(90deg, var(--purple), var(--gold));
+    border-radius: 2px; transition: width .9s linear;
+    width: 100%;
+  }
+
+  /* ── TAGS DE TEMA ── */
+  .theme-selector { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .4rem; }
+  .theme-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 20px; padding: .25rem .75rem;
+    font-family: 'Cinzel', serif; font-size: .68rem;
+    letter-spacing: .08em; cursor: pointer; transition: all .2s;
+    color: var(--text-dim);
+  }
+  .theme-btn:hover { border-color: var(--text-dim); color: var(--text); }
+  .theme-btn.active { color: #0e0b1a; font-weight: 600; }
+  .theme-btn[data-theme="amor"].active       { background:#c05070; border-color:#c05070; }
+  .theme-btn[data-theme="trabalho"].active   { background:#a07c3a; border-color:#a07c3a; }
+  .theme-btn[data-theme="saude"].active      { background:#3a9060; border-color:#3a9060; }
+  .theme-btn[data-theme="espiritual"].active { background:#7a4eb8; border-color:#7a4eb8; }
+  .theme-btn[data-theme="geral"].active      { background:#4a6090; border-color:#4a6090; }
+  .theme-btn[data-theme="outro"].active      { background:#606060; border-color:#606060; }
+
+  .theme-badge {
+    display: inline-block; font-family: 'Cinzel', serif;
+    font-size: .62rem; letter-spacing: .08em;
+    border-radius: 20px; padding: .12rem .55rem;
+    color: #fff; margin-left: .4rem;
+  }
+  .theme-amor       { background: rgba(192,80,112,.7); }
+  .theme-trabalho   { background: rgba(160,124,58,.7); }
+  .theme-saude      { background: rgba(58,144,96,.7); }
+  .theme-espiritual { background: rgba(122,78,184,.7); }
+  .theme-geral      { background: rgba(74,96,144,.7); }
+  .theme-outro      { background: rgba(96,96,96,.7); }
+
+  /* ── FASE DA LUA ── */
+  .lunar-badge {
+    font-size: .75rem; color: var(--text-dim);
+    display: inline-flex; align-items: center; gap: .25rem;
+    margin-top: .15rem;
+  }
+
+  /* ── EXPORTAR ── */
+  .export-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 8px; padding: .4rem .9rem;
+    color: var(--text-dim); font-family: 'Cinzel', serif;
+    font-size: .68rem; letter-spacing: .08em; cursor: pointer;
+    transition: all .2s; white-space: nowrap;
+  }
+  .export-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
   .consult-btn {
     width: 100%; background: none;
     border: 1px solid var(--border); border-radius: 10px;
@@ -503,7 +634,47 @@
   }
   .consult-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
 
-  .consult-overlay {
+  /* ── AUTOCOMPLETE DE CARTAS ── */
+  .card-autocomplete {
+    position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+    background: var(--bg2); border: 1px solid var(--purple);
+    border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    z-index: 300; max-height: 280px; overflow-y: auto;
+    display: none;
+  }
+  .card-autocomplete.open { display: block; }
+  .ac-group-label {
+    font-family: 'Cinzel', serif; font-size: .58rem;
+    letter-spacing: .15em; color: var(--gold-dim);
+    text-transform: uppercase; padding: .5rem .9rem .2rem;
+    position: sticky; top: 0; background: var(--bg2);
+  }
+  .ac-item {
+    display: flex; align-items: center; gap: .7rem;
+    padding: .5rem .9rem; cursor: pointer;
+    transition: background .15s; border-left: 2px solid transparent;
+  }
+  .ac-item:hover { background: rgba(122,78,184,.15); border-left-color: var(--purple); }
+  .ac-item.ac-inv:hover { background: rgba(192,80,112,.12); border-left-color: var(--rose); }
+  .ac-thumb {
+    width: 28px; height: 46px; object-fit: cover;
+    border-radius: 3px; border: 1px solid var(--border);
+    flex-shrink: 0; background: var(--bg3);
+  }
+  .ac-thumb.inv { transform: rotate(180deg); border-color: rgba(192,80,112,.4); }
+  .ac-info { flex: 1; min-width: 0; }
+  .ac-name {
+    font-family: 'Crimson Text', serif; font-size: .95rem;
+    color: var(--text); line-height: 1.3;
+  }
+  .ac-item.ac-inv .ac-name { color: #e888a0; }
+  .ac-sub {
+    font-size: .72rem; color: var(--text-dim);
+  }
+  .ac-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .ac-dot.sim    { background: #70dc90; }
+  .ac-dot.nao    { background: #e888a0; }
+  .ac-dot.talvez { background: var(--gold); }
     display: none; position: fixed; inset: 0;
     background: rgba(8,5,20,.9); z-index: 6000;
     align-items: flex-start; justify-content: center;
@@ -631,7 +802,33 @@
 
 <!-- TELA PRINCIPAL -->
 <div id="main-screen" style="display:none">
+
+<!-- TIMER (botão flutuante) -->
+<button class="timer-btn" id="timer-btn" title="Timer de meditação">🔔</button>
+
+<!-- TIMER OVERLAY -->
+<div class="timer-overlay" id="timer-overlay">
+  <div class="timer-box">
+    <div class="timer-title">🔔 Timer de Meditação</div>
+    <div class="timer-options">
+      <button class="timer-opt selected" data-secs="60">1 min</button>
+      <button class="timer-opt" data-secs="180">3 min</button>
+      <button class="timer-opt" data-secs="300">5 min</button>
+      <button class="timer-opt" data-secs="600">10 min</button>
+    </div>
+    <div class="timer-progress"><div class="timer-progress-bar" id="timer-bar"></div></div>
+    <div class="timer-display" id="timer-display">1:00</div>
+    <div class="timer-controls">
+      <button class="btn-save" id="timer-start" style="min-width:90px">Iniciar</button>
+      <button class="btn-cancel" id="timer-close">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <div class="page">
+
+  <!-- CARTA DO DIA -->
+  <div id="card-of-day-wrap"></div>
 
   <div class="stats-bar">
     <div class="stat"><span class="stat-num" id="stat-total">0</span><span class="stat-label">tiragens registradas</span></div>
@@ -652,11 +849,14 @@
     </div>
     <div class="form-row">
       <label>Cartas <span style="color:var(--text-dim);font-family:serif;text-transform:none;letter-spacing:0;font-size:.85rem">(escreva o nome e toque em + · acrescente "invertida" para marcar)</span></label>
-      <div style="display:flex;gap:.5rem;align-items:flex-start">
-        <div class="card-tags" id="card-tags-wrap" style="flex:1" onclick="document.getElementById('card-tag-input').focus()">
-          <input type="text" id="card-tag-input" class="card-tag-input" placeholder="Ex: O Sol..." autocomplete="off" autocorrect="off" spellcheck="false">
+      <div style="display:flex;gap:.5rem;align-items:flex-start;position:relative">
+        <div style="flex:1;position:relative">
+          <div class="card-tags" id="card-tags-wrap" onclick="document.getElementById('card-tag-input').focus()">
+            <input type="text" id="card-tag-input" class="card-tag-input" placeholder="Digite para buscar carta..." autocomplete="off" autocorrect="off" spellcheck="false">
+          </div>
+          <div class="card-autocomplete" id="card-autocomplete"></div>
         </div>
-        <button type="button" id="add-card-btn" style="background:var(--purple);border:none;border-radius:7px;width:40px;height:40px;color:#fff;font-size:1.4rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:.35rem">+</button>
+        <button type="button" id="add-card-btn" style="background:var(--purple);border:none;border-radius:7px;width:40px;height:40px;color:#fff;font-size:1.4rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:.35rem;opacity:.7" title="Adicionar manualmente">+</button>
       </div>
       <!-- preview visual das cartas adicionadas -->
       <div class="entry-spread" id="form-spread" style="display:none;margin-top:.7rem"></div>
@@ -665,6 +865,18 @@
         <div class="combos-panel-title">🔗 Combinações detectadas</div>
         <div id="combos-list"></div>
       </div>
+    </div>
+    <div class="form-row">
+      <label>Tema da Tiragem</label>
+      <div class="theme-selector">
+        <button type="button" class="theme-btn" data-theme="amor"       onclick="selectTheme(this)">❤️ Amor</button>
+        <button type="button" class="theme-btn" data-theme="trabalho"   onclick="selectTheme(this)">💼 Trabalho</button>
+        <button type="button" class="theme-btn" data-theme="saude"      onclick="selectTheme(this)">🌿 Saúde</button>
+        <button type="button" class="theme-btn" data-theme="espiritual" onclick="selectTheme(this)">🌙 Espiritual</button>
+        <button type="button" class="theme-btn" data-theme="geral"      onclick="selectTheme(this)">✦ Geral</button>
+        <button type="button" class="theme-btn" data-theme="outro"      onclick="selectTheme(this)">◈ Outro</button>
+      </div>
+      <input type="hidden" id="f-theme" value="">
     </div>
     <div class="form-row">
       <label>Análise</label>
@@ -687,6 +899,18 @@
   <div class="filter-bar" id="filter-bar" style="display:none">
     <input type="text" id="filter-input" placeholder="🔍  Buscar por carta ou palavra...">
     <span class="entry-count" id="entry-count"></span>
+    <button class="export-btn" id="export-btn" title="Exportar diário">⬇ JSON</button>
+  </div>
+  <div id="theme-filter-bar" style="display:none;margin-bottom:1rem">
+    <div class="theme-selector">
+      <span style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--text-dim);align-self:center">Filtrar:</span>
+      <button class="theme-btn" data-theme="amor"       onclick="toggleThemeFilter('amor')">❤️ Amor</button>
+      <button class="theme-btn" data-theme="trabalho"   onclick="toggleThemeFilter('trabalho')">💼 Trabalho</button>
+      <button class="theme-btn" data-theme="saude"      onclick="toggleThemeFilter('saude')">🌿 Saúde</button>
+      <button class="theme-btn" data-theme="espiritual" onclick="toggleThemeFilter('espiritual')">🌙 Espiritual</button>
+      <button class="theme-btn" data-theme="geral"      onclick="toggleThemeFilter('geral')">✦ Geral</button>
+      <button class="theme-btn" data-theme="outro"      onclick="toggleThemeFilter('outro')">◈ Outro</button>
+    </div>
   </div>
 
   <!-- PERSONALIZAR -->
@@ -984,6 +1208,158 @@ const REV = {
 };
 // injeta campo rev em cada carta
 Object.entries(REV).forEach(([name, rev]) => { if (TAROT_CARDS[name]) TAROT_CARDS[name].rev = rev; });
+
+// ── FASE DA LUA ──
+function lunarPhase(dateStr) {
+  const date = new Date(dateStr + 'T12:00:00');
+  const ref = new Date('2024-01-11T00:00:00'); // lua nova conhecida
+  const cycle = 29.53058867;
+  const diff = (date - ref) / 86400000;
+  const phase = ((diff % cycle) + cycle) % cycle;
+  if (phase < 1.85)  return { name:'Lua Nova',              emoji:'🌑' };
+  if (phase < 7.38)  return { name:'Lua Crescente',          emoji:'🌒' };
+  if (phase < 9.22)  return { name:'Quarto Crescente',       emoji:'🌓' };
+  if (phase < 14.75) return { name:'Lua Gibosa Crescente',   emoji:'🌔' };
+  if (phase < 16.61) return { name:'Lua Cheia',              emoji:'🌕' };
+  if (phase < 22.15) return { name:'Lua Gibosa Minguante',   emoji:'🌖' };
+  if (phase < 23.99) return { name:'Quarto Minguante',       emoji:'🌗' };
+  return               { name:'Lua Minguante',               emoji:'🌘' };
+}
+
+// ── CARTA DO DIA ──
+function renderCardOfDay() {
+  const wrap = document.getElementById('card-of-day-wrap');
+  if (!wrap) return;
+  const today = new Date().toISOString().split('T')[0];
+  const stored = JSON.parse(localStorage.getItem('tarot_cod') || 'null');
+  let cardName, isInv;
+  if (stored && stored.date === today) {
+    cardName = stored.name; isInv = stored.inv;
+  } else {
+    const keys = Object.keys(TAROT_CARDS);
+    cardName = keys[Math.floor(Math.random() * keys.length)];
+    isInv = Math.random() < 0.3;
+    localStorage.setItem('tarot_cod', JSON.stringify({ date: today, name: cardName, inv: isInv }));
+  }
+  const data = TAROT_CARDS[cardName] || {};
+  const img  = CARD_IMAGES[findCardExact(cardName)] || '';
+  const lunar = lunarPhase(today);
+  const meaning = isInv && data.rev ? data.rev : data.meaning || '';
+  wrap.innerHTML = `
+    <div class="card-of-day" onclick="showCardPopup('${cardName.replace(/'/g,"\\'")}', ${isInv})">
+      ${img ? `<img class="cod-img${isInv?' inv':''}" src="${img}" alt="${cardName}" loading="lazy" onerror="this.style.display='none'">` : ''}
+      <div class="cod-body">
+        <div class="cod-label">✦ Carta do Dia</div>
+        <div class="cod-name">${cardName}${isInv?' <span style="color:var(--rose);font-size:.75rem">↩</span>':''}</div>
+        <div class="cod-meaning">${meaning.slice(0,90)}${meaning.length>90?'…':''}</div>
+        <div class="cod-lunar">${lunar.emoji} ${lunar.name}</div>
+      </div>
+    </div>`;
+}
+
+// ── TIMER ──
+let timerInterval = null, timerTotal = 60, timerLeft = 60;
+const timerDisplay = document.getElementById('timer-display');
+const timerBar = document.getElementById('timer-bar');
+
+function formatTime(s) { return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}` }
+
+function playBell() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.5, 1].forEach(delay => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 528;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+      gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + delay + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 2);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 2);
+    });
+  } catch(e) {}
+}
+
+document.getElementById('timer-btn').addEventListener('click', () => {
+  document.getElementById('timer-overlay').classList.add('open');
+  playBell();
+});
+document.getElementById('timer-close').addEventListener('click', () => {
+  clearInterval(timerInterval); timerInterval = null;
+  document.getElementById('timer-overlay').classList.remove('open');
+  document.getElementById('timer-start').textContent = 'Iniciar';
+  timerLeft = timerTotal;
+  timerDisplay.textContent = formatTime(timerLeft);
+  timerBar.style.width = '100%';
+});
+
+document.querySelectorAll('.timer-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.timer-opt').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    clearInterval(timerInterval); timerInterval = null;
+    timerTotal = timerLeft = parseInt(btn.dataset.secs);
+    timerDisplay.textContent = formatTime(timerLeft);
+    timerBar.style.width = '100%';
+    document.getElementById('timer-start').textContent = 'Iniciar';
+  });
+});
+
+document.getElementById('timer-start').addEventListener('click', () => {
+  if (timerInterval) {
+    clearInterval(timerInterval); timerInterval = null;
+    document.getElementById('timer-start').textContent = 'Continuar';
+    return;
+  }
+  if (timerLeft <= 0) { timerLeft = timerTotal; timerBar.style.width='100%'; }
+  document.getElementById('timer-start').textContent = 'Pausar';
+  timerInterval = setInterval(() => {
+    timerLeft--;
+    timerDisplay.textContent = formatTime(timerLeft);
+    timerBar.style.width = (timerLeft / timerTotal * 100) + '%';
+    if (timerLeft <= 0) {
+      clearInterval(timerInterval); timerInterval = null;
+      timerDisplay.textContent = '0:00';
+      playBell();
+      document.getElementById('timer-start').textContent = 'Iniciar';
+    }
+  }, 1000);
+});
+
+// ── TEMA ──
+let activeThemeFilter = null;
+window.selectTheme = function(btn) {
+  document.querySelectorAll('.theme-selector .theme-btn').forEach(b => b.classList.remove('active'));
+  const val = btn.dataset.theme;
+  if (document.getElementById('f-theme').value === val) {
+    document.getElementById('f-theme').value = '';
+  } else {
+    btn.classList.add('active');
+    document.getElementById('f-theme').value = val;
+  }
+};
+window.toggleThemeFilter = function(theme) {
+  activeThemeFilter = activeThemeFilter === theme ? null : theme;
+  document.querySelectorAll('#theme-filter-bar .theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === activeThemeFilter);
+  });
+  render();
+};
+
+const THEME_LABELS = { amor:'❤️ Amor', trabalho:'💼 Trabalho', saude:'🌿 Saúde', espiritual:'🌙 Espiritual', geral:'✦ Geral', outro:'◈ Outro' };
+
+// ── EXPORTAR ──
+document.getElementById('export-btn')?.addEventListener('click', () => {
+  const data = JSON.stringify(entries, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `diario-tarot-${new Date().toISOString().split('T')[0]}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('✦ Diário exportado!');
+});
 
 </script>
 
@@ -1697,6 +2073,7 @@ auth.onAuthStateChanged(user => {
     }
     loadEntries();
     loadCustomData().then(()=>{ renderCustomCombosList(); });
+    renderCardOfDay();
   } else {
     document.getElementById('login-screen').style.display  = '';
     document.getElementById('main-screen').style.display   = 'none';
@@ -1754,30 +2131,98 @@ function addCardFromInput(){
 }
 
 // Enter no desktop, Go/Search no mobile (keyup é mais confiável)
-tagInput.addEventListener('keydown', e=>{
-  if(e.key==='Enter'||e.key===','){
+// ── AUTOCOMPLETE DE CARTAS ──
+const autocomplete = document.getElementById('card-autocomplete');
+const allCardNames = Object.keys(TAROT_CARDS);
+
+function openAutocomplete(q) {
+  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const nq = norm(q.replace(/inverti.*/i,'').trim());
+  if (!nq || nq.length < 2) { autocomplete.classList.remove('open'); return; }
+  const matches = allCardNames.filter(n => norm(n).includes(nq)).slice(0, 10);
+  if (!matches.length) { autocomplete.classList.remove('open'); return; }
+
+  let html = '<div class="ac-group-label">Normal</div>';
+  matches.forEach(name => {
+    const data = TAROT_CARDS[name] || {};
+    const img  = CARD_IMAGES[name] || '';
+    const oracle = data.oracle || '';
+    html += `<div class="ac-item" tabindex="0" onclick="addCardFromAC('${name.replace(/'/g,"\\'")}', false)">
+      ${img ? `<img class="ac-thumb" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:28px;flex-shrink:0"></div>'}
+      <div class="ac-info">
+        <div class="ac-name">${name}</div>
+        <div class="ac-sub">${(data.keywords||[]).slice(0,2).join(' · ')}</div>
+      </div>
+      ${oracle ? `<span class="ac-dot ${oracle}"></span>` : ''}
+    </div>`;
+  });
+
+  html += '<div class="ac-group-label" style="color:var(--rose)">↩ Invertida</div>';
+  matches.forEach(name => {
+    const data = TAROT_CARDS[name] || {};
+    const img  = CARD_IMAGES[name] || '';
+    html += `<div class="ac-item ac-inv" tabindex="0" onclick="addCardFromAC('${name.replace(/'/g,"\\'")}', true)">
+      ${img ? `<img class="ac-thumb inv" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:28px;flex-shrink:0"></div>'}
+      <div class="ac-info">
+        <div class="ac-name">${name} ↩</div>
+        <div class="ac-sub">${(data.rev||'').slice(0,50)||(data.keywords||[]).join(' · ')}${data.rev&&data.rev.length>50?'…':''}</div>
+      </div>
+    </div>`;
+  });
+
+  autocomplete.innerHTML = html;
+  autocomplete.classList.add('open');
+}
+
+window.addCardFromAC = function(name, inv) {
+  cardTags.push({ name, inv });
+  renderTags();
+  tagInput.value = '';
+  autocomplete.classList.remove('open');
+  document.getElementById('card-preview-panel').classList.remove('visible');
+  tagInput.focus();
+};
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('[style*="position:relative"]') && !e.target.closest('#card-autocomplete')) {
+    autocomplete.classList.remove('open');
+  }
+});
+
+autocomplete.addEventListener('keydown', e => {
+  const items = [...autocomplete.querySelectorAll('.ac-item')];
+  const idx = items.indexOf(document.activeElement);
+  if (e.key==='ArrowDown'){ e.preventDefault(); items[Math.min(idx+1,items.length-1)]?.focus(); }
+  if (e.key==='ArrowUp')  { e.preventDefault(); idx>0?items[idx-1].focus():tagInput.focus(); }
+  if (e.key==='Enter')    { e.preventDefault(); items[idx]?.click(); }
+  if (e.key==='Escape')   { autocomplete.classList.remove('open'); tagInput.focus(); }
+});
+
+tagInput.addEventListener('keydown', e => {
+  if (e.key==='Escape') { autocomplete.classList.remove('open'); return; }
+  if (e.key==='ArrowDown') {
     e.preventDefault();
+    const first = autocomplete.querySelector('.ac-item');
+    if (first) { autocomplete.classList.add('open'); first.focus(); } return;
+  }
+  if (e.key==='Enter'||e.key===',') {
+    e.preventDefault();
+    const items = autocomplete.querySelectorAll('.ac-item:not(.ac-inv)');
+    if (items.length===1) { items[0].click(); return; }
     addCardFromInput();
   }
-  if(e.key==='Backspace' && tagInput.value==='' && cardTags.length>0){
+  if (e.key==='Backspace' && tagInput.value==='' && cardTags.length>0) {
     cardTags.pop(); renderTags();
   }
 });
-// fallback para teclados mobile que disparam keyup mas não keydown corretamente
-tagInput.addEventListener('keyup', e=>{
-  if(e.key==='Enter'||e.key==='Go'||e.key==='Search'||e.keyCode===13){
-    addCardFromInput();
-  }
+tagInput.addEventListener('keyup', e => {
+  if (['ArrowDown','ArrowUp','Enter','Escape',','].includes(e.key)) return;
+  openAutocomplete(tagInput.value);
+  const isInv = /inverti|inversa/i.test(tagInput.value);
+  showCardPreview(findCard(tagInput.value), isInv);
 });
 
 document.getElementById('add-card-btn').addEventListener('click', addCardFromInput);
-
-tagInput.addEventListener('input', ()=>{
-  const val = tagInput.value;
-  const isInv = /inverti|inversa/i.test(val);
-  const match = findCard(val);
-  showCardPreview(match, isInv);
-});
 
 // ── FORM ──
 const form = document.getElementById('entry-form');
@@ -1800,6 +2245,8 @@ function resetForm(){
   document.getElementById('f-date').value='';
   document.getElementById('f-analysis').value='';
   document.getElementById('f-notes').value='';
+  document.getElementById('f-theme').value = '';
+  document.querySelectorAll('.theme-selector .theme-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('combos-panel').classList.remove('visible');
   const spread = document.getElementById('form-spread');
   if (spread) { spread.style.display='none'; spread.innerHTML=''; }
@@ -1821,6 +2268,7 @@ document.getElementById('save-entry').addEventListener('click', async ()=>{
     id: editingId||genId(),
     date, cards:[...cardTags], analysis,
     notes: document.getElementById('f-notes').value.trim(),
+    theme: document.getElementById('f-theme').value || '',
     createdAt: editingId?(entries.find(e=>e.id===editingId)?.createdAt||Date.now()):Date.now()
   };
   try {
@@ -1852,6 +2300,11 @@ window.editEntry=function(id){
   document.getElementById('f-date').value=e.date;
   document.getElementById('f-analysis').value=e.analysis;
   document.getElementById('f-notes').value=e.notes||'';
+  // restaurar tema
+  document.getElementById('f-theme').value = e.theme || '';
+  document.querySelectorAll('.theme-selector .theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === (e.theme||''));
+  });
   cardTags=[...e.cards]; renderTags();
   form.classList.add('open'); toggleBtn.textContent='✕ Fechar';
   form.scrollIntoView({behavior:'smooth',block:'start'});
@@ -1889,9 +2342,10 @@ function updateStats(){
 // ── RENDER ──
 function render(){
   const q=(document.getElementById('filter-input')?.value||'').toLowerCase().trim();
-  const filtered=q?entries.filter(e=>e.cards.some(c=>c.name.toLowerCase().includes(q))||e.analysis.toLowerCase().includes(q)||(e.notes||'').toLowerCase().includes(q)):entries;
-  if(entries.length>0) document.getElementById('filter-bar').style.display='flex';
-  document.getElementById('entry-count').textContent=q?`${filtered.length} de ${entries.length} entrada${entries.length!==1?'s':''}`:`${entries.length} entrada${entries.length!==1?'s':''}`;
+  let filtered=q?entries.filter(e=>e.cards.some(c=>c.name.toLowerCase().includes(q))||e.analysis.toLowerCase().includes(q)||(e.notes||'').toLowerCase().includes(q)):[...entries];
+  if(activeThemeFilter) filtered=filtered.filter(e=>e.theme===activeThemeFilter);
+  if(entries.length>0){document.getElementById('filter-bar').style.display='flex';document.getElementById('theme-filter-bar').style.display='block';}
+  document.getElementById('entry-count').textContent=(q||activeThemeFilter)?`${filtered.length} de ${entries.length} entrada${entries.length!==1?'s':''}`:`${entries.length} entrada${entries.length!==1?'s':''}`;
   updateStats();
   const hist=document.getElementById('history');
   if(entries.length===0){ hist.innerHTML='<div class="history-empty"><span>🌙</span>Ainda não há tiragens registradas.<br>Clique em <em>Registrar Tiragem de Hoje</em> para começar.</div>'; return }
@@ -1903,10 +2357,16 @@ function render(){
     const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv?'true':'false'})"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
     const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const lunar=lunarPhase(e.date);
+    const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
     html+=`
     <div class="entry" id="entry-${e.id}">
       <div class="entry-header" onclick="toggleEntry('${e.id}')">
-        <div class="entry-date-wrap"><span class="entry-date">${formatDate(e.date)}</span><span class="entry-weekday">${weekday(e.date)}-feira</span></div>
+        <div class="entry-date-wrap">
+          <span class="entry-date">${formatDate(e.date)}${themeBadge}</span>
+          <span class="entry-weekday">${weekday(e.date)}-feira</span>
+          <span class="lunar-badge">${lunar.emoji} ${lunar.name}</span>
+        </div>
         <div class="entry-cards">${badges||'<span style="color:var(--text-dim);font-size:.8rem;font-style:italic">sem cartas</span>'}</div>
         <span class="entry-chevron">▼</span>
       </div>
