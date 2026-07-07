@@ -261,7 +261,41 @@
     color: var(--text-dim); font-size: 2rem;
   }
 
-  /* thumbnail na lista de consulta */
+  /* ── LUZ / SOMBRA / MEME ── */
+  .card-section {
+    margin-top: .8rem; padding: .7rem .9rem;
+    border-radius: 8px; font-size: .88rem; line-height: 1.6;
+  }
+  .card-section-label {
+    font-family: 'Cinzel', serif; font-size: .62rem;
+    letter-spacing: .15em; text-transform: uppercase;
+    margin-bottom: .3rem; display: flex; align-items: center; gap: .35rem;
+  }
+  .section-luz   { background: rgba(212,170,80,.08); border-left: 3px solid var(--gold-dim); }
+  .section-luz   .card-section-label { color: var(--gold); }
+  .section-luz   p { color: var(--text-dim); }
+  .section-sombra{ background: rgba(192,80,112,.08); border-left: 3px solid var(--rose); }
+  .section-sombra .card-section-label { color: var(--rose); }
+  .section-sombra p { color: var(--text-dim); }
+  .section-meme  { background: rgba(122,78,184,.08); border-left: 3px solid var(--purple); }
+  .section-meme  .card-section-label { color: var(--purple-light); }
+  .section-meme  p { color: var(--text-dim); font-style: italic; }
+
+  /* abas do popup */
+  .popup-tabs {
+    display: flex; border-bottom: 1px solid var(--border);
+    margin: .8rem 0 .6rem;
+  }
+  .popup-tab {
+    flex: 1; background: none; border: none;
+    padding: .45rem; font-family: 'Cinzel', serif;
+    font-size: .65rem; letter-spacing: .08em;
+    color: var(--text-dim); cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all .2s;
+  }
+  .popup-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .popup-pane { display: none; }
+  .popup-pane.active { display: block; }
   .consult-card-thumb {
     width: 32px; height: 54px;
     border-radius: 4px; object-fit: cover;
@@ -1013,8 +1047,38 @@
     <h3 id="popup-name"></h3>
     <div class="popup-card-img-wrap" id="popup-img-wrap"></div>
     <div class="cp-keywords" id="popup-keywords"></div>
-    <div class="entry-section-label" id="popup-meaning-label" style="margin-top:.6rem;margin-bottom:.3rem">Significado</div>
-    <div class="cp-meaning" id="popup-meaning"></div>
+
+    <!-- abas -->
+    <div class="popup-tabs">
+      <button class="popup-tab active" onclick="switchPopupTab('significado',this)">📖 Significado</button>
+      <button class="popup-tab" onclick="switchPopupTab('luz',this)">☀️ Luz</button>
+      <button class="popup-tab" onclick="switchPopupTab('sombra',this)">🌑 Sombra</button>
+      <button class="popup-tab" onclick="switchPopupTab('meme',this)">😂 Meme</button>
+    </div>
+
+    <div class="popup-pane active" id="popup-pane-significado">
+      <div class="entry-section-label" id="popup-meaning-label">Significado</div>
+      <div class="cp-meaning" id="popup-meaning"></div>
+    </div>
+    <div class="popup-pane" id="popup-pane-luz">
+      <div class="card-section section-luz">
+        <div class="card-section-label">☀️ Lado Luz</div>
+        <p id="popup-luz">—</p>
+      </div>
+    </div>
+    <div class="popup-pane" id="popup-pane-sombra">
+      <div class="card-section section-sombra">
+        <div class="card-section-label">🌑 Lado Sombra</div>
+        <p id="popup-sombra">—</p>
+      </div>
+    </div>
+    <div class="popup-pane" id="popup-pane-meme">
+      <div class="card-section section-meme">
+        <div class="card-section-label">😂 Sem Filtro</div>
+        <p id="popup-meme">—</p>
+      </div>
+    </div>
+
     <div class="custom-note-in-popup" id="popup-custom-note" style="display:none"></div>
   </div>
 </div>
@@ -1208,6 +1272,410 @@ const REV = {
 };
 // injeta campo rev em cada carta
 Object.entries(REV).forEach(([name, rev]) => { if (TAROT_CARDS[name]) TAROT_CARDS[name].rev = rev; });
+
+// ── EXTRAS: LUZ, SOMBRA E MEME ──
+const CARD_EXTRAS = {
+  // ARCANOS MAIORES
+  'A Louca': {
+    luz: 'O universo está conspirando a seu favor justamente porque você ainda não sabe o suficiente para ter medo. Essa ignorância corajosa é um superpoder. Comece antes de estar pronta — você nunca vai estar.',
+    sombra: 'Você está pulando de um precipício achando que vai voar porque leu sobre isso uma vez. Impulsividade não é coragem, é falta de planejamento disfarçada de espiritualidade. O cachorro está latindo e você continua andando.',
+    meme: '"Larga o emprego e vai viajar o mundo" energy. Mas às vezes funciona mesmo. 🎒🌈'
+  },
+  'O Mago': {
+    luz: 'Você já tem tudo que precisa. Não está faltando oportunidade, recurso ou talento — está faltando você acreditar que pode usar o que está na sua mesa. A varinha já está na sua mão.',
+    sombra: 'Mestre da manipulação usando charme e palavras bonitas para conseguir o que quer. Ou então: pessoas que sabem de tudo mas não fazem nada. Muita teoria, zero prática. O Mago que nunca executa virou coach.',
+    meme: 'Você no primeiro dia do curso de empreendedorismo vs. você seis meses depois sem ter feito nada. ✨🪄'
+  },
+  'A Sacerdotisa': {
+    luz: 'Sua intuição está tentando te dizer algo que sua mente racional ainda não processou. Sente aquele friozinho na barriga? Aquela voz baixinha que você fica ignorando? Ela está certa. Ela sempre está.',
+    sombra: 'Paralisia por análise. Fica esperando o "sinal certo" que nunca chega porque no fundo tem medo de agir. Esconde atrás de "estou meditando sobre isso" quando na verdade está só procrastinando espiritualmente.',
+    meme: '"Vou esperar o momento certo" – pessoa que está esperando desde 2019. 🌙📜'
+  },
+  'A Imperatriz': {
+    luz: 'Você é fértil em todos os sentidos — ideias, projetos, relacionamentos, vida. Permita-se florescer sem culpa. Cuidar de si mesma não é egoísmo, é a base de tudo. Regue-se como regaria uma planta que ama.',
+    sombra: 'Sufocamento afetivo: amor que controla, que envolve tanto que sufoca. Ou o oposto — negligência total consigo mesma porque cuida de todo mundo menos de si. Maternidade tóxica ou ausência de autocuidado.',
+    meme: 'Comprou plantas, fez sourdough, decorou a casa, mandou mimos. A Imperatriz no seu melhor e pior. 🌸🍞'
+  },
+  'O Imperador': {
+    luz: 'Estrutura não é prisão — é fundação. Regras e limites bem colocados protegem e libertam. Liderar com firmeza e clareza é um ato de amor, não de controle. Coloque ordem nessa bagunça com cuidado.',
+    sombra: 'Pai autoritário que confunde respeito com medo. Controle disfarçado de "cuidado". Rigidez que não consegue se adaptar quando a vida muda. O chefe que micro-gerencia porque no fundo não confia em ninguém.',
+    meme: 'Planilha de gastos, agenda no Google, regras da casa na geladeira. Emperor behavior. 📊👑'
+  },
+  'O Hierofante': {
+    luz: 'Há sabedoria genuína nas tradições. Encontrar um professor, uma prática, uma comunidade que ressoa — isso é raro e precioso. Algumas regras existem porque alguém aprendeu na marra.',
+    sombra: '"É assim porque sempre foi assim" é a frase mais perigosa que existe. Instituições que controlam pelo medo, tradições que oprimem, líderes espirituais que usam a fé como ferramenta de poder.',
+    meme: 'Seu tio no almoço de domingo explicando por que as coisas devem continuar como estão. 🍽️📿'
+  },
+  'Os Amantes': {
+    luz: 'A escolha mais importante da sua vida não é sobre o outro — é sobre quem você quer ser. Amor de verdade começa com alinhamento de valores. Quando dois inteiros se encontram, o todo é maior que a soma.',
+    sombra: 'Indecisão crônica, o cara que fica no meio dos dois e não escolhe ninguém. Relacionamento construído sobre atração física sem base real. Ou então: aquela escolha que você sabe que precisa fazer mas fica adiando.',
+    meme: 'Você no menu do restaurante: "não sei o que quero". Os Amantes em crise. 💔😅'
+  },
+  'O Carro': {
+    luz: 'Determinação pura. Quando você decide de verdade — não decide com a cabeça, decide com toda a alma — o universo encontra um jeito. Não precisa ser fácil para ser possível. Segura o volante.',
+    sombra: 'Velocidade sem direção. Ganhar batalhas que não valem a pena vencer. Atropelar tudo e todos na busca da vitória, chegando no topo completamente sozinho. Sucesso vazio, relacionamentos destruídos no processo.',
+    meme: 'Velocidade máxima. Sem cinto. Sem GPS. Confiante. O Carro em dia ruim. 🏎️💨'
+  },
+  'A Força': {
+    luz: 'Você não precisa dominar seus medos com violência — precisa entendê-los com compaixão. O leão interior não some quando você finge que não existe. Ele some quando você olha direto nos olhos dele e pergunta "o que você precisa?"',
+    sombra: 'Força que na verdade é rigidez. Segurar demais para não parecer fraca. Ou o oposto: se deixar devorar pelo leão porque "sou muito sensível". Nem repressão, nem entrega — integração.',
+    meme: 'Você tentando não mandar mensagem para ex às 23h sendo a mulher que doma o leão. 🦁✋'
+  },
+  'O Eremita': {
+    luz: 'A resposta que você procura não está lá fora. Está no silêncio que você tanto evita. A lanterna ilumina um passo de cada vez — e tudo bem. Você não precisa ver o caminho inteiro agora.',
+    sombra: 'Isolamento disfarçado de "estou trabalhando em mim". Sábio que acumulou conhecimento mas se recusa a se relacionar com ninguém. Ou: usar a solidão como escudo porque conexão dói.',
+    meme: '"Estou em uma jornada de autoconhecimento" – pessoa que não abre o WhatsApp há 3 dias. 🏔️🔦'
+  },
+  'Roda da Fortuna': {
+    luz: 'O que está embaixo vai subir. O que está em cima vai descer. Nenhuma fase é permanente — nem a boa, nem a ruim. Aprenda a surfar em vez de tentar parar as ondas. A roda não para por você.',
+    sombra: 'Usar karma e destino como desculpa para não agir. "É o que é" quando na verdade dá para fazer algo. Ou: ficar girando nos mesmos ciclos sem perceber que é você quem gira a roda.',
+    meme: 'Quando finalmente arruma a vida e daí vem uma conta inesperada. Roda da Fortuna deu oi. 🎡😭'
+  },
+  'A Justiça': {
+    luz: 'A verdade não precisa da sua aprovação para ser verdade. Cause e efeito funcionam mesmo quando você fecha os olhos. O que você fez voltou — ou vai voltar. Seja honesta agora para não pagar depois.',
+    sombra: 'Julgamento cruel disfarçado de objetividade. Usar a "verdade" como arma. Ou: se recusar a se responsabilizar, sempre culpando o destino, os outros, a vida. Justiça sem misericórdia é brutalidade.',
+    meme: 'Karma chegando na velocidade exata em que você tratou mal alguém. ⚖️✨'
+  },
+  'O Enforcado': {
+    luz: 'Há coisas que só se aprendem quando você para de lutar. A rendição consciente não é derrota — é a coragem de deixar a transformação acontecer no tempo dela. Solte. Só por agora.',
+    sombra: 'Martírio sem propósito. Ficar pendurado em situação ruim achando que sofrendo vai ganhar um troféu. Procrastinação espiritualizada: "estou esperando o momento certo" quando na verdade está com medo.',
+    meme: 'Você esperando ele mudar há 3 anos. A Enforcada te vê. 😇🙃'
+  },
+  'A Morte': {
+    luz: 'Isso não é o fim. É o fim de uma versão de você que já cumpriu seu papel. O que está morrendo era necessário que morresse para que você possa ser quem está se tornando. Confie no processo da borboleta.',
+    sombra: 'Apego patológico ao que claramente já acabou. Relacionamento morto que você insiste em ressuscitar. Fase da vida encerrada que você ainda está tentando salvar. O cadáver que você continua abraçando.',
+    meme: 'Você tentando manter vivo algo que claramente já era. A Morte na janela acenando. 💀🌹'
+  },
+  'A Temperança': {
+    luz: 'A cura não acontece de uma vez. Você está sendo alquimizada — os elementos opostos da sua vida estão sendo integrados num processo lento e sagrado. Paciência não é passividade. É sabedoria ativa.',
+    sombra: 'Excesso em tudo — seja de trabalho, de comida, de relacionamentos, de autocrítica. Ou: impaciência que destrói processos que precisavam de tempo. Forçar o resultado antes da hora.',
+    meme: '"Moderação em tudo, inclusive na moderação." – pessoa que bebeu tudo no happy hour. 🍵⚗️'
+  },
+  'O Diabo': {
+    luz: 'As correntes são largas. Você pode sair quando quiser. Olhar para seus vícios, apegos e padrões sem julgamento é o primeiro passo para a liberdade. A sombra integrada vira superpoder.',
+    sombra: 'Vício que você chama de "personalidade". Relacionamento tóxico que chama de "amor intenso". Padrão destrutivo que chama de "minha essência". O Diabo não te prende — você escolhe ficar.',
+    meme: '"Só mais um episódio." "Só uma mensagem." "É que eu sou assim mesmo." O Diabo nas pequenas coisas. 😈📱'
+  },
+  'A Torre': {
+    luz: 'O raio só destrói o que estava podre. Estruturas falsas, relacionamentos baseados em mentira, identidades construídas sobre medo — tudo isso estava pedindo para cair. Agora você pode construir sobre verdade.',
+    sombra: 'Isso vai doer. Muito. Não tem como suavizar. Mas resistir ao desmoronamento é tentar manter de pé uma casa que já está pegando fogo. Às vezes a melhor coisa é deixar cair.',
+    meme: 'Quando tudo cai ao mesmo tempo: emprego, relacionamento e a conta do cartão. Torre disse "oi". 🏚️⚡'
+  },
+  'A Estrela': {
+    luz: 'Depois de tudo que caiu, de tudo que doeu — você ainda está aqui. E há beleza esperando por você do outro lado disso. Abra o coração novamente. Com cuidado, mas abra. A esperança não é ingenuidade.',
+    sombra: 'Ingenuidade depois da crise: sair da Torre e achar que agora tudo vai ser perfeito sem trabalho interno. Ou: não conseguir acreditar que merece coisas boas porque "sempre acaba mal".',
+    meme: 'Você depois de terapia, água, sol e boa alimentação. A Estrela chegou. 🌟💧'
+  },
+  'A Lua': {
+    luz: 'Nem tudo que assusta é perigoso. Muitos dos monstros que aparecem à noite são sombras suas esperando para ser integradas. A Lua convida a nadar nas profundezas — com cuidado, não com medo.',
+    sombra: 'Ansiedade nocturna que distorce tudo. Paranoia que parece intuição mas é trauma falando. Ilusões que parecem amor. Pessoas que não são o que parecem. O que você não quer ver está bem aqui.',
+    meme: 'Você às 3 da manhã revivendo conversas de 2015 e chegando a conclusões absurdas. A Lua: "exatamente." 🌑😰'
+  },
+  'O Sol': {
+    luz: 'Você pode ser exatamente quem é. Sem filtro, sem desculpa, sem diminuir para caber. Há uma fase de genuína celebração e clareza chegando — ou já aqui. Deixe-se brilhar sem culpa.',
+    sombra: 'Ego inflado que não suporta crítica. Otimismo que ignora problemas reais porque "boa energia só". Ou: incapacidade de desfrutar do bom porque você está sempre esperando o outro sapato cair.',
+    meme: 'Quando você acorda descansada, com tempo, sol na janela e dinheiro na conta. O Sol apareceu. ☀️✨'
+  },
+  'O Julgamento': {
+    luz: 'Tem um chamado tocando. Você está ouvindo? Não o chamado da sociedade, dos pais, das expectativas — o chamado da sua alma. É hora de acordar para quem você realmente veio ser.',
+    sombra: 'Autojulgamento brutal que nunca perdoa nada. Ou: ficar esperando uma revelação divina em vez de agir com o que já sabe. O julgamento que paralisa em vez de libertar.',
+    meme: 'Quando uma música toca e você tem um despertar espiritual no meio do mercado. O Julgamento bateu. 📯🙌'
+  },
+  'O Mundo': {
+    luz: 'Você chegou. Não ao fim — ao fim de uma jornada enorme que te transformou completamente. Celebre isso. Integre isso. E então, quando estiver pronta, a Louca vai chamar de novo para o próximo ciclo.',
+    sombra: 'Quase lá, mas não fecha. Procrastinar a conclusão porque terminar significa mudar, e mudar dá medo mesmo quando a mudança é boa. Ou: completar o ciclo externo sem ter integrado nada internamente.',
+    meme: 'Você no último dia de um processo longo olhando para trás e não acreditando que passou por tudo aquilo. O Mundo: "sim, foi você mesma." 🌍👑'
+  },
+  // COPAS
+  'Ás de Copas': {
+    luz: 'Um coração transbordando de possibilidade. Algo novo está chegando no campo emocional — amor, amizade, intuição, criatividade. Abra-se para receber sem calcular se merece.',
+    sombra: 'O cálice está cheio mas você está com medo de derramar. Amor disponível que você não consegue receber porque não acha que merece. Ou: emoções represadas prestes a explodir.',
+    meme: 'Quando alguém é genuinamente gentil com você e você não sabe como reagir porque não está acostumada. Ás de Copas chegou. 🥂💗'
+  },
+  'Dois de Copas': {
+    luz: 'Parceria genuína onde dois inteiros se encontram. Não é dependência, não é apego — é reconhecimento. "Eu te vejo e você me vê." Isso é raro. Cuide disso.',
+    sombra: 'Codependência fantasiada de amor profundo. "Não consigo viver sem você" não é romântico — é um sinal de alerta. Dois meios não fazem um inteiro feliz.',
+    meme: 'Quando você encontra alguém que tem o mesmo humor perturbador que o seu. Dois de Copas falando. 🥂😌'
+  },
+  'Três de Copas': {
+    luz: 'Suas pessoas. Aquelas com quem você pode ser completamente você mesma, rir até chorar e compartilhar o melhor da vida. Celebração genuína, amizade de alma, comunidade que sustenta.',
+    sombra: 'Fofoca glamourizada de celebração. O grupo de WhatsApp que parece unido mas tem panela. Festas usadas para escapar de si mesmo. Ou: triangle — duas amigas e uma situação complicada.',
+    meme: 'Você, sua melhor amiga e a terceira amiga que vocês adotaram. Três de Copas reunidas. 🥂🎉'
+  },
+  'Quatro de Copas': {
+    luz: 'Às vezes a bênção que você precisa está bem à sua frente e você não está vendo porque está olhando para o chão. Uma pausa para contemplar o que já tem pode revelar abundância que você ignorava.',
+    sombra: 'Tédio existencial. Ingratidão não reconhecida. O cálice de ouro oferecido pelo universo que você rejeita porque está de mau humor. Boredom que parece profundidade mas é resistência.',
+    meme: 'Quando tem oportunidade perfeita do seu lado mas você está no celular. Quatro de Copas te vendo. 😒🍂'
+  },
+  'Cinco de Copas': {
+    luz: 'O luto é amor sem lugar para ir. Permita-se sentir a perda completamente — mas lembre-se de virar para ver os dois cálices que ainda estão de pé. O que restou ainda tem valor.',
+    sombra: 'Catastrofismo. Focar só no que se perdeu e ignorar sistematicamente o que ficou. Trauma que vira identidade. "Sempre me abandona" quando na verdade ainda há pessoas que ficaram.',
+    meme: 'Você ruminando sobre o erro de 2018 ignorando as coisas boas de hoje. Cinco de Copas: "sim, sou eu." 💧😔'
+  },
+  'Seis de Copas': {
+    luz: 'Memória afetiva, inocência recuperada, reencontro com algo genuíno do passado. A nostalgia aqui é doce — um reencontro com quem você era antes de tudo ficar complicado.',
+    sombra: 'Incapacidade de viver no presente porque o passado era melhor. Idealização de quem ou do que foi. Ex que "era diferente" — provavelmente não era. A armadilha dourada da saudade.',
+    meme: 'Ouvir uma música de 2012 e passar 40 minutos revivendo uma versão idealizada de quem você era. 🎶😢'
+  },
+  'Sete de Copas': {
+    luz: 'Imaginação fértil e muitas possibilidades. O desafio é discernir o que é real do que é ilusão — mas a capacidade criativa aqui é genuína. Sonhos grandes podem ser a semente de algo real.',
+    sombra: 'Paralisia por excesso de opções. Escapismo viciante. Planos que existem só na cabeça e nunca saem do papel. "Vou fazer isso" (spoiler: não vai). Fantasias substituindo ação.',
+    meme: '"Tenho 47 projetos em mente." Executa: 0. Sete de Copas em ação. 💭✨'
+  },
+  'Oito de Copas': {
+    luz: 'Às vezes o ato mais corajoso é ir embora. Deixar o que foi construído com carinho quando fica claro que pertence a um ciclo passado. Não é derrota — é discernimento.',
+    sombra: 'Fuga crônica de qualquer coisa que pede comprometimento real. "Preciso encontrar a mim mesmo" como desculpa para não lidar com o que está ali. Abandono antes de chegar na parte difícil.',
+    meme: 'Você indo embora de uma situação que não te serve mais. A lua te iluminando discretamente. 🌙🚶‍♀️'
+  },
+  'Nove de Copas': {
+    luz: 'A carta dos desejos. O que você pediu, ou está chegando, ou já está aqui. Satisfação genuína, contentamento que não precisa de mais nada agora. Permita-se estar bem.',
+    sombra: 'Satisfação superficial que evita crescimento. Ficar na zona de conforto emocional porque está "bom o suficiente". Ou: conseguir o que queria e ainda assim não ser feliz, porque o vazio era interno.',
+    meme: 'Quando o pedido chegou, a conta está paga e a série não acabou. Nove de Copas apareceu. 🍷😌'
+  },
+  'Dez de Copas': {
+    luz: 'O amor em sua forma mais completa e duradoura. Família de sangue ou de escolha, lar como lugar seguro, alegria que se multiplica quando compartilhada. Isso é o objetivo final.',
+    sombra: 'Performar felicidade familiar perfeita enquanto debaixo do arco-íris tem disfunção séria. O álbum bonito do Instagram que não representa o que acontece na vida real.',
+    meme: 'Foto perfeita da família no Natal vs. a briga que aconteceu 20 minutos antes. Dez de Copas entende. 🌈👨‍👩‍👧‍👦'
+  },
+  'Valete de Copas': {
+    luz: 'Mensagens do mundo espiritual, intuição desenvolvendo-se, sonhos com conteúdo. Pessoa jovem ou energia jovem trazendo novidade emocional, criatividade e sensibilidade genuína.',
+    sombra: 'Imaturidade emocional que se vende como profundidade. Sentimentalismo que paralisa. A pessoa que sente tudo mas não processa nada e fica vazando emoção em todo mundo.',
+    meme: 'Você aos 19 anos escrevendo poesia às 2 da manhã achando que tinha descoberto o sentido da vida. 🐟💌'
+  },
+  'Cavaleiro de Copas': {
+    luz: 'O cortejo poético, a proposta inesperada, o convite que chega de coração aberto. Alguém (ou algo) chegando com intenção genuína e energia suave. Romance que pode ser real.',
+    sombra: 'Love bombing. Promises, promises. O homem que aparece com flores e desaparece quando fica sério. Romantismo que serve ao ego, não ao amor. "Ele é intenso" — sim, intensamente inconsistente.',
+    meme: 'Ele apareceu com flores, poesia e planos grandes. Três semanas depois: "precisamos conversar." Cavaleiro de Copas, né. 🏇💐'
+  },
+  'Rainha de Copas': {
+    luz: 'Empatia madura, intuição desenvolvida, amor que cuida sem sufocar. Você sente os outros profundamente e ainda consegue se manter inteira. Cura emocional como superpoder.',
+    sombra: 'Esponja emocional que absorve tudo dos outros e esquece de si. Ou: manipulação afetiva suave — fazer tudo pelo outro para se sentir necessária. Amor com expectativa escondida.',
+    meme: 'Você que sente a vibe de todo mundo na sala mas ninguém pergunta como você está. Rainha de Copas cansada. 👸🌊'
+  },
+  'Rei de Copas': {
+    luz: 'Maturidade emocional masculina no seu melhor — sente profundamente, processa com sabedoria, age com coração. Liderança que usa empatia como bússola. Homem seguro de verdade.',
+    sombra: 'Repressão emocional que chama de "equilíbrio". Ou o oposto: o cara que usou de "sou sensível" para manipular por anos. Inteligência emocional colocada a serviço do ego.',
+    meme: 'Quando ele consegue dizer "estou triste" sem transformar no seu problema. Rei de Copas desbloqueado. 🤴💙'
+  },
+  // ESPADAS
+  'Ás de Espadas': {
+    luz: 'Clareza cortante. A névoa levantou, você vê a situação como ela é — sem romantizações, sem desculpas. Isso pode doer mas é libertador. A verdade que você finalmente admite para si mesma.',
+    sombra: 'Clareza que vira crueldade. Usar a verdade como arma. Ou: breakthrough que fica só na cabeça e nunca se traduz em ação real. Muita análise, zero implementação.',
+    meme: 'Quando você finalmente entende o que estava acontecendo e fica tipo "ah, então era isso." ⚡🗡️'
+  },
+  'Dois de Espadas': {
+    luz: 'Às vezes a pausa antes da decisão é necessária. Você ainda não tem as informações que precisa — e isso está tudo bem. Mas a venda vai ter que sair em algum momento.',
+    sombra: 'Decisão evitada porque escolher significa perder algo. Ficar no meio do caminho até a vida forçar uma direção. "Não sei o que quero" quando na verdade sabe e tem medo de assumir.',
+    meme: 'Você quando pedem para escolher onde vai jantar. Dois de Espadas incarnada. 🙈⚔️'
+  },
+  'Três de Espadas': {
+    luz: 'A dor que você sente agora é real. Não precisa minimizar, não precisa "superar rápido". Chore. Processe. A chuva lava o ar. Traição, perda e desgosto fazem parte — e passam.',
+    sombra: 'Ruminação que não processa, só repete. Colecionar mágoas como troféus. Identidade construída em torno de ter sido magoada. A ferida que você não deixa cicatrizar porque define quem você é.',
+    meme: 'Você que ainda está processando algo de anos atrás às 3 da manhã. Três de Espadas: "sei, eu sei." 💔🌧️'
+  },
+  'Quatro de Espadas': {
+    luz: 'Descanso não é preguiça — é estratégia. O guerreiro que não repousa perde a próxima batalha. Você ganhou o direito de pausar. Silêncio, recuperação, recarregar. Permissão concedida.',
+    sombra: 'Evitação disfarçada de "estou me recuperando". Fugir de tudo sob o rótulo de descanso. Ou: não conseguir descansar mesmo quando precisa, porque a mente não para.',
+    meme: 'Você dando uma pausa saudável de tudo vs. você no décimo dia no sofá sem sair. Quatro de Espadas: "fine line." 😴⚔️'
+  },
+  'Cinco de Espadas': {
+    luz: 'Reconhecer quando uma batalha não vale o custo. Às vezes a vitória mais inteligente é recuar. Escolha suas lutas com sabedoria — nem toda colina vale morrer em cima.',
+    sombra: 'Ganhar a discussão e perder a relação. Competitividade que destrói tudo ao redor. Ou ser a pessoa que sempre perde e fica recolhendo os cacos enquanto o outro vai embora sorrindo.',
+    meme: 'Você ganhando a discussão no Twitter às 2 da manhã sobre algo irrelevante. Cinco de Espadas: "parabéns." 🏆💀'
+  },
+  'Seis de Espadas': {
+    luz: 'Saindo de período turbulento em direção a algo mais tranquilo. Pode não ser o destino final, mas é mais calmo que onde você estava. A transição é necessária mesmo que seja triste.',
+    sombra: 'Fuga antes de resolver. Levar os problemas para o próximo lugar achando que a mudança externa vai resolver o interno. Spoiler: não vai. Você vai junto.',
+    meme: 'Mudar de cidade para "recomeçar" mas seus problemas compraram passagem junto. Seis de Espadas te vê. ⛵🗡️'
+  },
+  'Sete de Espadas': {
+    luz: 'Às vezes estratégia inteligente parece furtividade. Saber quando revelar seus planos, quando guardar segredos necessários, quando mover-se em silêncio é sabedoria, não traição.',
+    sombra: 'Desonestidade que você chama de "estratégia". Traição pequena que vai crescendo. A pessoa que sorri na sua cara e faz diferente pelas costas. Ou você mesma evitando uma conversa honesta necessária.',
+    meme: 'Você saindo pela porta dos fundos de uma situação complicada achando que ninguém percebeu. 🏃‍♀️🗡️'
+  },
+  'Oito de Espadas': {
+    luz: 'A prisão é mental. As espadas ao redor não estão te tocando — você pode se afastar. O primeiro passo é perceber que a venda nos olhos não foi colocada por ninguém além de você.',
+    sombra: 'Vitimismo estrutural. "Não posso fazer nada." "Não tenho escolha." "É assim." Quando a verdade é que escolher dá medo e a prisão pelo menos é familiar. Conforto no aprisionamento.',
+    meme: '"Não tenho saída" – pessoa rodeada por portas abertas. Oito de Espadas em modo total. 😶‍🌫️⚔️'
+  },
+  'Nove de Espadas': {
+    luz: 'A mente que te atormenta às 3 da manhã está exagerando. Sempre. Isso não significa que os problemas não são reais — significa que o sofrimento preventivo não resolve nada.',
+    sombra: 'Ansiedade que criou vida própria. Catastrofismo como modo de operação. O "e se" infinito que nunca permite descanso. A mente que tortura a pessoa que habita.',
+    meme: 'Você às 3:47 da manhã resolvendo problemas que provavelmente não vão acontecer. Nove de Espadas: "bem-vinda ao clube." 😰🗡️'
+  },
+  'Dez de Espadas': {
+    luz: 'O fundo do poço tem uma propriedade interessante: só tem um jeito para ir a partir daqui. O pior já aconteceu. Agora só sobe. O amanhecer no horizonte da carta não é acidental.',
+    sombra: 'Drama exagerado quando a situação poderia ser resolvida. Ou: negação de que o fundo chegou, tentando continuar numa situação que claramente terminou. Dez facas não é figurativo nesse contexto.',
+    meme: 'Quando tudo cai ao mesmo tempo e você só pode rir porque chorar cansou. Dez de Espadas: "pois é." 😂💀'
+  },
+  'Valete de Espadas': {
+    luz: 'Mente rápida, perspicácia aguçada, capacidade de ver o que os outros não veem. Mensagens importantes chegando. Alguém ou algo que questiona o status quo.',
+    sombra: 'Fofoca intelectualizada. Usar a inteligência para destruir em vez de construir. O jovem que sabe de tudo e respeita poucos. Crítica sem construtividade.',
+    meme: 'Você espiando a conversa para depois entrar com o comentário certeiro. Valete de Espadas lifestyle. 👀🗡️'
+  },
+  'Cavaleiro de Espadas': {
+    luz: 'Velocidade, clareza e ação imediata. Quando o Cavaleiro de Espadas decide, age. Não há tempo para hesitação — a janela está aberta agora. Aproveite o impulso.',
+    sombra: 'Atropela tudo e todos no caminho. Fala antes de pensar, age antes de sentir as consequências. Velocidade sem sabedoria. A pessoa que resolve um problema criando três outros.',
+    meme: '"Resolvi." – você dois segundos depois de tomar uma decisão enorme sem pensar. Cavaleiro de Espadas disse oi. ⚡🏇'
+  },
+  'Rainha de Espadas': {
+    luz: 'Clareza que vem de ter sofrido e sobrevivido. Ela não tem paciência para bullshit porque já aprendeu caro o preço de aceitar menos do que merecia. Independência conquistada, não dada.',
+    sombra: 'Frieza como mecanismo de defesa que acabou virando personalidade. Cortar pessoas com precisão cirúrgica mas sem misericórdia. A mulher que aprendeu a não precisar de ninguém — e ficou sozinha de propósito.',
+    meme: '"Não me venha com conversa mole." – energia Rainha de Espadas em reunião. 👸⚔️'
+  },
+  'Rei de Espadas': {
+    luz: 'Julgamento claro, autoridade intelectual, capacidade de tomar decisões difíceis sem deixar emoção nublar a razão quando necessário. Líder que age com lógica e justiça.',
+    sombra: 'Frio demais para ser humano. Usa a inteligência para intimidar. Ou: o nerd com autoridade que finalmente pode mandar em alguém e está aproveitando demais.',
+    meme: 'Ele que explica mansplaining suas próprias emoções racionalmente. Rei de Espadas com problemas de apego. 🤴📊'
+  },
+  // OUROS
+  'Ás de Ouros': {
+    luz: 'Uma semente de prosperidade material. Pode ser uma oportunidade, um projeto, uma ideia com potencial real de se tornar algo concreto. O universo oferece — agora depende do que você faz.',
+    sombra: 'Oportunidade que você deixou passar por medo de não ser boa o suficiente. Ou: agarrou sem planejamento e perdeu. O Ás de Ouros não garante sucesso — garante possibilidade.',
+    meme: 'Quando o universo abre uma porta e você fica parado na soleira analisando se o piso vai aguentar. 💰✨'
+  },
+  'Dois de Ouros': {
+    luz: 'Malabarismo com graça. Múltiplas responsabilidades sendo equilibradas com habilidade e até humor. Adaptabilidade como talento. Você consegue dar conta de mais do que imagina.',
+    sombra: 'Você está fazendo malabarismo com coisas demais e mais cedo ou mais tarde uma vai cair. Bagunça financeira que parece "estilo de vida". Incapacidade de dar prioridade a qualquer coisa.',
+    meme: 'Você com 7 abas abertas, 3 projetos simultâneos e uma conta bancária nervosa. Dois de Ouros personificado. 🤹💸'
+  },
+  'Três de Ouros': {
+    luz: 'Colaboração que gera mais do que cada um poderia criar sozinho. Talento reconhecido, trabalho em equipe genuíno, aprendizado de um ofício com orientação. O artesão sendo visto.',
+    sombra: 'Crédito que não chega. Trabalho em grupo onde um faz tudo. Ou: incapacidade de colaborar porque não confia em ninguém para fazer direito.',
+    meme: 'Você fazendo o projeto todo enquanto o grupo bota o nome. Três de Ouros dark side. 🏗️😤'
+  },
+  'Quatro de Ouros': {
+    luz: 'Segurança financeira construída com esforço. Saber proteger o que conquistou. Às vezes segurar o que tem faz sentido — não é avareza, é prudência.',
+    sombra: 'Apego ao dinheiro tão intenso que impede de viver. Mão fechada que não deixa nada entrar nem sair. Controle financeiro que vira controle de pessoas. "Economizando" para uma vida que nunca começa.',
+    meme: 'Você que não gasta nada mas também não aproveita nada. Guardando para quando? Quatro de Ouros pergunta. 💰😤'
+  },
+  'Cinco de Ouros': {
+    luz: 'A ajuda está mais perto do que parece. A luz no vitral existe — é preciso parar de olhar para o chão e bater na porta. Dificuldade material não é fracasso — é uma fase.',
+    sombra: 'Orgulho que impede de pedir ajuda. Ou: vitimismo que usa a dificuldade como identidade. "Nunca tenho dinheiro" como traço de personalidade em vez de situação temporária a resolver.',
+    meme: 'Você passando na frente da solução do seu problema sem enxergar porque está com a cabeça baixa. Cinco de Ouros. ❄️💸'
+  },
+  'Seis de Ouros': {
+    luz: 'O fluxo saudável de dar e receber. Generosidade que não empobrece. Ajuda que não humilha. Reconhecimento financeiro merecido chegando. O equilíbrio entre abundância partilhada.',
+    sombra: 'Generosidade com agenda. Dar para ter controle. Ou: receber com ressentimento porque precisa de ajuda. Desequilíbrio crônico — sempre dando mais ou recebendo mais, nunca no equilíbrio.',
+    meme: 'Você que ajuda todo mundo mas não sabe receber ajuda. Seis de Ouros invertido, você. ⚖️💛'
+  },
+  'Sete de Ouros': {
+    luz: 'O trabalho foi feito. Agora é aguardar com confiança. Nem toda colheita é imediata — algumas demandam estações inteiras. Avalie se o que está crescendo está crescendo na direção certa.',
+    sombra: 'Impaciência que arranca a planta antes de crescer. Ou: trabalho que vai e vai mas nunca traz resultado porque a estratégia está errada e você não quer admitir.',
+    meme: 'Você postando no Instagram esperando que o algoritmo te acha há 6 meses. Sete de Ouros te vê. 🌱⏳'
+  },
+  'Oito de Ouros': {
+    luz: 'Maestria através da prática deliberada. Cada repetição conta. Você está exatamente onde precisa estar no processo de se tornar excelente. Foque no processo, não no produto.',
+    sombra: 'Perfeccionismo que nunca termina nada. Aprendizado infinito como forma de evitar se expor. "Ainda não estou pronta" para sempre. Ou: trabalho mecânico sem presença, só no piloto automático.',
+    meme: 'Você fazendo um curso novo para a habilidade que você já sabe fazer há anos. Oito de Ouros em loop. 🔨📚'
+  },
+  'Nove de Ouros': {
+    luz: 'Conquista real e merecida. Independência construída com esforço próprio. O jardim que você cultivou está florido. Permita-se desfrutar do que conquistou sem culpa.',
+    sombra: 'Solidão dourada. Ter conquistado tudo e perceber que está sozinha no topo. Ou: confundir independência com incapacidade de vulnerabilidade. Prosperidade material que não basta.',
+    meme: 'Finalmente independente, organizada e bem-sucedida. E completamente sozinha num domingo. Nove de Ouros. 🌺💰'
+  },
+  'Dez de Ouros': {
+    luz: 'Riqueza que atravessa gerações — não só financeira, mas de valores, sabedoria, amor. Deixar um legado. Segurança profunda construída sobre base sólida. O lar como bastião.',
+    sombra: 'Dinheiro de família que cria dinâmicas tóxicas. Herança com condições. Tradição que sufoca. Ou: obsessão com estabilidade material que esquece que a vida é mais que isso.',
+    meme: 'Você planejando o futuro dos seus filhos antes de ter filhos. Dez de Ouros vibrações. 🏰💎'
+  },
+  'Valete de Ouros': {
+    luz: 'O estudante dedicado no início de uma jornada prática. Metódico, confiável, aprendendo com atenção. Novo projeto em estágio inicial com grande potencial se houver consistência.',
+    sombra: 'Eterno estudante que nunca aplica. Coleciona certificados, nunca usa. Ou: procrastinação disfarçada de pesquisa. "Ainda estou me preparando" há 3 anos.',
+    meme: 'Você que tem cursos não assistidos na Udemy desde 2020. Valete de Ouros te julga gentilmente. 📚💰'
+  },
+  'Cavaleiro de Ouros': {
+    luz: 'Lento mas absolutamente inabalável. O mais confiável de todos os cavaleiros. Resultados que levam tempo mas são construídos para durar. Consistência como superpoder silencioso.',
+    sombra: 'Lentidão que vira estagnação. Teimosia disfarçada de constância. Resistência a qualquer mudança mesmo quando mudança é necessária. O carro parado com motor ligado.',
+    meme: 'Você que leva 3 meses para responder um email mas quando responde é perfeito. Cavaleiro de Ouros. 🐴💼'
+  },
+  'Rainha de Ouros': {
+    luz: 'O lar como templo, o corpo como sagrado, a prosperidade como cuidado. Mulher que sabe gerenciar recursos, que cuida com praticidade e amor, que faz o dinheiro e a casa funcionarem.',
+    sombra: 'Materialismo que confunde coisas com amor. Ou: dar tanto para os outros que não sobra nada para si. Controle sobre o lar que vira controle sobre todos que nele vivem.',
+    meme: 'Você que transforma qualquer espaço em lar e qualquer orçamento em abundância. Rainha de Ouros ativada. 🌸🏡'
+  },
+  'Rei de Ouros': {
+    luz: 'Prosperidade com sabedoria. Liderança que gera riqueza para todos ao redor. Generosidade estratégica. O homem ou energia que constrói impérios duradouros com cuidado.',
+    sombra: 'Ganância que chama de ambição. Sucesso a qualquer custo. O empresário que constrói muito e cuida de ninguém, incluindo si mesmo. Rei de um castelo vazio.',
+    meme: 'Bem-sucedido, confiante, sólido. E não sabe fazer uma omelete. Rei de Ouros IRL. 👑💰'
+  },
+  // PAUS
+  'Ás de Paus': {
+    luz: 'Faísca pura. A centelha que pode virar fogueira. Inspiração genuína, energia sexual criativa, desejo de criar algo do zero. Quando essa carta aparece, o combustível está disponível — use agora.',
+    sombra: 'Entusiasmo que dura 48 horas. Começa projetos com intensidade máxima e abandona quando chega a parte difícil. A ideia brilhante que nunca saiu da fase de ideia.',
+    meme: '"Tive uma ideia incrível." Você, toda semana, com ideias diferentes. Ás de Paus em loop. 🔥💡'
+  },
+  'Dois de Paus': {
+    luz: 'O mundo nas suas mãos — literalmente. A visão está clara, o horizonte está aberto. Este é o momento do planejamento estratégico antes da ação. Quão longe você quer ir?',
+    sombra: 'Paralisia da visão grande: sabe onde quer chegar mas o primeiro passo assusta. Fica olhando para o mapa sem começar a caminhar. Planos que existem só na cabeça.',
+    meme: 'Você com o plano de vida perfeito na cabeça e zero ação concreta. Dois de Paus diz "e aí?" 🗺️🔥'
+  },
+  'Três de Paus': {
+    luz: 'O que você plantou está crescendo além do quintal. Expansão real, projetos que ganham vida, horizontes se alargando. Os navios estão chegando com o que foi pedido.',
+    sombra: 'Expansão antes de ter a base sólida. Crescer para fora enquanto a estrutura interna ainda está frágil. Ou: esperar eternamente pelos navios que não vêm porque a estratégia estava errada.',
+    meme: 'Você vendo seus planos finalmente tomando forma depois de meses. Três de Paus: "oi, eu cheguei." 🚢🔥'
+  },
+  'Quatro de Paus': {
+    luz: 'Celebração genuína merecida. O lar que é lar de verdade, casamento, housewarming, conquista compartilhada com quem importa. Um momento de pura alegria coletiva.',
+    sombra: 'Comemorar antes de terminar. Ou: a festa linda por fora que esconde dinâmicas problemáticas. O lar bonito em aparência mas tenso na atmosfera.',
+    meme: 'Você comemorando que acabou a faculdade esquecendo que agora precisa trabalhar. Quatro de Paus: "aproveita!" 🏠🎉'
+  },
+  'Cinco de Paus': {
+    luz: 'Competição saudável que estimula crescimento. Energia em movimento, ideias colidindo, criatividade sendo desafiada. O caos que precede a ordem mais sofisticada.',
+    sombra: 'Briga por briga. Confusão disfarçada de criatividade. Grupo onde todo mundo fala ao mesmo tempo e ninguém escuta. Energia desperdiçada em conflitos que não levam a lugar nenhum.',
+    meme: 'Reunião de equipe onde todo mundo tem a melhor ideia ao mesmo tempo. Cinco de Paus ao vivo. 🔥🤜🤛'
+  },
+  'Seis de Paus': {
+    luz: 'Vitória reconhecida publicamente. O esforço que finalmente recebe o mérito que merece. Seja modesta — mas permita-se receber o reconhecimento com graça e gratidão.',
+    sombra: 'Necessidade de validação externa tão intensa que você só se sente bem quando reconhecida. Ou: reconhecimento que infla o ego além do que a base sustenta.',
+    meme: 'Você no dia que o chefe finalmente percebeu o que você já sabia há meses. Seis de Paus chegou. 🏆🔥'
+  },
+  'Sete de Paus': {
+    luz: 'Você tem terreno elevado. Experiência, perspectiva e posição que os outros não têm. Defender o que acredita com energia — mas escolha com sabedoria o que vale defender.',
+    sombra: 'Paranoia de que todo mundo está contra você. Defensividade que não deixa espaço para colaboração. Lutar em todas as frentes ao mesmo tempo até esgotar completamente.',
+    meme: 'Você explicando sua posição pela quinta vez para pessoas que não querem entender. Sete de Paus cansada. 🔥🛡️'
+  },
+  'Oito de Paus': {
+    luz: 'Tudo se move ao mesmo tempo e na direção certa. Comunicações chegando, projetos acelerando, viagem no horizonte. Aproveite o momentum — janelas assim não ficam abertas para sempre.',
+    sombra: 'Velocidade sem controle. Tanta coisa acontecendo ao mesmo tempo que nada recebe atenção adequada. Ou: expectativa de velocidade que a realidade não acompanha — frustração garantida.',
+    meme: 'Sua caixa de entrada depois de um fim de semana offline. Oito de Paus materializado. 📱🔥'
+  },
+  'Nove de Paus': {
+    luz: 'Você chegou longe. Está cansada, machucada, mas de pé. Há uma última barreira antes da chegada — e você tem o que precisa para ultrapassá-la. Só mais um passo.',
+    sombra: 'Paranoia pós-trauma. Não consegue confiar porque já foi machucada antes. Briga com tudo e todos como mecanismo de defesa. Forças no limite mas recusa de pedir ajuda.',
+    meme: 'Você que já superou tanta coisa que qualquer problema novo parece pessoal. Nove de Paus te entende. 🔥🩹'
+  },
+  'Dez de Paus': {
+    luz: 'Às vezes você está carregando o peso porque é capaz — mas isso não significa que deve fazê-lo sozinha. Delegar não é fraqueza. Soltar não é abandono. Você pode chegar ao destino sem carregar tudo.',
+    sombra: 'Martírio voluntário disfarçado de responsabilidade. "Ninguém faz como eu faço" usado como razão para não soltar nada. Burnout como estilo de vida. Peso que começou com propósito e virou prisão.',
+    meme: 'Você aceitando mais uma tarefa com "claro, sem problema" morrendo por dentro. Dez de Paus diz tchau. 😅🔥'
+  },
+  'Valete de Paus': {
+    luz: 'Energia jovem e aventureira chegando com boas notícias. Faísca de entusiasmo contagiante, início de projeto com muita energia, pessoa que inspira pela presença e vitalidade.',
+    sombra: 'Fogo sem direção. Começa tudo com intensidade e abandona quando a empolgação passa. O "empreendedor" com dez projetos novos todo mês e nenhum terminado.',
+    meme: 'Você nos primeiros dias de um projeto novo vs. você duas semanas depois. Valete de Paus é você. 🏃‍♀️🔥'
+  },
+  'Cavaleiro de Paus': {
+    luz: 'Energia irresistível, aventura, paixão que arrasta. Quando o Cavaleiro de Paus entra, tudo fica mais vivo e mais imprevisível. O tipo de energia que muda a trajetória de uma vida.',
+    sombra: 'Sedutor que some. Apaixonado pela conquista, não pela continuidade. Mudanças de plano constantes que deixam todos ao redor sem chão. Encantador e completamente irresponsável.',
+    meme: 'Ele que apareceu como vendaval, te virou de cabeça para baixo e sumiu. Cavaleiro de Paus, clássico. 🏇🔥'
+  },
+  'Rainha de Paus': {
+    luz: 'Solar, carismática, confiante sem esforço. Lidera pelo exemplo, cria pelo prazer, ama com intensidade. A mulher que entra numa sala e transforma a atmosfera só pela presença.',
+    sombra: 'Ciúme que vem de insegurança escondida. Dominação de quem não suporta não ser o centro. Ou: energia criativa tão intensa que queima as pessoas ao redor.',
+    meme: 'Você que é a energia do grupo até ficar com tédio e ir embora. Rainha de Paus no modo real. 🌻🔥'
+  },
+  'Rei de Paus': {
+    luz: 'Visão clara, execução poderosa, liderança que inspira pelo fogo genuíno. O fundador, o inovador, o que vê possibilidades onde outros veem impossibilidades. Carisma que move montanhas.',
+    sombra: 'Ego tão grande que não cabe nas pessoas ao redor. Visionário que não ouve ninguém. Arrogância que afasta exatamente quem poderia ajudar. CEO que é o maior obstáculo da própria empresa.',
+    meme: 'Ele que tem a visão do século mas não consegue trabalhar com ninguém porque "ninguém entende". Rei de Paus problema. 🔥👑'
+  },
+};
+
+// injeta luz, sombra e meme em cada carta
+Object.entries(CARD_EXTRAS).forEach(([name, extra]) => {
+  if (TAROT_CARDS[name]) Object.assign(TAROT_CARDS[name], extra);
+});
 
 // ── FASE DA LUA ──
 function lunarPhase(dateStr) {
@@ -1724,42 +2192,60 @@ function findCardExact(name) {
   return null;
 }
 
+window.switchPopupTab = function(tab, btn) {
+  document.querySelectorAll('.popup-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.popup-pane').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('popup-pane-' + tab)?.classList.add('active');
+};
+
 window.showCardPopup = function(name, isInv) {
   if (!name) return;
+  // reset abas
+  document.querySelectorAll('.popup-tab').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.querySelectorAll('.popup-pane').forEach((p,i) => p.classList.toggle('active', i===0));
+
   const resolvedName = findCardExact(name);
   const data = resolvedName ? TAROT_CARDS[resolvedName] : null;
   const displayName = resolvedName || name;
   const oracle = data?.oracle || '';
   const imgUrl = CARD_IMAGES[resolvedName] || CARD_IMAGES[name] || null;
-  const meaningText = isInv && data?.rev ? data.rev : (data?.meaning || 'Carta não encontrada no guia. Você pode adicionar uma anotação na seção ✦ Personalizar.');
+  const meaningText = isInv && data?.rev
+    ? data.rev
+    : (data?.meaning || 'Carta não encontrada no guia. Adicione uma anotação na seção ✦ Personalizar.');
 
   document.getElementById('popup-name').innerHTML =
     `${displayName} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}
-     ${isInv ? '<span style="color:var(--rose);font-size:.75rem;font-family:serif">↩ invertida</span>' : ''}`;
+     ${isInv ? '<span style="color:var(--rose);font-size:.75rem;font-family:serif"> ↩ invertida</span>' : ''}`;
 
+  // imagem
   const imgWrap = document.getElementById('popup-img-wrap');
   if (imgWrap) {
-    if (imgUrl) {
-      imgWrap.innerHTML = `<img class="popup-card-img${isInv?' inv':''}" src="${imgUrl}"
-        alt="${displayName}" loading="lazy"
-        onerror="this.parentElement.innerHTML='<div class=\\'popup-card-img-placeholder\\'>🃏</div>'">`;
-    } else {
-      imgWrap.innerHTML = '<div class="popup-card-img-placeholder">🃏</div>';
-    }
+    imgWrap.innerHTML = imgUrl
+      ? `<img class="popup-card-img${isInv?' inv':''}" src="${imgUrl}" alt="${displayName}" loading="lazy"
+           onerror="this.parentElement.innerHTML='<div class=\\'popup-card-img-placeholder\\'>🃏</div>'">`
+      : '<div class="popup-card-img-placeholder">🃏</div>';
   }
 
+  // palavras-chave
   document.getElementById('popup-keywords').innerHTML =
     (data?.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
 
-  // label diferente para invertida
+  // significado
   const meaningLabel = document.getElementById('popup-meaning-label');
   if (meaningLabel) meaningLabel.textContent = isInv ? 'Significado invertido' : 'Significado';
   document.getElementById('popup-meaning').textContent = meaningText;
 
-  const rawNote   = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
+  // luz, sombra, meme
+  document.getElementById('popup-luz').textContent    = data?.luz    || '—';
+  document.getElementById('popup-sombra').textContent = data?.sombra || '—';
+  document.getElementById('popup-meme').textContent   = data?.meme   || '—';
+
+  // nota personalizada
+  const rawNote    = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
   const customNote = isInv
-    ? (typeof rawNote === 'object' ? rawNote?.rev : null)
-    : (typeof rawNote === 'object' ? rawNote?.normal : rawNote);
+    ? (typeof rawNote==='object' ? rawNote?.rev    : null)
+    : (typeof rawNote==='object' ? rawNote?.normal : rawNote);
   const noteArea = document.getElementById('popup-custom-note');
   if (noteArea) {
     if (customNote) {
