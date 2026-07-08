@@ -657,6 +657,138 @@
     transition: all .2s; white-space: nowrap;
   }
   .export-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+  /* ── IA BUTTON ── */
+  .ai-btn {
+    width:100%; background: linear-gradient(135deg,#1a0a3a,#2d1060);
+    border: 1px solid var(--purple); border-radius:10px;
+    padding:.85rem; color:var(--purple-light);
+    font-family:'Cinzel',serif; font-size:.82rem; letter-spacing:.08em;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    gap:.5rem; margin-top:.7rem; transition:all .2s;
+  }
+  .ai-btn:hover { border-color:var(--purple-light); color:#fff; }
+  .ai-btn:disabled { opacity:.5; cursor:not-allowed; }
+  .ai-loading { display:inline-block; animation:spin .7s linear infinite; }
+
+  /* ── CONFIGURAÇÕES ── */
+  .settings-btn {
+    position:fixed; bottom:5.5rem; right:1.2rem;
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:50%; width:44px; height:44px; font-size:1.1rem;
+    cursor:pointer; z-index:500; display:flex; align-items:center;
+    justify-content:center; box-shadow:0 4px 16px rgba(0,0,0,.4);
+    transition:border-color .2s, transform .15s; color:var(--text-dim);
+  }
+  .settings-btn:hover { border-color:var(--gold-dim); transform:scale(1.08); }
+
+  .settings-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(8,5,20,.88); z-index:7000;
+    align-items:center; justify-content:center; padding:1rem;
+  }
+  .settings-overlay.open { display:flex; }
+  .settings-box {
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:14px; padding:1.8rem; width:100%; max-width:440px;
+    animation:fadeIn .2s ease;
+  }
+  .settings-box h3 { font-family:'Cinzel',serif; color:var(--gold-light); margin-bottom:1rem; }
+  .settings-box p  { font-size:.85rem; color:var(--text-dim); margin-bottom:1rem; line-height:1.6; }
+  .settings-box a  { color:var(--gold-dim); }
+
+  /* ── QUIZ ── */
+  .quiz-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(8,5,20,.95); z-index:8000;
+    align-items:flex-start; justify-content:center;
+    padding:1rem; overflow-y:auto;
+  }
+  .quiz-overlay.open { display:flex; }
+  .quiz-box {
+    background:var(--bg2); border:1px solid var(--purple);
+    border-radius:14px; width:100%; max-width:480px;
+    margin:1rem auto; animation:fadeIn .2s ease; overflow:hidden;
+  }
+  .quiz-header {
+    background:linear-gradient(135deg,rgba(122,78,184,.3),rgba(201,168,76,.1));
+    padding:1rem 1.3rem; display:flex; align-items:center;
+    justify-content:space-between; border-bottom:1px solid var(--border);
+  }
+  .quiz-title { font-family:'Cinzel',serif; color:var(--gold-light); font-size:.9rem; }
+  .quiz-score { font-family:'Cinzel',serif; font-size:.8rem; color:var(--text-dim); }
+  .quiz-body  { padding:1.4rem; }
+  .quiz-img-wrap {
+    display:flex; justify-content:center; margin-bottom:1.2rem;
+  }
+  .quiz-img {
+    width:100px; border-radius:8px;
+    border:2px solid var(--border);
+    box-shadow:0 4px 20px rgba(0,0,0,.5);
+  }
+  .quiz-question {
+    font-family:'Cinzel',serif; font-size:.82rem;
+    color:var(--text-dim); text-align:center; margin-bottom:1rem;
+    letter-spacing:.06em;
+  }
+  .quiz-options { display:flex; flex-direction:column; gap:.5rem; }
+  .quiz-opt {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:8px; padding:.7rem 1rem;
+    font-family:'Crimson Text',serif; font-size:1rem; color:var(--text);
+    cursor:pointer; text-align:left; transition:all .2s;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color:var(--purple-light); color:var(--purple-light); }
+  .quiz-opt.correct  { border-color:#70dc90; background:rgba(60,160,80,.15); color:#70dc90; }
+  .quiz-opt.wrong    { border-color:var(--rose); background:rgba(192,80,112,.15); color:var(--rose); }
+  .quiz-opt:disabled { cursor:default; }
+  .quiz-reveal {
+    margin-top:1rem; background:rgba(201,168,76,.08);
+    border:1px solid rgba(201,168,76,.2); border-radius:8px;
+    padding:.9rem 1rem; font-size:.88rem; color:var(--text-dim); display:none;
+  }
+  .quiz-reveal.show { display:block; }
+  .quiz-actions { display:flex; gap:.8rem; margin-top:1rem; justify-content:flex-end; }
+  .quiz-progress {
+    height:3px; background:var(--border); margin-bottom:1rem;
+  }
+  .quiz-progress-bar {
+    height:100%; background:linear-gradient(90deg,var(--purple),var(--gold));
+    transition:width .4s ease;
+  }
+
+  /* ── GRÁFICO ── */
+  .chart-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(8,5,20,.92); z-index:7500;
+    align-items:flex-start; justify-content:center;
+    padding:1rem; overflow-y:auto;
+  }
+  .chart-overlay.open { display:flex; }
+  .chart-box {
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:14px; width:100%; max-width:600px;
+    margin:1rem auto; animation:fadeIn .2s ease;
+  }
+  .chart-header {
+    padding:1rem 1.3rem; display:flex; align-items:center;
+    justify-content:space-between; border-bottom:1px solid var(--border);
+  }
+  .chart-header h3 { font-family:'Cinzel',serif; color:var(--gold-light); font-size:.9rem; }
+  .chart-body { padding:1.2rem; }
+  .chart-bar-wrap { margin-bottom:.5rem; }
+  .chart-bar-label {
+    font-family:'Cinzel',serif; font-size:.68rem;
+    color:var(--text-dim); margin-bottom:.2rem; display:flex;
+    justify-content:space-between;
+  }
+  .chart-bar-track { background:var(--bg3); border-radius:20px; height:10px; overflow:hidden; }
+  .chart-bar-fill  { height:100%; border-radius:20px; transition:width .6s ease; }
+  .chart-section-title {
+    font-family:'Cinzel',serif; font-size:.72rem; letter-spacing:.12em;
+    color:var(--gold-dim); text-transform:uppercase;
+    margin:1.2rem 0 .6rem; border-bottom:1px solid var(--border); padding-bottom:.3rem;
+  }
   .consult-btn {
     width: 100%; background: none;
     border: 1px solid var(--border); border-radius: 10px;
@@ -839,6 +971,56 @@
 
 <!-- TIMER (botão flutuante) -->
 <button class="timer-btn" id="timer-btn" title="Timer de meditação">🔔</button>
+<button class="settings-btn" id="settings-btn" title="Configurações">⚙️</button>
+
+<!-- SETTINGS -->
+<div class="settings-overlay" id="settings-overlay">
+  <div class="settings-box">
+    <h3>⚙️ Configurações</h3>
+    <p>Para gerar interpretações automáticas com IA, você precisa de uma chave da API Anthropic. É gratuita para começar em <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. A chave fica salva só no seu navegador.</p>
+    <div class="form-row">
+      <label>Chave API Anthropic</label>
+      <input type="password" id="anthropic-key-input" placeholder="sk-ant-..." style="margin-top:.35rem">
+    </div>
+    <div style="display:flex;gap:.8rem;margin-top:1rem;justify-content:flex-end">
+      <button class="btn-cancel" id="settings-close">Fechar</button>
+      <button class="btn-save" id="settings-save">Salvar ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz-overlay" id="quiz-overlay">
+  <div class="quiz-box">
+    <div class="quiz-header">
+      <span class="quiz-title">🎓 Quiz de Cartas</span>
+      <span class="quiz-score" id="quiz-score">0 / 0</span>
+      <button class="consult-close" id="quiz-close">×</button>
+    </div>
+    <div class="quiz-progress"><div class="quiz-progress-bar" id="quiz-progress-bar" style="width:0%"></div></div>
+    <div class="quiz-body">
+      <div class="quiz-img-wrap"><img class="quiz-img" id="quiz-img" src="" alt=""></div>
+      <div class="quiz-question" id="quiz-question">Qual é esta carta?</div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="quiz-reveal" id="quiz-reveal"></div>
+      <div class="quiz-actions">
+        <button class="btn-cancel" id="quiz-close2">Sair</button>
+        <button class="btn-save" id="quiz-next" style="display:none">Próxima →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRÁFICO -->
+<div class="chart-overlay" id="chart-overlay">
+  <div class="chart-box">
+    <div class="chart-header">
+      <h3>📊 Frequência de Cartas</h3>
+      <button class="consult-close" id="chart-close">×</button>
+    </div>
+    <div class="chart-body" id="chart-body"></div>
+  </div>
+</div>
 
 <!-- TIMER OVERLAY -->
 <div class="timer-overlay" id="timer-overlay">
@@ -899,6 +1081,10 @@
         <div class="combos-panel-title">🔗 Combinações detectadas</div>
         <div id="combos-list"></div>
       </div>
+      <!-- botão IA -->
+      <button type="button" class="ai-btn" id="ai-btn" style="display:none">
+        <span>✨</span> Gerar Interpretação com IA
+      </button>
     </div>
     <div class="form-row">
       <label>Tema da Tiragem</label>
@@ -934,6 +1120,10 @@
     <input type="text" id="filter-input" placeholder="🔍  Buscar por carta ou palavra...">
     <span class="entry-count" id="entry-count"></span>
     <button class="export-btn" id="export-btn" title="Exportar diário">⬇ JSON</button>
+    <button class="export-btn" id="import-btn" title="Importar diário">⬆ JSON</button>
+    <button class="export-btn" id="chart-btn" title="Ver frequência">📊</button>
+    <button class="export-btn" id="quiz-btn" title="Quiz de cartas">🎓</button>
+    <input type="file" id="import-file" accept=".json" style="display:none">
   </div>
   <div id="theme-filter-bar" style="display:none;margin-bottom:1rem">
     <div class="theme-selector">
@@ -1884,7 +2074,256 @@ function renderSpread(tags, containerId) {
 }
 
 
-// ── CUSTOM DATA ──
+// ── CONFIGURAÇÕES / API KEY ──
+document.getElementById('settings-btn').addEventListener('click', () => {
+  const key = localStorage.getItem('anthropic_key') || '';
+  document.getElementById('anthropic-key-input').value = key;
+  document.getElementById('settings-overlay').classList.add('open');
+});
+document.getElementById('settings-close').addEventListener('click', () =>
+  document.getElementById('settings-overlay').classList.remove('open'));
+document.getElementById('settings-save').addEventListener('click', () => {
+  const key = document.getElementById('anthropic-key-input').value.trim();
+  if (key) localStorage.setItem('anthropic_key', key);
+  else localStorage.removeItem('anthropic_key');
+  document.getElementById('settings-overlay').classList.remove('open');
+  showToast(key ? '✦ Chave API salva!' : 'Chave removida');
+});
+
+// ── IA: GERAR ANÁLISE ──
+function updateAIBtn() {
+  const btn = document.getElementById('ai-btn');
+  if (btn) btn.style.display = cardTags.length > 0 ? '' : 'none';
+}
+
+async function generateAIReading() {
+  const apiKey = localStorage.getItem('anthropic_key');
+  if (!apiKey) {
+    showToast('⚠ Configure sua chave API em ⚙️');
+    document.getElementById('settings-overlay').classList.add('open');
+    return;
+  }
+  const btn = document.getElementById('ai-btn');
+  const theme = document.getElementById('f-theme').value;
+  const existing = document.getElementById('f-analysis').value.trim();
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ai-loading">⟳</span> Gerando interpretação...';
+
+  const cardList = cardTags.map(c =>
+    `${c.name}${c.inv ? ' (invertida)' : ''}`
+  ).join(', ');
+
+  const combos = detectCombinations(cardTags);
+  const comboText = combos.length
+    ? '\nCombinações detectadas: ' + combos.map(c => c.cards.join(' + ')).join('; ')
+    : '';
+
+  const prompt = `Você é uma taróloga experiente com conhecimento profundo das tradições herméticas, psicologia junguiana e sabedoria ancestral. Faça uma leitura sincera, direta e sem filtros das seguintes cartas:
+
+Cartas: ${cardList}${comboText}${theme ? `\nTema da consulta: ${theme}` : ''}${existing ? `\nContexto adicional: ${existing}` : ''}
+
+Escreva uma interpretação completa em português brasileiro considerando:
+- O significado de cada carta (e o lado sombra das invertidas)
+- Como as cartas dialogam entre si e o que o conjunto revela
+- Uma mensagem prática e direta para quem tirou
+- Seja honesta: diga o que precisa ser dito, não só o que é confortável
+
+Máximo 350 palavras. Tom: sincero, profundo, sem eufemismos desnecessários.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    if (text) {
+      document.getElementById('f-analysis').value = text;
+      showToast('✦ Interpretação gerada!');
+    } else throw new Error('Resposta vazia');
+  } catch(e) {
+    showToast('Erro ao chamar IA: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>✨</span> Gerar Interpretação com IA';
+  }
+}
+
+document.getElementById('ai-btn').addEventListener('click', generateAIReading);
+
+// ── QUIZ ──
+let quizCards = [], quizIdx = 0, quizCorrect = 0, quizAnswered = false;
+
+function shuffleArr(arr) { return [...arr].sort(() => Math.random() - .5); }
+
+function startQuiz() {
+  const eligible = Object.keys(TAROT_CARDS).filter(n => CARD_IMAGES[n]);
+  quizCards = shuffleArr(eligible);
+  quizIdx = 0; quizCorrect = 0;
+  document.getElementById('quiz-overlay').classList.add('open');
+  loadQuizCard();
+}
+
+function loadQuizCard() {
+  if (quizIdx >= Math.min(quizCards.length, 20)) { endQuiz(); return; }
+  quizAnswered = false;
+  const name = quizCards[quizIdx];
+  const data = TAROT_CARDS[name] || {};
+  const total = Math.min(quizCards.length, 20);
+
+  document.getElementById('quiz-score').textContent = `${quizCorrect} / ${quizIdx}`;
+  document.getElementById('quiz-progress-bar').style.width = (quizIdx / total * 100) + '%';
+  document.getElementById('quiz-img').src = CARD_IMAGES[name] || '';
+  document.getElementById('quiz-question').textContent = 'Qual é esta carta?';
+  document.getElementById('quiz-reveal').classList.remove('show');
+  document.getElementById('quiz-next').style.display = 'none';
+
+  // 4 opções: resposta certa + 3 erradas
+  const wrong = shuffleArr(Object.keys(TAROT_CARDS).filter(n => n !== name)).slice(0, 3);
+  const opts = shuffleArr([name, ...wrong]);
+
+  document.getElementById('quiz-options').innerHTML = opts.map(opt =>
+    `<button class="quiz-opt" onclick="answerQuiz('${opt.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}')">
+      ${opt}
+    </button>`
+  ).join('');
+}
+
+window.answerQuiz = function(chosen, correct) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(btn => {
+    btn.disabled = true;
+    if (btn.textContent.trim() === correct) btn.classList.add('correct');
+    else if (btn.textContent.trim() === chosen && chosen !== correct) btn.classList.add('wrong');
+  });
+  if (chosen === correct) quizCorrect++;
+  const data = TAROT_CARDS[correct] || {};
+  const reveal = document.getElementById('quiz-reveal');
+  reveal.innerHTML = `<strong style="color:var(--gold)">${correct}</strong><br>
+    <span style="color:var(--text-dim);font-size:.85rem">${data.meaning || ''}</span>
+    ${data.meme ? `<br><span style="color:var(--purple-light);font-style:italic;font-size:.82rem">${data.meme}</span>` : ''}`;
+  reveal.classList.add('show');
+  document.getElementById('quiz-next').style.display = '';
+};
+
+document.getElementById('quiz-next').addEventListener('click', () => {
+  quizIdx++;
+  loadQuizCard();
+});
+
+function endQuiz() {
+  const pct = Math.round(quizCorrect / Math.min(quizCards.length,20) * 100);
+  const emoji = pct >= 80 ? '🌟' : pct >= 50 ? '🌙' : '🌱';
+  document.getElementById('quiz-options').innerHTML = '';
+  document.getElementById('quiz-img').src = '';
+  document.getElementById('quiz-reveal').classList.remove('show');
+  document.getElementById('quiz-next').style.display = 'none';
+  document.getElementById('quiz-question').innerHTML =
+    `${emoji} Resultado: <strong style="color:var(--gold)">${quizCorrect} / 20</strong> (${pct}%)<br>
+    <span style="font-size:.82rem;color:var(--text-dim)">${pct>=80?'Você conhece muito bem seu baralho!':pct>=50?'Indo bem! Continue praticando.':'Continue estudando — a prática leva à maestria.'}</span>`;
+  document.getElementById('quiz-progress-bar').style.width = '100%';
+  document.getElementById('quiz-score').textContent = `${quizCorrect} / 20`;
+}
+
+document.getElementById('quiz-btn').addEventListener('click', startQuiz);
+['quiz-close','quiz-close2'].forEach(id => {
+  document.getElementById(id).addEventListener('click', () =>
+    document.getElementById('quiz-overlay').classList.remove('open'));
+});
+
+// ── GRÁFICO DE FREQUÊNCIA ──
+function renderChart() {
+  const freq = {};
+  const naipeFreq = { Copas:0, Espadas:0, Ouros:0, Paus:0, Maiores:0 };
+
+  entries.forEach(e => e.cards.forEach(c => {
+    freq[c.name] = (freq[c.name]||0) + 1;
+    const n = c.name;
+    if (n.includes('Copas')) naipeFreq.Copas++;
+    else if (n.includes('Espadas')) naipeFreq.Espadas++;
+    else if (n.includes('Ouros')) naipeFreq.Ouros++;
+    else if (n.includes('Paus')) naipeFreq.Paus++;
+    else naipeFreq.Maiores++;
+  }));
+
+  const top = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const maxV = top[0]?.[1] || 1;
+  const maxN = Math.max(...Object.values(naipeFreq), 1);
+
+  const naipeColors = { Copas:'#c05070', Espadas:'#6090c0', Ouros:'#c9a84c', Paus:'#50a060', Maiores:'#9b6fd0' };
+
+  const body = document.getElementById('chart-body');
+  if (!entries.length) { body.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:2rem">Nenhuma tiragem registrada ainda.</p>'; return; }
+
+  body.innerHTML = `
+    <div class="chart-section-title">Top 10 Cartas Mais Frequentes</div>
+    ${top.map(([name, count]) => `
+      <div class="chart-bar-wrap">
+        <div class="chart-bar-label"><span>${name}</span><span>${count}×</span></div>
+        <div class="chart-bar-track">
+          <div class="chart-bar-fill" style="width:${count/maxV*100}%;background:var(--purple)"></div>
+        </div>
+      </div>`).join('')}
+    <div class="chart-section-title" style="margin-top:1.5rem">Distribuição por Naipe</div>
+    ${Object.entries(naipeFreq).map(([naipe, count]) => `
+      <div class="chart-bar-wrap">
+        <div class="chart-bar-label"><span>${naipe}</span><span>${count}×</span></div>
+        <div class="chart-bar-track">
+          <div class="chart-bar-fill" style="width:${count/maxN*100}%;background:${naipeColors[naipe]||'var(--gold)'}"></div>
+        </div>
+      </div>`).join('')}
+  `;
+
+  document.getElementById('chart-overlay').classList.add('open');
+}
+
+document.getElementById('chart-btn').addEventListener('click', renderChart);
+document.getElementById('chart-close').addEventListener('click', () =>
+  document.getElementById('chart-overlay').classList.remove('open'));
+
+// ── IMPORTAR ──
+document.getElementById('import-btn').addEventListener('click', () =>
+  document.getElementById('import-file').click());
+
+document.getElementById('import-file').addEventListener('change', async e => {
+  const file = e.target.files[0]; if (!file) return;
+  try {
+    const text = await file.text();
+    const imported = JSON.parse(text);
+    if (!Array.isArray(imported)) throw new Error('Formato inválido');
+    const confirmed = confirm(`Importar ${imported.length} entradas? Elas serão mescladas com as existentes.`);
+    if (!confirmed) return;
+    let added = 0;
+    for (const entry of imported) {
+      const exists = entries.find(e => e.id === entry.id);
+      if (!exists && entry.date && entry.cards) {
+        await saveEntry(entry);
+        entries.unshift(entry);
+        added++;
+      }
+    }
+    render();
+    showToast(`✦ ${added} entrada${added!==1?'s':''} importada${added!==1?'s':''}!`);
+  } catch(err) { showToast('Erro ao importar: ' + err.message); }
+  e.target.value = '';
+});
+
+// ── FIM DOS NOVOS RECURSOS ──
+
 let customNotes = {};    // {cardName: noteText}
 let customCombos = [];   // [{id, cards:[], meaning}]
 
@@ -2599,6 +3038,7 @@ function renderTags(){
   });
   renderCombosPanel(cardTags);
   renderSpread(cardTags, 'form-spread');
+  updateAIBtn();
 }
 window.removeTag=function(i){ cardTags.splice(i,1); renderTags() };
 
