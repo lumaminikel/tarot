@@ -195,11 +195,12 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(8,5,20,.7);
-    z-index: 5000;
+    background: rgba(8,5,20,.85);
+    z-index: 9500;
     align-items: center;
     justify-content: center;
     padding: 1rem;
+    overflow-y: auto;
   }
   .card-popup-overlay.open { display: flex; }
   .card-popup {
@@ -789,6 +790,179 @@
     color:var(--gold-dim); text-transform:uppercase;
     margin:1.2rem 0 .6rem; border-bottom:1px solid var(--border); padding-bottom:.3rem;
   }
+
+  /* ── CALENDÁRIO ── */
+  .cal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(8,5,20,.92); z-index:7500;
+    align-items:flex-start; justify-content:center;
+    padding:1rem; overflow-y:auto;
+  }
+  .cal-overlay.open { display:flex; }
+  .cal-box {
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:14px; width:100%; max-width:520px;
+    margin:1rem auto; animation:fadeIn .2s ease;
+  }
+  .cal-header {
+    padding:1rem 1.3rem; display:flex; align-items:center;
+    justify-content:space-between; border-bottom:1px solid var(--border);
+  }
+  .cal-header h3 { font-family:'Cinzel',serif; color:var(--gold-light); font-size:.9rem; }
+  .cal-nav { display:flex; align-items:center; gap:.6rem; }
+  .cal-nav-btn {
+    background:none; border:1px solid var(--border); border-radius:6px;
+    width:28px; height:28px; color:var(--text-dim); cursor:pointer;
+    font-size:.9rem; display:flex; align-items:center; justify-content:center;
+    transition:all .2s;
+  }
+  .cal-nav-btn:hover { border-color:var(--gold-dim); color:var(--gold); }
+  .cal-month-label { font-family:'Cinzel',serif; font-size:.78rem; color:var(--gold); min-width:120px; text-align:center; }
+  .cal-body { padding:1rem; }
+  .cal-grid {
+    display:grid; grid-template-columns:repeat(7,1fr);
+    gap:3px;
+  }
+  .cal-day-label {
+    font-family:'Cinzel',serif; font-size:.6rem; color:var(--text-dim);
+    text-align:center; padding:.3rem 0; letter-spacing:.05em;
+  }
+  .cal-day {
+    aspect-ratio:1; border-radius:6px; border:1px solid transparent;
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; cursor:default; font-size:.78rem;
+    color:var(--text-dim); transition:all .15s; position:relative;
+    padding:2px;
+  }
+  .cal-day.has-entry {
+    border-color:var(--purple); background:rgba(122,78,184,.12);
+    cursor:pointer; color:var(--text);
+  }
+  .cal-day.has-entry:hover { border-color:var(--gold-dim); background:rgba(201,168,76,.1); }
+  .cal-day.today { border-color:var(--gold-dim); }
+  .cal-day.empty { opacity:0; pointer-events:none; }
+  .cal-day-num { font-family:'Cinzel',serif; font-size:.72rem; line-height:1; }
+  .cal-day-cards {
+    display:flex; flex-wrap:wrap; gap:1px; justify-content:center; margin-top:2px;
+  }
+  .cal-card-dot {
+    width:14px; height:20px; border-radius:2px;
+    object-fit:cover; border:1px solid var(--border);
+  }
+  .cal-lunar { font-size:.65rem; line-height:1; }
+  .cal-day-detail {
+    margin-top:1rem; background:var(--bg3); border-radius:8px;
+    padding:.9rem; display:none;
+  }
+  .cal-day-detail.show { display:block; }
+
+  /* ── HISTÓRICO CARTA DO DIA ── */
+  .cod-history-btn {
+    font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.1em;
+    color:var(--gold-dim); background:none; border:none;
+    cursor:pointer; text-decoration:underline; margin-top:.3rem;
+    display:block; transition:color .2s;
+  }
+  .cod-history-btn:hover { color:var(--gold); }
+  .cod-history-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(8,5,20,.9); z-index:7000;
+    align-items:flex-start; justify-content:center;
+    padding:1rem; overflow-y:auto;
+  }
+  .cod-history-overlay.open { display:flex; }
+  .cod-history-box {
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:14px; width:100%; max-width:440px;
+    margin:1rem auto; animation:fadeIn .2s ease;
+  }
+  .cod-history-header {
+    padding:1rem 1.3rem; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .cod-history-header h3 { font-family:'Cinzel',serif; color:var(--gold-light); font-size:.9rem; }
+  .cod-history-list { max-height:60vh; overflow-y:auto; }
+  .cod-history-item {
+    display:flex; align-items:center; gap:.9rem;
+    padding:.7rem 1.2rem; border-bottom:1px solid rgba(58,46,98,.4);
+    cursor:pointer; transition:background .15s;
+  }
+  .cod-history-item:hover { background:rgba(122,78,184,.1); }
+  .cod-history-img { width:32px; border-radius:4px; border:1px solid var(--border); flex-shrink:0; }
+  .cod-history-img.inv { transform:rotate(180deg); border-color:var(--rose); }
+  .cod-history-info { flex:1; min-width:0; }
+  .cod-history-name { font-family:'Cinzel',serif; font-size:.82rem; color:var(--text); }
+  .cod-history-date { font-size:.72rem; color:var(--text-dim); }
+
+  /* ── COMPARAÇÃO ── */
+  .compare-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(8,5,20,.92); z-index:7500;
+    align-items:flex-start; justify-content:center;
+    padding:1rem; overflow-y:auto;
+  }
+  .compare-overlay.open { display:flex; }
+  .compare-box {
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:14px; width:100%; max-width:600px;
+    margin:1rem auto; animation:fadeIn .2s ease;
+  }
+  .compare-header {
+    padding:1rem 1.3rem; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .compare-header h3 { font-family:'Cinzel',serif; color:var(--gold-light); font-size:.9rem; }
+  .compare-selectors {
+    display:grid; grid-template-columns:1fr 1fr; gap:1rem; padding:1rem;
+  }
+  .compare-selector input {
+    width:100%; background:var(--bg3); border:1px solid var(--border);
+    border-radius:7px; padding:.55rem .8rem; color:var(--text);
+    font-family:'Crimson Text',serif; font-size:.95rem; outline:none;
+    transition:border-color .2s;
+  }
+  .compare-selector input:focus { border-color:var(--purple-light); }
+  .compare-selector-label {
+    font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.1em;
+    color:var(--gold-dim); text-transform:uppercase; margin-bottom:.35rem;
+  }
+  .compare-suggestions {
+    position:absolute; left:0; right:0; top:100%;
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:8px; z-index:100; max-height:160px; overflow-y:auto;
+    display:none;
+  }
+  .compare-suggestions.open { display:block; }
+  .compare-sug-item {
+    padding:.45rem .8rem; cursor:pointer; font-size:.9rem; color:var(--text-dim);
+  }
+  .compare-sug-item:hover { background:rgba(122,78,184,.2); color:var(--text); }
+  .compare-cards {
+    display:grid; grid-template-columns:1fr 1fr; gap:1rem; padding:0 1rem 1rem;
+  }
+  .compare-card-panel { }
+  .compare-card-img {
+    width:100%; max-height:180px; object-fit:contain;
+    border-radius:8px; border:1px solid var(--border);
+    background:#080514; display:block; margin-bottom:.7rem;
+  }
+  .compare-card-name {
+    font-family:'Cinzel',serif; font-size:.82rem; color:var(--gold-light);
+    margin-bottom:.4rem;
+  }
+  .compare-field {
+    font-size:.82rem; color:var(--text-dim); line-height:1.55;
+    margin-bottom:.6rem;
+  }
+  .compare-field-label {
+    font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.12em;
+    color:var(--gold-dim); text-transform:uppercase; margin-bottom:.2rem;
+  }
+  .compare-vs {
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cinzel',serif; color:var(--border); font-size:1.2rem;
+    padding:.5rem 0;
+  }
   .consult-btn {
     width: 100%; background: none;
     border: 1px solid var(--border); border-radius: 10px;
@@ -977,10 +1151,10 @@
 <div class="settings-overlay" id="settings-overlay">
   <div class="settings-box">
     <h3>⚙️ Configurações</h3>
-    <p>Para gerar interpretações automáticas com IA, você precisa de uma chave da API Anthropic. É gratuita para começar em <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. A chave fica salva só no seu navegador.</p>
+    <p>Para gerar interpretações automáticas com IA, você precisa de uma chave da API Google Gemini. Obtenha gratuitamente em <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>. A chave fica salva só no seu navegador.</p>
     <div class="form-row">
-      <label>Chave API Anthropic</label>
-      <input type="password" id="anthropic-key-input" placeholder="sk-ant-..." style="margin-top:.35rem">
+      <label>Chave API Google Gemini</label>
+      <input type="password" id="anthropic-key-input" placeholder="AIza..." style="margin-top:.35rem">
     </div>
     <div style="display:flex;gap:.8rem;margin-top:1rem;justify-content:flex-end">
       <button class="btn-cancel" id="settings-close">Fechar</button>
@@ -1103,8 +1277,8 @@
       <textarea id="f-analysis" placeholder="Cole aqui a análise do chat..."></textarea>
     </div>
     <div class="form-row">
-      <label>Notas pessoais (opcional)</label>
-      <textarea id="f-notes" style="min-height:80px" placeholder="O que você sentiu? O que aconteceu no dia?"></textarea>
+      <label>Qual foi a pergunta? (opcional)</label>
+      <textarea id="f-notes" style="min-height:60px" placeholder="O que você queria saber com essa tiragem?"></textarea>
     </div>
     <div class="form-actions">
       <button class="btn-cancel" id="cancel-form">Cancelar</button>
@@ -2076,7 +2250,7 @@ function renderSpread(tags, containerId) {
 
 // ── CONFIGURAÇÕES / API KEY ──
 document.getElementById('settings-btn').addEventListener('click', () => {
-  const key = localStorage.getItem('anthropic_key') || '';
+  const key = localStorage.getItem('gemini_key') || '';
   document.getElementById('anthropic-key-input').value = key;
   document.getElementById('settings-overlay').classList.add('open');
 });
@@ -2084,20 +2258,20 @@ document.getElementById('settings-close').addEventListener('click', () =>
   document.getElementById('settings-overlay').classList.remove('open'));
 document.getElementById('settings-save').addEventListener('click', () => {
   const key = document.getElementById('anthropic-key-input').value.trim();
-  if (key) localStorage.setItem('anthropic_key', key);
-  else localStorage.removeItem('anthropic_key');
+  if (key) localStorage.setItem('gemini_key', key);
+  else localStorage.removeItem('gemini_key');
   document.getElementById('settings-overlay').classList.remove('open');
   showToast(key ? '✦ Chave API salva!' : 'Chave removida');
 });
 
-// ── IA: GERAR ANÁLISE ──
+// ── IA: GERAR ANÁLISE (Gemini) ──
 function updateAIBtn() {
   const btn = document.getElementById('ai-btn');
   if (btn) btn.style.display = cardTags.length > 0 ? '' : 'none';
 }
 
 async function generateAIReading() {
-  const apiKey = localStorage.getItem('anthropic_key');
+  const apiKey = localStorage.getItem('gemini_key');
   if (!apiKey) {
     showToast('⚠ Configure sua chave API em ⚙️');
     document.getElementById('settings-overlay').classList.add('open');
@@ -2105,7 +2279,7 @@ async function generateAIReading() {
   }
   const btn = document.getElementById('ai-btn');
   const theme = document.getElementById('f-theme').value;
-  const existing = document.getElementById('f-analysis').value.trim();
+  const pergunta = document.getElementById('f-notes').value.trim();
 
   btn.disabled = true;
   btn.innerHTML = '<span class="ai-loading">⟳</span> Gerando interpretação...';
@@ -2119,42 +2293,43 @@ async function generateAIReading() {
     ? '\nCombinações detectadas: ' + combos.map(c => c.cards.join(' + ')).join('; ')
     : '';
 
-  const prompt = `Você é uma taróloga experiente com conhecimento profundo das tradições herméticas, psicologia junguiana e sabedoria ancestral. Faça uma leitura sincera, direta e sem filtros das seguintes cartas:
+  const prompt = `Você é uma taróloga experiente com conhecimento profundo das tradições herméticas e psicologia junguiana. Faça uma leitura de tarot sincera, direta e sem filtros.
 
-Cartas: ${cardList}${comboText}${theme ? `\nTema da consulta: ${theme}` : ''}${existing ? `\nContexto adicional: ${existing}` : ''}
+CARTAS: ${cardList}${comboText}
+${theme ? `TEMA: ${theme}` : ''}
+${pergunta ? `PERGUNTA / CONTEXTO: ${pergunta}` : ''}
 
 Escreva uma interpretação completa em português brasileiro considerando:
-- O significado de cada carta (e o lado sombra das invertidas)
-- Como as cartas dialogam entre si e o que o conjunto revela
-- Uma mensagem prática e direta para quem tirou
-- Seja honesta: diga o que precisa ser dito, não só o que é confortável
+- O significado específico de cada carta (especialmente o lado sombra das invertidas)
+- Como as cartas conversam entre si e o que o conjunto revela
+- Se há uma pergunta, responda-a diretamente com base nas cartas
+- Uma mensagem prática: o que fazer com essa energia
 
-Máximo 350 palavras. Tom: sincero, profundo, sem eufemismos desnecessários.`;
+Seja honesta e direta. Não suavize demais. Máximo 350 palavras.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      }
+    );
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `HTTP ${res.status}`);
+    }
     const data = await res.json();
-    const text = data.content?.[0]?.text || '';
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     if (text) {
       document.getElementById('f-analysis').value = text;
       showToast('✦ Interpretação gerada!');
-    } else throw new Error('Resposta vazia');
+    } else throw new Error('Resposta vazia da API');
   } catch(e) {
-    showToast('Erro ao chamar IA: ' + e.message);
+    showToast('Erro: ' + e.message);
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<span>✨</span> Gerar Interpretação com IA';
@@ -2594,9 +2769,9 @@ const CARD_IMAGES = {
   'Seis de Paus':      W+'3/3b/Wands06.jpg',
   'Sete de Paus':      W+'e/e4/Wands07.jpg',
   'Oito de Paus':      W+'6/6b/Wands08.jpg',
-  'Nove de Paus':      W+'e/e7/Wands09.jpg',
+  'Nove de Paus':      'https://www.sacred-texts.com/tarot/pkt/img/wawa09.jpg',
   'Dez de Paus':       W+'0/0b/Wands10.jpg',
-  'Valete de Paus':    W+'6/6a/Wands11.jpg',
+  'Valete de Paus':    'https://www.sacred-texts.com/tarot/pkt/img/wawa11.jpg',
   'Cavaleiro de Paus': W+'1/16/Wands12.jpg',
   'Rainha de Paus':    W+'0/0d/Wands13.jpg',
   'Rei de Paus':       W+'c/ce/Wands14.jpg',
@@ -2657,7 +2832,6 @@ window.showCardPopup = function(name, isInv) {
     `${displayName} ${oracle ? `<span class="oracle-pill ${oracle}">${oracleLabels[oracle]}</span>` : ''}
      ${isInv ? '<span style="color:var(--rose);font-size:.75rem;font-family:serif"> ↩ invertida</span>' : ''}`;
 
-  // imagem
   const imgWrap = document.getElementById('popup-img-wrap');
   if (imgWrap) {
     imgWrap.innerHTML = imgUrl
@@ -2666,21 +2840,17 @@ window.showCardPopup = function(name, isInv) {
       : '<div class="popup-card-img-placeholder">🃏</div>';
   }
 
-  // palavras-chave
   document.getElementById('popup-keywords').innerHTML =
     (data?.keywords||[]).map(k=>`<span class="cp-kw">${k}</span>`).join('');
 
-  // significado
   const meaningLabel = document.getElementById('popup-meaning-label');
   if (meaningLabel) meaningLabel.textContent = isInv ? 'Significado invertido' : 'Significado';
   document.getElementById('popup-meaning').textContent = meaningText;
 
-  // luz, sombra, meme
   document.getElementById('popup-luz').textContent    = data?.luz    || '—';
   document.getElementById('popup-sombra').textContent = data?.sombra || '—';
   document.getElementById('popup-meme').textContent   = data?.meme   || '—';
 
-  // nota personalizada
   const rawNote    = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
   const customNote = isInv
     ? (typeof rawNote==='object' ? rawNote?.rev    : null)
@@ -2692,7 +2862,15 @@ window.showCardPopup = function(name, isInv) {
       noteArea.style.display = 'block';
     } else { noteArea.style.display = 'none'; }
   }
-  document.getElementById('card-popup-overlay').classList.add('open');
+
+  // travar scroll da página
+  document.body.style.overflow = 'hidden';
+  const overlay = document.getElementById('card-popup-overlay');
+  overlay.classList.add('open');
+  // scroll do popup de volta ao topo
+  overlay.scrollTop = 0;
+  const inner = overlay.querySelector('.card-popup');
+  if (inner) inner.scrollTop = 0;
 };
 
 // ── CONSULTAR CARTA ──
@@ -2751,9 +2929,13 @@ function filterConsultList(q) {
 }
 
 window.consultCard = function(name) {
-  document.getElementById('consult-overlay').classList.remove('open');
-  document.getElementById('consult-search').value = '';
-  showCardPopup(name);
+  // mantém o overlay de consulta visível enquanto popup abre — evita scroll
+  showCardPopup(name, false);
+  // fecha o overlay de consulta DEPOIS que popup já está aberto
+  setTimeout(() => {
+    document.getElementById('consult-overlay').classList.remove('open');
+    document.getElementById('consult-search').value = '';
+  }, 80);
 };
 
 document.getElementById('consult-btn').addEventListener('click', ()=>{
@@ -2908,10 +3090,13 @@ function showCardPreview(cardName, isInv) {
   panel.classList.add('visible');
 }
 
-document.getElementById('card-popup-close').addEventListener('click', ()=>
-  document.getElementById('card-popup-overlay').classList.remove('open'));
+function closeCardPopup() {
+  document.getElementById('card-popup-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('card-popup-close').addEventListener('click', closeCardPopup);
 document.getElementById('card-popup-overlay').addEventListener('click', e=>{
-  if (e.target===e.currentTarget) e.currentTarget.classList.remove('open');
+  if (e.target===e.currentTarget) closeCardPopup();
 });
 
 // ── HELPERS ──
@@ -3313,7 +3498,7 @@ function render(){
           return `<div class="entry-spread">${imgs}</div>`;
         })()}
         ${an?`<div class="entry-section-label">Análise</div><div class="entry-analysis">${an}</div>`:''}
-        ${nt?`<div class="entry-section-label">Notas pessoais</div><div class="entry-notes">${nt}</div>`:''}
+        ${nt?`<div class="entry-section-label">Qual foi a pergunta</div><div class="entry-notes">${nt}</div>`:''}
         ${(()=>{
           const combos=detectCombinations(e.cards);
           if(!combos.length) return '';
