@@ -1185,6 +1185,60 @@
   </div>
 </div>
 
+<!-- CALENDÁRIO -->
+<div class="cal-overlay" id="cal-overlay">
+  <div class="cal-box">
+    <div class="cal-header">
+      <h3>📅 Calendário</h3>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" id="cal-prev">‹</button>
+        <span class="cal-month-label" id="cal-month-label"></span>
+        <button class="cal-nav-btn" id="cal-next">›</button>
+      </div>
+      <button class="consult-close" id="cal-close">×</button>
+    </div>
+    <div class="cal-body">
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-day-detail" id="cal-day-detail"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTÓRICO CARTA DO DIA -->
+<div class="cod-history-overlay" id="cod-history-overlay">
+  <div class="cod-history-box">
+    <div class="cod-history-header">
+      <h3>🌙 Histórico — Carta do Dia</h3>
+      <button class="consult-close" id="cod-history-close">×</button>
+    </div>
+    <div class="cod-history-list" id="cod-history-list"></div>
+  </div>
+</div>
+
+<!-- COMPARAÇÃO -->
+<div class="compare-overlay" id="compare-overlay">
+  <div class="compare-box">
+    <div class="compare-header">
+      <h3>⚖️ Comparar Cartas</h3>
+      <button class="consult-close" id="compare-close">×</button>
+    </div>
+    <div class="compare-selectors">
+      <div class="compare-selector" style="position:relative">
+        <div class="compare-selector-label">Carta 1</div>
+        <input type="text" id="compare-input-1" placeholder="Buscar..." autocomplete="off" autocorrect="off">
+        <div class="compare-suggestions" id="compare-sug-1"></div>
+      </div>
+      <div class="compare-selector" style="position:relative">
+        <div class="compare-selector-label">Carta 2</div>
+        <input type="text" id="compare-input-2" placeholder="Buscar..." autocomplete="off" autocorrect="off">
+        <div class="compare-suggestions" id="compare-sug-2"></div>
+      </div>
+    </div>
+    <div class="compare-vs">✦</div>
+    <div class="compare-cards" id="compare-cards"></div>
+  </div>
+</div>
+
 <!-- GRÁFICO -->
 <div class="chart-overlay" id="chart-overlay">
   <div class="chart-box">
@@ -1293,11 +1347,28 @@
   <div class="filter-bar" id="filter-bar" style="display:none">
     <input type="text" id="filter-input" placeholder="🔍  Buscar por carta ou palavra...">
     <span class="entry-count" id="entry-count"></span>
-    <button class="export-btn" id="export-btn" title="Exportar diário">⬇ JSON</button>
-    <button class="export-btn" id="import-btn" title="Importar diário">⬆ JSON</button>
-    <button class="export-btn" id="chart-btn" title="Ver frequência">📊</button>
-    <button class="export-btn" id="quiz-btn" title="Quiz de cartas">🎓</button>
+    <button class="export-btn" id="export-btn" title="Exportar">⬇</button>
+    <button class="export-btn" id="import-btn" title="Importar">⬆</button>
+    <button class="export-btn" id="lunar-filter-btn" title="Filtrar por fase lunar">🌙</button>
+    <button class="export-btn" id="cal-btn" title="Calendário">📅</button>
+    <button class="export-btn" id="chart-btn" title="Frequência">📊</button>
+    <button class="export-btn" id="quiz-btn" title="Quiz">🎓</button>
+    <button class="export-btn" id="compare-btn" title="Comparar cartas">⚖️</button>
     <input type="file" id="import-file" accept=".json" style="display:none">
+  </div>
+  <!-- filtro lunar -->
+  <div id="lunar-filter-bar" style="display:none;margin-bottom:.8rem">
+    <div class="theme-selector" id="lunar-filter-btns" style="flex-wrap:wrap;gap:.35rem">
+      <span style="font-family:'Cinzel',serif;font-size:.65rem;color:var(--text-dim);align-self:center">Fase:</span>
+      <button class="theme-btn" data-lunar="Lua Nova"            onclick="toggleLunarFilter(this)">🌑 Nova</button>
+      <button class="theme-btn" data-lunar="Lua Crescente"       onclick="toggleLunarFilter(this)">🌒 Crescente</button>
+      <button class="theme-btn" data-lunar="Quarto Crescente"    onclick="toggleLunarFilter(this)">🌓 Q.Crescente</button>
+      <button class="theme-btn" data-lunar="Lua Gibosa Crescente" onclick="toggleLunarFilter(this)">🌔 Gibosa+</button>
+      <button class="theme-btn" data-lunar="Lua Cheia"           onclick="toggleLunarFilter(this)">🌕 Cheia</button>
+      <button class="theme-btn" data-lunar="Lua Gibosa Minguante" onclick="toggleLunarFilter(this)">🌖 Gibosa-</button>
+      <button class="theme-btn" data-lunar="Quarto Minguante"    onclick="toggleLunarFilter(this)">🌗 Q.Minguante</button>
+      <button class="theme-btn" data-lunar="Lua Minguante"       onclick="toggleLunarFilter(this)">🌘 Minguante</button>
+    </div>
   </div>
   <div id="theme-filter-bar" style="display:none;margin-bottom:1rem">
     <div class="theme-selector">
@@ -2072,6 +2143,7 @@ function renderCardOfDay() {
     cardName = keys[Math.floor(Math.random() * keys.length)];
     isInv = Math.random() < 0.3;
     localStorage.setItem('tarot_cod', JSON.stringify({ date: today, name: cardName, inv: isInv }));
+    saveCodToHistory({ date: today, name: cardName, inv: isInv });
   }
   const data = TAROT_CARDS[cardName] || {};
   const img  = CARD_IMAGES[findCardExact(cardName)] || '';
@@ -2085,6 +2157,7 @@ function renderCardOfDay() {
         <div class="cod-name">${cardName}${isInv?' <span style="color:var(--rose);font-size:.75rem">↩</span>':''}</div>
         <div class="cod-meaning">${meaning.slice(0,90)}${meaning.length>90?'…':''}</div>
         <div class="cod-lunar">${lunar.emoji} ${lunar.name}</div>
+        <button class="cod-history-btn" onclick="openCodHistory()">Ver histórico das cartas do dia ›</button>
       </div>
     </div>`;
 }
@@ -2308,26 +2381,48 @@ Escreva uma interpretação completa em português brasileiro considerando:
 Seja honesta e direta. Não suavize demais. Máximo 350 palavras.`;
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
+    // tenta modelos em ordem de preferência
+    const models = [
+      'gemini-1.5-flash',
+      'gemini-1.5-flash-8b',
+      'gemini-1.0-pro',
+    ];
+
+    let text = '';
+    let lastErr = '';
+
+    for (const model of models) {
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { maxOutputTokens: 1024, temperature: 0.8 }
+            })
+          }
+        );
+        const data = await res.json();
+        if (!res.ok) {
+          lastErr = data?.error?.message || `HTTP ${res.status}`;
+          if (data?.error?.status === 'RESOURCE_EXHAUSTED') continue; // tenta próximo modelo
+          throw new Error(lastErr);
+        }
+        text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (text) { showToast(`✦ Interpretação gerada (${model})`); break; }
+      } catch(e) {
+        if (e.message.includes('RESOURCE_EXHAUSTED') || e.message.includes('quota')) {
+          lastErr = e.message; continue;
+        }
+        throw e;
       }
-    );
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error?.message || `HTTP ${res.status}`);
     }
-    const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    if (text) {
-      document.getElementById('f-analysis').value = text;
-      showToast('✦ Interpretação gerada!');
-    } else throw new Error('Resposta vazia da API');
+
+    if (!text) throw new Error('Cota esgotada em todos os modelos. ' + lastErr);
+
+    document.getElementById('f-analysis').value = text;
   } catch(e) {
     showToast('Erro: ' + e.message);
   } finally {
@@ -2498,6 +2593,235 @@ document.getElementById('import-file').addEventListener('change', async e => {
 });
 
 // ── FIM DOS NOVOS RECURSOS ──
+
+// ── CALENDÁRIO ──
+let calYear, calMonth;
+const calMonths = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const calWeekdays = ['D','S','T','Q','Q','S','S'];
+
+function openCalendar() {
+  const now = new Date();
+  calYear = now.getFullYear(); calMonth = now.getMonth();
+  renderCalendar();
+  document.getElementById('cal-overlay').classList.add('open');
+}
+
+function renderCalendar() {
+  const label = `${calMonths[calMonth]} ${calYear}`;
+  document.getElementById('cal-month-label').textContent = label;
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  // index entries by date
+  const byDate = {};
+  entries.forEach(e => {
+    const [y,m] = e.date.split('-');
+    if (+y===calYear && +m===calMonth+1) {
+      if (!byDate[e.date]) byDate[e.date] = [];
+      byDate[e.date].push(e);
+    }
+  });
+
+  let html = calWeekdays.map(d=>`<div class="cal-day-label">${d}</div>`).join('');
+
+  // células vazias antes do primeiro dia
+  for (let i=0; i<firstDay; i++) html += '<div class="cal-day empty"></div>';
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayEntries = byDate[dateStr] || [];
+    const isToday = dateStr === todayStr;
+    const hasEntry = dayEntries.length > 0;
+    const lunar = lunarPhase(dateStr);
+
+    const thumbs = dayEntries.slice(0,3).flatMap(e =>
+      e.cards.slice(0,2).map(c => {
+        const img = CARD_IMAGES[findCardExact(c.name)] || CARD_IMAGES[c.name] || '';
+        return img ? `<img class="cal-card-dot" src="${img}" alt="${c.name}" loading="lazy">` : '';
+      })
+    ).join('');
+
+    html += `<div class="cal-day${hasEntry?' has-entry':''}${isToday?' today':''}"
+      ${hasEntry?`onclick="showCalDay('${dateStr}')"`:''}
+      title="${dateStr}">
+      <span class="cal-day-num">${d}</span>
+      <span class="cal-lunar">${lunar.emoji}</span>
+      ${hasEntry?`<div class="cal-day-cards">${thumbs}</div>`:''}
+    </div>`;
+  }
+
+  document.getElementById('cal-grid').innerHTML = html;
+  document.getElementById('cal-day-detail').classList.remove('show');
+}
+
+window.showCalDay = function(dateStr) {
+  const dayEntries = entries.filter(e => e.date === dateStr);
+  if (!dayEntries.length) return;
+  const lunar = lunarPhase(dateStr);
+  const [y,m,d] = dateStr.split('-');
+  let html = `<div style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold-dim);margin-bottom:.7rem">${d}/${m}/${y} · ${lunar.emoji} ${lunar.name}</div>`;
+  dayEntries.forEach(e => {
+    const badges = e.cards.map(c=>
+      `<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv})">${c.name}${c.inv?' ↩':''}</span>`
+    ).join('');
+    html += `<div style="margin-bottom:.7rem">
+      <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.3rem">${badges}</div>
+      ${e.analysis?`<div style="font-size:.82rem;color:var(--text-dim);line-height:1.5">${e.analysis.slice(0,120)}${e.analysis.length>120?'…':''}</div>`:''}
+    </div>`;
+  });
+  const detail = document.getElementById('cal-day-detail');
+  detail.innerHTML = html;
+  detail.classList.add('show');
+};
+
+document.getElementById('cal-prev').addEventListener('click', () => {
+  calMonth--; if (calMonth<0){calMonth=11;calYear--;} renderCalendar();
+});
+document.getElementById('cal-next').addEventListener('click', () => {
+  calMonth++; if (calMonth>11){calMonth=0;calYear++;} renderCalendar();
+});
+document.getElementById('cal-btn').addEventListener('click', openCalendar);
+document.getElementById('cal-close').addEventListener('click', ()=>
+  document.getElementById('cal-overlay').classList.remove('open'));
+
+// ── HISTÓRICO CARTA DO DIA ──
+function openCodHistory() {
+  const raw = {};
+  for (let i=0; i<localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key === 'tarot_cod') {
+      try { const v = JSON.parse(localStorage.getItem(key)); if (v?.date) raw[v.date] = v; } catch(e){}
+    }
+  }
+  // recuperar histórico salvo separadamente
+  let hist = [];
+  try { hist = JSON.parse(localStorage.getItem('tarot_cod_history') || '[]'); } catch(e){}
+
+  // adiciona carta de hoje se existir
+  try {
+    const today = JSON.parse(localStorage.getItem('tarot_cod') || 'null');
+    if (today && !hist.find(h=>h.date===today.date)) hist.unshift(today);
+  } catch(e){}
+
+  const list = document.getElementById('cod-history-list');
+  if (!hist.length) {
+    list.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:2rem;font-style:italic">Nenhum histórico ainda. A carta de hoje será registrada automaticamente.</p>';
+  } else {
+    list.innerHTML = [...hist].sort((a,b)=>b.date.localeCompare(a.date)).map(item => {
+      const img = CARD_IMAGES[findCardExact(item.name)] || CARD_IMAGES[item.name] || '';
+      const [y,m,d] = item.date.split('-');
+      const lunar = lunarPhase(item.date);
+      return `<div class="cod-history-item" onclick="showCardPopup('${item.name.replace(/'/g,"\\'")}',${item.inv||false})">
+        ${img?`<img class="cod-history-img${item.inv?' inv':''}" src="${img}" alt="${item.name}" loading="lazy">`:''}
+        <div class="cod-history-info">
+          <div class="cod-history-name">${item.name}${item.inv?' ↩':''}</div>
+          <div class="cod-history-date">${d}/${m}/${y} · ${lunar.emoji} ${lunar.name}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('cod-history-overlay').classList.add('open');
+}
+
+// salva carta do dia no histórico automaticamente
+function saveCodToHistory(entry) {
+  try {
+    let hist = JSON.parse(localStorage.getItem('tarot_cod_history') || '[]');
+    if (!hist.find(h=>h.date===entry.date)) {
+      hist.unshift(entry);
+      if (hist.length > 365) hist = hist.slice(0, 365); // máx 1 ano
+      localStorage.setItem('tarot_cod_history', JSON.stringify(hist));
+    }
+  } catch(e){}
+}
+
+window.openCodHistory = openCodHistory;
+document.getElementById('cod-history-close').addEventListener('click', ()=>
+  document.getElementById('cod-history-overlay').classList.remove('open'));
+
+// ── FILTRO POR FASE LUNAR ──
+let activeLunarFilter = null;
+window.toggleLunarFilter = function(btn) {
+  const phase = btn.dataset.lunar;
+  activeLunarFilter = activeLunarFilter === phase ? null : phase;
+  document.querySelectorAll('#lunar-filter-btns .theme-btn').forEach(b=>
+    b.classList.toggle('active', b.dataset.lunar === activeLunarFilter));
+  render();
+};
+
+document.getElementById('lunar-filter-btn').addEventListener('click', () => {
+  const bar = document.getElementById('lunar-filter-bar');
+  bar.style.display = bar.style.display==='none' ? 'block' : 'none';
+  if (bar.style.display==='none') { activeLunarFilter=null; render(); }
+});
+
+// ── COMPARAÇÃO ──
+function setupCompareInput(inputId, sugId) {
+  const input = document.getElementById(inputId);
+  const sug   = document.getElementById(sugId);
+  const norm  = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+
+  input.addEventListener('input', () => {
+    const q = norm(input.value.trim());
+    if (!q || q.length < 2) { sug.classList.remove('open'); return; }
+    const matches = Object.keys(TAROT_CARDS).filter(n => norm(n).includes(q)).slice(0,8);
+    sug.innerHTML = matches.map(n =>
+      `<div class="compare-sug-item" onclick="selectCompareCard('${inputId}','${sugId}','${n.replace(/'/g,"\\'")}')">${n}</div>`
+    ).join('');
+    sug.classList.toggle('open', matches.length > 0);
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest(`#${inputId}`) && !e.target.closest(`#${sugId}`))
+      sug.classList.remove('open');
+  });
+}
+
+window.selectCompareCard = function(inputId, sugId, name) {
+  document.getElementById(inputId).value = name;
+  document.getElementById(sugId).classList.remove('open');
+  renderCompare();
+};
+
+function renderCompare() {
+  const n1 = document.getElementById('compare-input-1').value.trim();
+  const n2 = document.getElementById('compare-input-2').value.trim();
+  if (!n1 || !n2) return;
+  const r1 = findCardExact(n1), r2 = findCardExact(n2);
+  const d1 = TAROT_CARDS[r1] || {}, d2 = TAROT_CARDS[r2] || {};
+  const i1 = CARD_IMAGES[r1] || '', i2 = CARD_IMAGES[r2] || '';
+
+  function panel(name, data, img) {
+    return `<div class="compare-card-panel">
+      ${img?`<img class="compare-card-img" src="${img}" alt="${name}" loading="lazy" onerror="this.style.display='none'">` :''}
+      <div class="compare-card-name">${name||'—'}</div>
+      <div class="compare-field-label">Palavras-chave</div>
+      <div class="compare-field">${(data.keywords||[]).join(' · ')||'—'}</div>
+      <div class="compare-field-label">Significado</div>
+      <div class="compare-field">${data.meaning||'—'}</div>
+      <div class="compare-field-label">☀️ Luz</div>
+      <div class="compare-field">${data.luz||'—'}</div>
+      <div class="compare-field-label">🌑 Sombra</div>
+      <div class="compare-field">${data.sombra||'—'}</div>
+    </div>`;
+  }
+
+  document.getElementById('compare-cards').innerHTML =
+    panel(r1||n1, d1, i1) + panel(r2||n2, d2, i2);
+}
+
+setupCompareInput('compare-input-1','compare-sug-1');
+setupCompareInput('compare-input-2','compare-sug-2');
+document.getElementById('compare-input-1').addEventListener('change', renderCompare);
+document.getElementById('compare-input-2').addEventListener('change', renderCompare);
+document.getElementById('compare-btn').addEventListener('click', ()=>
+  document.getElementById('compare-overlay').classList.add('open'));
+document.getElementById('compare-close').addEventListener('click', ()=>
+  document.getElementById('compare-overlay').classList.remove('open'));
+
 
 let customNotes = {};    // {cardName: noteText}
 let customCombos = [];   // [{id, cards:[], meaning}]
@@ -2769,9 +3093,9 @@ const CARD_IMAGES = {
   'Seis de Paus':      W+'3/3b/Wands06.jpg',
   'Sete de Paus':      W+'e/e4/Wands07.jpg',
   'Oito de Paus':      W+'6/6b/Wands08.jpg',
-  'Nove de Paus':      W+'e/e7/Wands09.jpg',
+  'Nove de Paus':      'https://www.sacred-texts.com/tarot/pkt/img/wawa09.jpg',
   'Dez de Paus':       W+'0/0b/Wands10.jpg',
-  'Valete de Paus':    W+'6/6a/Wands11.jpg',
+  'Valete de Paus':    'https://www.sacred-texts.com/tarot/pkt/img/wawa11.jpg',
   'Cavaleiro de Paus': W+'1/16/Wands12.jpg',
   'Rainha de Paus':    W+'0/0d/Wands13.jpg',
   'Rei de Paus':       W+'c/ce/Wands14.jpg',
@@ -3455,8 +3779,14 @@ function render(){
   const q=(document.getElementById('filter-input')?.value||'').toLowerCase().trim();
   let filtered=q?entries.filter(e=>e.cards.some(c=>c.name.toLowerCase().includes(q))||e.analysis.toLowerCase().includes(q)||(e.notes||'').toLowerCase().includes(q)):[...entries];
   if(activeThemeFilter) filtered=filtered.filter(e=>e.theme===activeThemeFilter);
-  if(entries.length>0){document.getElementById('filter-bar').style.display='flex';document.getElementById('theme-filter-bar').style.display='block';}
-  document.getElementById('entry-count').textContent=(q||activeThemeFilter)?`${filtered.length} de ${entries.length} entrada${entries.length!==1?'s':''}`:`${entries.length} entrada${entries.length!==1?'s':''}`;
+  if(activeLunarFilter) filtered=filtered.filter(e=>lunarPhase(e.date).name===activeLunarFilter);
+
+  if(entries.length>0){
+    document.getElementById('filter-bar').style.display='flex';
+    document.getElementById('theme-filter-bar').style.display='block';
+  }
+  const hasFilter = q||activeThemeFilter||activeLunarFilter;
+  document.getElementById('entry-count').textContent=hasFilter?`${filtered.length} de ${entries.length} entrada${entries.length!==1?'s':''}`:`${entries.length} entrada${entries.length!==1?'s':''}`;
   updateStats();
   const hist=document.getElementById('history');
   if(entries.length===0){ hist.innerHTML='<div class="history-empty"><span>🌙</span>Ainda não há tiragens registradas.<br>Clique em <em>Registrar Tiragem de Hoje</em> para começar.</div>'; return }
