@@ -2378,7 +2378,7 @@ Escreva uma interpretação completa em português brasileiro considerando:
 - Se há uma pergunta, responda-a diretamente com base nas cartas
 - Uma mensagem prática: o que fazer com essa energia
 
-Seja honesta e direta. Não suavize demais. Complete todas as frases — nunca corte no meio de uma ideia.`;
+Seja honesta e direta. Não suavize demais. Máximo 350 palavras.`;
 
  try {
     const models = [
@@ -2670,7 +2670,7 @@ window.showCalDay = function(dateStr) {
     ).join('');
     html += `<div style="margin-bottom:.7rem">
       <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.3rem">${badges}</div>
-      ${e.analysis?`<div style="font-size:.82rem;color:var(--text-dim);line-height:1.5">${e.analysis.slice(0,120)}${e.analysis.length>120?'…':''}</div>`:''}
+      ${e.analysis?`<div style="font-size:.82rem;color:var(--text-dim);line-height:1.5">${e.analysis.slice(0,120).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')}${e.analysis.length>120?'…':''}</div>`:''}
     </div>`;
   });
   const detail = document.getElementById('cal-day-detail');
@@ -3797,7 +3797,7 @@ function render(){
     const m=monthLabel(e.date);
     if(m!==lastMonth){ html+=`<div class="timeline-month">${m}</div>`; lastMonth=m }
     const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv?'true':'false'})"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
-    const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
     const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const lunar=lunarPhase(e.date);
     const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
