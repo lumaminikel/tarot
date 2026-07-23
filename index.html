@@ -1615,6 +1615,26 @@
     <div class="combo-item"><div class="combo-cards">Julgamento + Ás de Paus</div><div class="combo-meaning">Chamado ao propósito que se transforma em ação criativa. Uma nova missão começa com muito fogo e clareza de direção.</div></div>
     <div class="combo-item"><div class="combo-cards">Lua + Temperança</div><div class="combo-meaning">Navegando com paciência pelas ilusões e medos. A alquimia do inconsciente está acontecendo — confie no processo mesmo sem ver o resultado.</div></div>
   </div>
+
+  <div class="arcana-label" style="margin-top:1.5rem">Trios Poderosos — Três Cartas Juntas</div>
+  <p style="color:var(--text-dim); margin-bottom:.8rem; font-style:italic; font-size:.9rem;">Quando três cartas se combinam, uma costuma dar o tema, outra o obstáculo, e a terceira o caminho — mas às vezes as três apontam junto para a mesma força.</p>
+  <div class="combo-list" data-search>
+    <div class="combo-item"><div class="combo-cards">Louca + Mago + Mundo</div><div class="combo-meaning">Um ciclo inteiro em três cartas: potencial puro ganhando ferramentas para se manifestar e chegando à realização completa. A jornada do herói em miniatura.</div></div>
+    <div class="combo-item"><div class="combo-cards">Sol + Estrela + Mundo</div><div class="combo-meaning">Um dos trios mais auspiciosos do baralho. Alegria, esperança renovada e realização plena convergindo — sinal de que a fase de bênçãos está consolidada.</div></div>
+    <div class="combo-item"><div class="combo-cards">Torre + Morte + Estrela</div><div class="combo-meaning">Colapso, fim radical e depois a cura. A sequência clássica de crise: primeiro tudo desmorona, depois o que não servia morre de vez, e por fim vem a esperança genuína.</div></div>
+    <div class="combo-item"><div class="combo-cards">Diabo + Torre + Julgamento</div><div class="combo-meaning">Um padrão viciante ou tóxico colapsa de forma abrupta, abrindo espaço para um chamado de renascimento. Doloroso, mas libertador em três atos.</div></div>
+    <div class="combo-item"><div class="combo-cards">Sacerdotisa + Eremita + Lua</div><div class="combo-meaning">Introspecção em três camadas: intuição, retiro voluntário e revelações do inconsciente. Um período denso de trabalho interior — não é hora de decisões externas.</div></div>
+    <div class="combo-item"><div class="combo-cards">Os Amantes + Dois de Copas + Ás de Copas</div><div class="combo-meaning">Escolha amorosa consciente que se transforma em parceria genuína desde o início. Três estágios do mesmo amor: decisão, união e abertura de coração.</div></div>
+    <div class="combo-item"><div class="combo-cards">Três de Espadas + Cinco de Copas + Dez de Espadas</div><div class="combo-meaning">Dor, luto e o fundo do poço, todos juntos. Não minimize o sofrimento — mas lembre-se de que o Dez de Espadas também significa que o pior já passou.</div></div>
+    <div class="combo-item"><div class="combo-cards">Roda da Fortuna + Justiça + Mundo</div><div class="combo-meaning">Karma se ajustando com precisão e chegando à completude. O que foi plantado ao longo do tempo está sendo colhido de forma justa e definitiva.</div></div>
+    <div class="combo-item"><div class="combo-cards">Ás de Paus + Três de Paus + Seis de Paus</div><div class="combo-meaning">A trajetória de um projeto do início à vitória: faísca inicial, primeiros resultados aparecendo, e reconhecimento público consolidado.</div></div>
+    <div class="combo-item"><div class="combo-cards">Nove de Copas + Dez de Copas + Dez de Ouros</div><div class="combo-meaning">Satisfação pessoal, plenitude familiar e abundância material duradoura, tudo ao mesmo tempo. Um dos trios mais completos de realização de vida.</div></div>
+    <div class="combo-item"><div class="combo-cards">Enforcado + Eremita + Temperança</div><div class="combo-meaning">Pausa, recolhimento e integração gradual formando uma só mensagem: não é hora de agir. É hora de render-se ao processo e deixar a cura acontecer no tempo certo.</div></div>
+    <div class="combo-item"><div class="combo-cards">Sete de Espadas + Cinco de Paus + O Diabo</div><div class="combo-meaning">Conflito com elementos de desonestidade e padrões tóxicos se reforçando. Vale examinar com cuidado quem está agindo de má-fé nessa situação.</div></div>
+    <div class="combo-item"><div class="combo-cards">Cavaleiro de Copas + Dois de Copas + Os Amantes</div><div class="combo-meaning">Um cortejo genuíno evoluindo para parceria e, então, para uma escolha consciente de compromisso. Romance com potencial real de se aprofundar.</div></div>
+    <div class="combo-item"><div class="combo-cards">Oito de Copas + A Estrela + O Mundo</div><div class="combo-meaning">Partir em busca de algo mais verdadeiro, encontrar esperança pelo caminho, e chegar à realização plena. Uma jornada de saída que termina em completude.</div></div>
+    <div class="combo-item"><div class="combo-cards">Quatro de Espadas + O Eremita + Sete de Ouros</div><div class="combo-meaning">Descanso, introspecção e paciência formando um mesmo conselho: recue, avalie e espere. Não é o momento de forçar resultados.</div></div>
+  </div>
 </section>
 
 <!-- ═══════════════ TIRAGENS ═══════════════ -->
@@ -2123,6 +2143,12 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     img.onerror = () => img.remove();
     card.insertBefore(img, card.firstChild);
   });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
 </script>
 </body>
 </html>

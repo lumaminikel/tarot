@@ -533,7 +533,7 @@
 
   /* ── TIMER ── */
   .timer-btn {
-    position: fixed; bottom: 1.5rem; right: 1.2rem;
+    position: fixed; bottom: 5.5rem; right: 1.2rem;
     background: var(--bg2); border: 1px solid var(--border);
     border-radius: 50%; width: 52px; height: 52px;
     font-size: 1.3rem; cursor: pointer; z-index: 500;
@@ -644,7 +644,7 @@
 
   /* ── CONFIGURAÇÕES ── */
   .settings-btn {
-    position:fixed; bottom:5.5rem; right:1.2rem;
+    position:fixed; bottom:9.7rem; right:1.2rem;
     background:var(--bg2); border:1px solid var(--border);
     border-radius:50%; width:44px; height:44px; font-size:1.1rem;
     cursor:pointer; z-index:500; display:flex; align-items:center;
@@ -673,9 +673,33 @@
     15% { box-shadow:0 0 0 2px var(--gold-dim); }
   }
 
+  /* ── COMPARTILHAR ── */
+  .share-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(8,5,20,.88); z-index:7000;
+    align-items:center; justify-content:center; padding:1rem;
+  }
+  .share-overlay.open { display:flex; }
+  .share-box {
+    background:var(--bg2); border:1px solid var(--purple);
+    border-radius:14px; padding:1.4rem; width:100%; max-width:460px;
+    animation:fadeIn .2s ease; max-height:92vh; display:flex; flex-direction:column;
+  }
+  .share-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .share-title { font-family:'Cinzel', serif; color:var(--gold-light); font-size:.9rem; }
+  .share-body { display:flex; flex-direction:column; gap:1rem; overflow:hidden; }
+  .share-canvas-wrap {
+    display:flex; align-items:center; justify-content:center;
+    background:var(--bg); border-radius:10px; overflow:auto;
+    min-height:200px; max-height:60vh; padding:.5rem;
+  }
+  .share-loading { color:var(--text-dim); font-style:italic; font-size:.85rem; }
+  #share-canvas { max-width:100%; height:auto; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,.5); }
+  .share-actions { display:flex; gap:.6rem; justify-content:flex-end; flex-wrap:wrap; }
+
   /* ── VOLTAR AO TOPO ── */
   .top-btn {
-    position:fixed; bottom:1.5rem; left:1.2rem;
+    position:fixed; bottom:1.5rem; right:1.2rem;
     background:var(--bg2); border:1px solid var(--border);
     border-radius:50%; width:46px; height:46px; font-size:1.2rem;
     cursor:pointer; z-index:500; display:flex; align-items:center; justify-content:center;
@@ -1130,7 +1154,7 @@
 <div class="quiz-overlay" id="quiz-overlay">
   <div class="quiz-box">
     <div class="quiz-header">
-      <span class="quiz-title">🎓 Quiz de Cartas</span>
+      <span class="quiz-title" id="quiz-title">🎓 Quiz de Cartas</span>
       <span class="quiz-score" id="quiz-score">0 / 0</span>
       <button class="consult-close" id="quiz-close">×</button>
     </div>
@@ -1221,6 +1245,27 @@
   </div>
 </div>
 
+<!-- COMPARTILHAR TIRAGEM -->
+<div class="share-overlay" id="share-overlay">
+  <div class="share-box">
+    <div class="share-header">
+      <span class="share-title">📤 Compartilhar Tiragem</span>
+      <button class="consult-close" id="share-close">×</button>
+    </div>
+    <div class="share-body">
+      <div class="share-canvas-wrap" id="share-canvas-wrap">
+        <div class="share-loading" id="share-loading">Gerando imagem...</div>
+        <canvas id="share-canvas" style="display:none"></canvas>
+      </div>
+      <div class="share-actions">
+        <button class="btn-cancel" id="share-cancel">Fechar</button>
+        <button class="btn-save" id="share-download">⬇ Baixar imagem</button>
+        <button class="btn-save" id="share-native" style="display:none">📤 Compartilhar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="page">
 
   <div class="stats-bar">
@@ -1297,7 +1342,8 @@
     <button class="export-btn" id="lunar-filter-btn" title="Filtrar por fase lunar">🌙</button>
     <button class="export-btn" id="cal-btn" title="Calendário">📅</button>
     <button class="export-btn" id="chart-btn" title="Frequência">📊</button>
-    <button class="export-btn" id="quiz-btn" title="Quiz">🎓</button>
+    <button class="export-btn" id="quiz-btn" title="Quiz aleatório">🎓</button>
+    <button class="export-btn" id="quiz-study-btn" title="Modo Estudo (repetição espaçada) — prioriza cartas que você mais erra ou não revisa há mais tempo">🧠</button>
     <button class="export-btn" id="compare-btn" title="Comparar cartas">⚖️</button>
     <input type="file" id="import-file" accept=".json" style="display:none">
   </div>
@@ -2347,13 +2393,64 @@ Seja honesta e direta. Não suavize demais. Máximo 350 palavras.`;
 document.getElementById('ai-btn').addEventListener('click', generateAIReading);
 
 // ── QUIZ ──
-let quizCards = [], quizIdx = 0, quizCorrect = 0, quizAnswered = false;
+let quizCards = [], quizIdx = 0, quizCorrect = 0, quizAnswered = false, quizMode = 'random';
 
 function shuffleArr(arr) { return [...arr].sort(() => Math.random() - .5); }
 
-function startQuiz() {
+// ── Repetição espaçada (sistema de Leitner, 5 caixas) ──
+const SR_KEY = 'tarotQuizSR';
+const SR_INTERVALS_DAYS = [1, 2, 4, 8, 16]; // dias até a próxima revisão por caixa (1-5)
+
+function loadSR() {
+  try { return JSON.parse(localStorage.getItem(SR_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveSR(data) {
+  try { localStorage.setItem(SR_KEY, JSON.stringify(data)); } catch {}
+}
+function getCardSR(sr, name) {
+  return sr[name] || { box: 1, due: 0, seen: 0, wrong: 0 };
+}
+function updateSR(name, correct) {
+  const sr = loadSR();
+  const rec = getCardSR(sr, name);
+  rec.seen = (rec.seen || 0) + 1;
+  if (correct) {
+    rec.box = Math.min((rec.box || 1) + 1, 5);
+  } else {
+    rec.box = 1;
+    rec.wrong = (rec.wrong || 0) + 1;
+  }
+  const days = SR_INTERVALS_DAYS[rec.box - 1];
+  rec.due = Date.now() + days * 86400000;
+  sr[name] = rec;
+  saveSR(sr);
+}
+
+function buildStudyDeck() {
   const eligible = Object.keys(TAROT_CARDS).filter(n => CARD_IMAGES[n]);
-  quizCards = shuffleArr(eligible);
+  const sr = loadSR();
+  const now = Date.now();
+  const withData = eligible.map(name => ({ name, rec: getCardSR(sr, name) }));
+  // prioriza: vencidas primeiro (mais atrasadas), depois por caixa mais baixa (mais erradas / menos dominadas)
+  withData.sort((a, b) => {
+    const aDue = a.rec.due <= now ? (now - a.rec.due) : -1;
+    const bDue = b.rec.due <= now ? (now - b.rec.due) : -1;
+    const aOverdue = a.rec.due <= now, bOverdue = b.rec.due <= now;
+    if (aOverdue !== bOverdue) return aOverdue ? -1 : 1;
+    if (aOverdue && bOverdue) return bDue - aDue;
+    // nenhuma vencida ainda: prioriza caixa mais baixa, depois vencimento mais próximo
+    if (a.rec.box !== b.rec.box) return a.rec.box - b.rec.box;
+    return a.rec.due - b.rec.due;
+  });
+  return withData.map(x => x.name);
+}
+
+function startQuiz(mode) {
+  quizMode = mode === 'study' ? 'study' : 'random';
+  const title = document.getElementById('quiz-title');
+  title.textContent = quizMode === 'study' ? '🧠 Modo Estudo · Repetição Espaçada' : '🎓 Quiz de Cartas';
+  quizCards = quizMode === 'study' ? buildStudyDeck() : shuffleArr(Object.keys(TAROT_CARDS).filter(n => CARD_IMAGES[n]));
   quizIdx = 0; quizCorrect = 0;
   document.getElementById('quiz-overlay').classList.add('open');
   loadQuizCard();
@@ -2394,6 +2491,7 @@ window.answerQuiz = function(chosen, correct) {
     else if (btn.textContent.trim() === chosen && chosen !== correct) btn.classList.add('wrong');
   });
   if (chosen === correct) quizCorrect++;
+  updateSR(correct, chosen === correct);
   const data = TAROT_CARDS[correct] || {};
   const reveal = document.getElementById('quiz-reveal');
   reveal.innerHTML = `<strong style="color:var(--gold)">${correct}</strong><br>
@@ -2422,7 +2520,8 @@ function endQuiz() {
   document.getElementById('quiz-score').textContent = `${quizCorrect} / 20`;
 }
 
-document.getElementById('quiz-btn').addEventListener('click', startQuiz);
+document.getElementById('quiz-btn').addEventListener('click', () => startQuiz('random'));
+document.getElementById('quiz-study-btn').addEventListener('click', () => startQuiz('study'));
 ['quiz-close','quiz-close2'].forEach(id => {
   document.getElementById(id).addEventListener('click', () =>
     document.getElementById('quiz-overlay').classList.remove('open'));
@@ -3212,6 +3311,22 @@ const COMBINATIONS = [
   {cards:['A Lua','A Temperança'],        meaning:'Navegando com paciência pelas ilusões. A alquimia do inconsciente acontece — confie sem ver o resultado.'},
   {cards:['Seis de Copas','Os Amantes'], meaning:'Amor do passado ressurgindo ou decisão guiada por saudade. Examine se é amor real ou romantização.'},
   {cards:['O Julgamento','Ás de Paus'],   meaning:'Chamado ao propósito que vira ação criativa. Uma nova missão começa com fogo e clareza de direção.'},
+  // ── Trios (três cartas) ──
+  {cards:['A Louca','O Mago','O Mundo'], meaning:'Um ciclo inteiro em três cartas: potencial puro ganhando ferramentas para se manifestar e chegando à realização completa.'},
+  {cards:['O Sol','A Estrela','O Mundo'], meaning:'Um dos trios mais auspiciosos do baralho — alegria, esperança renovada e realização plena convergindo.'},
+  {cards:['A Torre','A Morte','A Estrela'], meaning:'Colapso, fim radical e depois a cura. Primeiro tudo desmorona, depois o que não servia morre de vez, e por fim vem a esperança.'},
+  {cards:['O Diabo','A Torre','O Julgamento'], meaning:'Um padrão viciante colapsa de forma abrupta, abrindo espaço para um chamado de renascimento.'},
+  {cards:['A Sacerdotisa','O Eremita','A Lua'], meaning:'Introspecção em três camadas: intuição, retiro voluntário e revelações do inconsciente. Não é hora de decisões externas.'},
+  {cards:['Os Amantes','Dois de Copas','Ás de Copas'], meaning:'Escolha amorosa consciente que se transforma em parceria genuína desde o início.'},
+  {cards:['Três de Espadas','Cinco de Copas','Dez de Espadas'], meaning:'Dor, luto e o fundo do poço, todos juntos — mas o Dez de Espadas também diz que o pior já passou.'},
+  {cards:['Roda da Fortuna','A Justiça','O Mundo'], meaning:'Karma se ajustando com precisão e chegando à completude. O que foi plantado está sendo colhido de forma justa.'},
+  {cards:['Ás de Paus','Três de Paus','Seis de Paus'], meaning:'A trajetória de um projeto do início à vitória: faísca inicial, primeiros resultados, reconhecimento público.'},
+  {cards:['Nove de Copas','Dez de Copas','Dez de Ouros'], meaning:'Satisfação pessoal, plenitude familiar e abundância material duradoura, tudo ao mesmo tempo.'},
+  {cards:['O Enforcado','O Eremita','A Temperança'], meaning:'Pausa, recolhimento e integração gradual: não é hora de agir, é hora de render-se ao processo.'},
+  {cards:['Sete de Espadas','Cinco de Paus','O Diabo'], meaning:'Conflito com elementos de desonestidade e padrões tóxicos se reforçando — examine quem age de má-fé.'},
+  {cards:['Cavaleiro de Copas','Dois de Copas','Os Amantes'], meaning:'Um cortejo genuíno evoluindo para parceria e, então, para uma escolha consciente de compromisso.'},
+  {cards:['Oito de Copas','A Estrela','O Mundo'], meaning:'Partir em busca de algo mais verdadeiro, encontrar esperança pelo caminho, e chegar à realização plena.'},
+  {cards:['Quatro de Espadas','O Eremita','Sete de Ouros'], meaning:'Descanso, introspecção e paciência: recue, avalie e espere. Não é o momento de forçar resultados.'},
 ];
 
 function detectCombinations(tags) {
@@ -3654,6 +3769,231 @@ function updateStats(){
   else { topEl.textContent='—'; topEl.className='stat-num'; }
 }
 
+// ── COMPARTILHAR TIRAGEM COMO IMAGEM ──
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+function wrapText(ctx,text,x,y,maxWidth,lineHeight,maxLines){
+  const words=(text||'').split(/\s+/);
+  let line='', lines=[];
+  for(const w of words){
+    const test=line?line+' '+w:w;
+    if(ctx.measureText(test).width>maxWidth && line){ lines.push(line); line=w; }
+    else line=test;
+  }
+  if(line) lines.push(line);
+  let truncated=false;
+  if(maxLines && lines.length>maxLines){ lines=lines.slice(0,maxLines); truncated=true; }
+  lines.forEach((l,i)=>{
+    let txt=l;
+    if(truncated && i===lines.length-1) txt=txt.replace(/\s*$/,'')+'…';
+    ctx.fillText(txt,x,y+i*lineHeight);
+  });
+  return y+lines.length*lineHeight;
+}
+
+function loadImgSafe(url){
+  return new Promise(resolve=>{
+    if(!url) return resolve(null);
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    let done=false;
+    const finish=(val)=>{ if(!done){ done=true; resolve(val); } };
+    img.onload=()=>finish(img);
+    img.onerror=()=>finish(null);
+    setTimeout(()=>finish(null),6000);
+    img.src=url;
+  });
+}
+
+async function shareEntry(id){
+  const entry=entries.find(e=>e.id===id);
+  if(!entry) return;
+  document.getElementById('share-overlay').classList.add('open');
+  document.getElementById('share-loading').style.display='block';
+  document.getElementById('share-canvas').style.display='none';
+  document.getElementById('share-native').style.display='none';
+  try{
+    const blob=await buildShareImage(entry);
+    lastShareBlob=blob;
+    document.getElementById('share-loading').style.display='none';
+    document.getElementById('share-canvas').style.display='block';
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[new File([blob],'tiragem.png',{type:'image/png'})]})){
+      document.getElementById('share-native').style.display='';
+    }
+  }catch(err){
+    document.getElementById('share-loading').textContent='Não foi possível gerar a imagem. Tente novamente.';
+    console.error(err);
+  }
+}
+
+let lastShareBlob=null;
+
+async function buildShareImage(e){
+  const W_=760, PAD=44;
+  const canvas=document.getElementById('share-canvas');
+  const ctx=canvas.getContext('2d');
+
+  const cardsData = await Promise.all(e.cards.map(async c=>{
+    const resolved=findCardExact(c.name);
+    const url=CARD_IMAGES[resolved]||CARD_IMAGES[c.name]||'';
+    const img=await loadImgSafe(url);
+    return {name:c.name, inv:c.inv, img};
+  }));
+
+  const cardW=124, cardH=190, cardGap=16;
+  const perRow=Math.max(1,Math.floor((W_-PAD*2+cardGap)/(cardW+cardGap)));
+  const rows=Math.ceil(cardsData.length/perRow) || 1;
+  const cardsBlockH = cardsData.length ? rows*(cardH+34)+16 : 0;
+
+  const lunar=lunarPhase(e.date);
+  const themeLabel = e.theme ? (THEME_LABELS[e.theme]||e.theme) : '';
+  const an=(e.analysis||'').replace(/\*\*/g,'');
+  const nt=(e.notes||'');
+
+  ctx.font='16px Georgia';
+  const tmpLines=(text,maxW)=>{ const words=(text||'').split(/\s+/); let line='',n=0; words.forEach(w=>{ const t=line?line+' '+w:w; if(ctx.measureText(t).width>maxW && line){ n++; line=w; } else line=t; }); if(line)n++; return n; };
+  const anLines = an ? Math.min(tmpLines(an, W_-PAD*2), 6) : 0;
+  const ntLines = nt ? Math.min(tmpLines(nt, W_-PAD*2), 3) : 0;
+
+  let H_ = 210 + cardsBlockH + (anLines?anLines*24+50:0) + (ntLines?ntLines*22+46:0) + 70;
+
+  const scale=2;
+  canvas.width=W_*scale; canvas.height=H_*scale;
+  canvas.style.width=W_+'px'; canvas.style.height=H_+'px';
+  ctx.scale(scale,scale);
+
+  // fundo
+  const grad=ctx.createLinearGradient(0,0,W_,H_);
+  grad.addColorStop(0,'#0e0b1a'); grad.addColorStop(1,'#19132e');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,W_,H_);
+
+  // moldura sutil
+  ctx.strokeStyle='rgba(212,170,80,.35)'; ctx.lineWidth=1.5;
+  roundRect(ctx,10,10,W_-20,H_-20,16); ctx.stroke();
+
+  let y=54;
+  ctx.textAlign='center';
+  ctx.fillStyle='#d4aa50';
+  ctx.font='16px Georgia';
+  ctx.fillText('✦ DIÁRIO DE TAROT ✦', W_/2, y);
+
+  y+=38;
+  ctx.fillStyle='#f0e8d8';
+  ctx.font='bold 26px Georgia';
+  const dateLine = `${formatDate(e.date)} · ${weekday(e.date)}-feira`;
+  ctx.fillText(dateLine, W_/2, y);
+
+  y+=28;
+  ctx.font='14px Georgia';
+  ctx.fillStyle='#c0a888';
+  let subLine=`${lunar.emoji} ${lunar.name}`;
+  if(themeLabel) subLine+='   ·   '+themeLabel;
+  ctx.fillText(subLine, W_/2, y);
+
+  y+=34;
+  // cartas
+  if(cardsData.length){
+    const totalRowW = Math.min(cardsData.length,perRow)*(cardW+cardGap)-cardGap;
+    cardsData.forEach((c,i)=>{
+      const row=Math.floor(i/perRow), col=i%perRow;
+      const itemsInRow=Math.min(perRow, cardsData.length-row*perRow);
+      const rowW=itemsInRow*(cardW+cardGap)-cardGap;
+      const startX=(W_-rowW)/2;
+      const x=startX+col*(cardW+cardGap);
+      const cy=y+row*(cardH+34);
+
+      ctx.save();
+      roundRect(ctx,x,cy,cardW,cardH,10);
+      ctx.fillStyle='#150f28'; ctx.fill();
+      ctx.strokeStyle= c.inv?'rgba(208,96,128,.6)':'rgba(212,170,80,.4)';
+      ctx.lineWidth=1.5; ctx.stroke();
+      ctx.clip();
+      if(c.img){
+        if(c.inv){ ctx.translate(x+cardW/2,cy+cardH/2); ctx.rotate(Math.PI); ctx.drawImage(c.img,-cardW/2,-cardH/2,cardW,cardH); }
+        else ctx.drawImage(c.img,x,cy,cardW,cardH);
+      }else{
+        ctx.restore(); ctx.save();
+        ctx.fillStyle='#231848'; ctx.fillRect(x,cy,cardW,cardH);
+        ctx.fillStyle='#7a4eb8'; ctx.font='40px Georgia'; ctx.textAlign='center';
+        ctx.fillText('🃏', x+cardW/2, cy+cardH/2+14);
+      }
+      ctx.restore();
+
+      ctx.fillStyle = c.inv ? '#d06080' : '#f0e8d8';
+      ctx.font='12px Georgia'; ctx.textAlign='center';
+      const label = c.inv ? `${c.name} ↩` : c.name;
+      wrapTextCentered(ctx,label,x+cardW/2,cy+cardH+16,cardW+10,14,2);
+    });
+    y += rows*(cardH+34) + 14;
+  }
+
+  // análise
+  if(an){
+    ctx.textAlign='left';
+    ctx.fillStyle='#b088e0'; ctx.font='bold 13px Georgia';
+    ctx.fillText('ANÁLISE', PAD, y); y+=22;
+    ctx.fillStyle='#e8ddc8'; ctx.font='15px Georgia';
+    y = wrapText(ctx, an, PAD, y, W_-PAD*2, 22, 6) + 14;
+  }
+  if(nt){
+    ctx.textAlign='left';
+    ctx.fillStyle='#b088e0'; ctx.font='bold 13px Georgia';
+    ctx.fillText('A PERGUNTA', PAD, y); y+=20;
+    ctx.fillStyle='#c0a888'; ctx.font='italic 14px Georgia';
+    y = wrapText(ctx, '"'+nt+'"', PAD, y, W_-PAD*2, 20, 3) + 10;
+  }
+
+  ctx.textAlign='center';
+  ctx.fillStyle='rgba(212,170,80,.7)'; ctx.font='italic 12px Georgia';
+  ctx.fillText('lumaminikel.github.io/tarot', W_/2, H_-24);
+
+  return new Promise(resolve=>canvas.toBlob(b=>resolve(b),'image/png',0.95));
+}
+
+function wrapTextCentered(ctx,text,cx,y,maxWidth,lineHeight,maxLines){
+  const words=(text||'').split(/\s+/);
+  let line='', lines=[];
+  for(const w of words){
+    const test=line?line+' '+w:w;
+    if(ctx.measureText(test).width>maxWidth && line){ lines.push(line); line=w; }
+    else line=test;
+  }
+  if(line) lines.push(line);
+  let truncated=false;
+  if(maxLines && lines.length>maxLines){ lines=lines.slice(0,maxLines); truncated=true; }
+  lines.forEach((l,i)=>{
+    let txt=l;
+    if(truncated && i===lines.length-1) txt=txt.replace(/\s*$/,'')+'…';
+    ctx.fillText(txt,cx,y+i*lineHeight);
+  });
+}
+
+document.getElementById('share-close').addEventListener('click', ()=>document.getElementById('share-overlay').classList.remove('open'));
+document.getElementById('share-cancel').addEventListener('click', ()=>document.getElementById('share-overlay').classList.remove('open'));
+document.getElementById('share-download').addEventListener('click', ()=>{
+  if(!lastShareBlob) return;
+  const url=URL.createObjectURL(lastShareBlob);
+  const a=document.createElement('a');
+  a.href=url; a.download='tiragem-tarot.png';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+});
+document.getElementById('share-native').addEventListener('click', async ()=>{
+  if(!lastShareBlob) return;
+  try{
+    const file=new File([lastShareBlob],'tiragem-tarot.png',{type:'image/png'});
+    await navigator.share({files:[file], title:'Minha tiragem de tarot'});
+  }catch(err){ /* usuário cancelou ou não suportado */ }
+});
+
 // ── RENDER ──
 function render(){
   const q=(document.getElementById('filter-input')?.value||'').toLowerCase().trim();
@@ -3721,6 +4061,7 @@ function render(){
             +'</div>';
         })()}
         <div class="entry-actions">
+          <button class="btn-edit" onclick="shareEntry('${e.id}')" style="margin-right:auto">📤 Compartilhar</button>
           <button class="btn-edit" onclick="editEntry('${e.id}')">✎ Editar</button>
           <button class="btn-delete" onclick="deleteEntry('${e.id}')">✕ Apagar</button>
         </div>
@@ -3728,6 +4069,12 @@ function render(){
     </div>`;
   });
   hist.innerHTML=html;
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
 }
 </script>
 </body>
