@@ -531,36 +531,6 @@
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
   ::-webkit-scrollbar-thumb:hover{background:var(--gold-dim)}
 
-  /* ── CARTA DO DIA ── */
-  .card-of-day {
-    background: linear-gradient(135deg, rgba(122,78,184,.2), rgba(201,168,76,.1));
-    border: 1px solid var(--gold-dim); border-radius: 12px;
-    padding: 1.2rem 1.4rem; margin-bottom: 1.5rem;
-    display: flex; align-items: center; gap: 1.2rem;
-    cursor: pointer; transition: border-color .2s;
-  }
-  .card-of-day:hover { border-color: var(--gold); }
-  .cod-img {
-    width: 56px; flex-shrink: 0; border-radius: 5px;
-    border: 1px solid var(--border); background: var(--bg3);
-  }
-  .cod-img.inv { transform: rotate(180deg); border-color: var(--rose); }
-  .cod-body { flex: 1; min-width: 0; }
-  .cod-label {
-    font-family: 'Cinzel', serif; font-size: .62rem;
-    letter-spacing: .15em; color: var(--gold-dim);
-    text-transform: uppercase; margin-bottom: .25rem;
-  }
-  .cod-name {
-    font-family: 'Cinzel', serif; font-size: .95rem;
-    color: var(--gold-light); margin-bottom: .2rem;
-  }
-  .cod-meaning { font-size: .82rem; color: var(--text-dim); line-height: 1.5; }
-  .cod-lunar {
-    font-size: .75rem; color: var(--text-dim);
-    margin-top: .4rem; display: flex; align-items: center; gap: .3rem;
-  }
-
   /* ── TIMER ── */
   .timer-btn {
     position: fixed; bottom: 1.5rem; right: 1.2rem;
@@ -682,6 +652,56 @@
     transition:border-color .2s, transform .15s; color:var(--text-dim);
   }
   .settings-btn:hover { border-color:var(--gold-dim); transform:scale(1.08); }
+
+  /* ── MENU LATERAL (busca + calendário) ── */
+  .side-menu {
+    position:fixed; top:50%; right:1.2rem; transform:translateY(-50%);
+    display:flex; flex-direction:column; gap:.6rem; z-index:500;
+  }
+  .side-menu-btn {
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:50%; width:46px; height:46px; font-size:1.15rem;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 16px rgba(0,0,0,.4);
+    transition:border-color .2s, transform .15s; color:var(--text-dim);
+  }
+  .side-menu-btn:hover { border-color:var(--gold-dim); transform:scale(1.08); }
+  .side-menu-btn.active { border-color:var(--gold); color:var(--gold-light); }
+
+  .side-search-pop {
+    display:none; position:fixed; top:50%; right:4.4rem; transform:translateY(-50%);
+    width:280px; max-width:calc(100vw - 6rem);
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,.5);
+    padding:.9rem; z-index:501; animation:fadeIn .15s ease;
+  }
+  .side-search-pop.open { display:block; }
+  .side-search-pop input {
+    width:100%; background:var(--bg3); border:1px solid var(--border);
+    border-radius:8px; padding:.55rem .8rem; color:var(--text);
+    font-family:'Crimson Text',serif; font-size:.95rem; outline:none;
+    transition:border-color .2s;
+  }
+  .side-search-pop input:focus { border-color:var(--gold-dim); }
+  .side-search-results { max-height:280px; overflow-y:auto; margin-top:.6rem; }
+  .side-search-empty {
+    color:var(--text-dim); font-style:italic; font-size:.82rem;
+    text-align:center; padding:.9rem .3rem;
+  }
+  .side-search-item {
+    display:flex; align-items:baseline; justify-content:space-between; gap:.6rem;
+    padding:.5rem .3rem; border-bottom:1px solid rgba(58,46,98,.4);
+    cursor:pointer; transition:background .15s;
+  }
+  .side-search-item:last-child { border-bottom:none; }
+  .side-search-item:hover { background:rgba(122,78,184,.12); }
+  .side-search-item-cards { font-size:.85rem; color:var(--text); }
+  .side-search-item-date { font-size:.7rem; color:var(--text-dim); flex-shrink:0; }
+  .entry.flash-highlight { animation:entryFlash 1.6s ease; }
+  @keyframes entryFlash {
+    0%,100% { box-shadow:none; }
+    20% { box-shadow:0 0 0 2px var(--gold-dim); }
+  }
 
   .settings-overlay {
     display:none; position:fixed; inset:0;
@@ -855,44 +875,6 @@
     padding:.9rem; display:none;
   }
   .cal-day-detail.show { display:block; }
-
-  /* ── HISTÓRICO CARTA DO DIA ── */
-  .cod-history-btn {
-    font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.1em;
-    color:var(--gold-dim); background:none; border:none;
-    cursor:pointer; text-decoration:underline; margin-top:.3rem;
-    display:block; transition:color .2s;
-  }
-  .cod-history-btn:hover { color:var(--gold); }
-  .cod-history-overlay {
-    display:none; position:fixed; inset:0;
-    background:rgba(8,5,20,.9); z-index:7000;
-    align-items:flex-start; justify-content:center;
-    padding:1rem; overflow-y:auto;
-  }
-  .cod-history-overlay.open { display:flex; }
-  .cod-history-box {
-    background:var(--bg2); border:1px solid var(--border);
-    border-radius:14px; width:100%; max-width:440px;
-    margin:1rem auto; animation:fadeIn .2s ease;
-  }
-  .cod-history-header {
-    padding:1rem 1.3rem; border-bottom:1px solid var(--border);
-    display:flex; align-items:center; justify-content:space-between;
-  }
-  .cod-history-header h3 { font-family:'Cinzel',serif; color:var(--gold-light); font-size:.9rem; }
-  .cod-history-list { max-height:60vh; overflow-y:auto; }
-  .cod-history-item {
-    display:flex; align-items:center; gap:.9rem;
-    padding:.7rem 1.2rem; border-bottom:1px solid rgba(58,46,98,.4);
-    cursor:pointer; transition:background .15s;
-  }
-  .cod-history-item:hover { background:rgba(122,78,184,.1); }
-  .cod-history-img { width:32px; border-radius:4px; border:1px solid var(--border); flex-shrink:0; }
-  .cod-history-img.inv { transform:rotate(180deg); border-color:var(--rose); }
-  .cod-history-info { flex:1; min-width:0; }
-  .cod-history-name { font-family:'Cinzel',serif; font-size:.82rem; color:var(--text); }
-  .cod-history-date { font-size:.72rem; color:var(--text-dim); }
 
   /* ── COMPARAÇÃO ── */
   .compare-overlay {
@@ -1147,6 +1129,16 @@
 <button class="timer-btn" id="timer-btn" title="Timer de meditação">🔔</button>
 <button class="settings-btn" id="settings-btn" title="Configurações">⚙️</button>
 
+<!-- MENU LATERAL: busca + calendário -->
+<div class="side-menu">
+  <button class="side-menu-btn" id="side-search-btn" title="Buscar carta">🔍</button>
+  <button class="side-menu-btn" id="side-cal-btn" title="Calendário">📅</button>
+</div>
+<div class="side-search-pop" id="side-search-pop">
+  <input type="text" id="side-search-input" placeholder="🔍  Buscar por carta ou palavra..." autocomplete="off">
+  <div class="side-search-results" id="side-search-results"></div>
+</div>
+
 <!-- SETTINGS -->
 <div class="settings-overlay" id="settings-overlay">
   <div class="settings-box">
@@ -1201,17 +1193,6 @@
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-day-detail" id="cal-day-detail"></div>
     </div>
-  </div>
-</div>
-
-<!-- HISTÓRICO CARTA DO DIA -->
-<div class="cod-history-overlay" id="cod-history-overlay">
-  <div class="cod-history-box">
-    <div class="cod-history-header">
-      <h3>🌙 Histórico — Carta do Dia</h3>
-      <button class="consult-close" id="cod-history-close">×</button>
-    </div>
-    <div class="cod-history-list" id="cod-history-list"></div>
   </div>
 </div>
 
@@ -1270,9 +1251,6 @@
 </div>
 
 <div class="page">
-
-  <!-- CARTA DO DIA -->
-  <div id="card-of-day-wrap"></div>
 
   <div class="stats-bar">
     <div class="stat"><span class="stat-num" id="stat-total">0</span><span class="stat-label">tiragens registradas</span></div>
@@ -2129,39 +2107,6 @@ function lunarPhase(dateStr) {
   return               { name:'Lua Minguante',               emoji:'🌘' };
 }
 
-// ── CARTA DO DIA ──
-function renderCardOfDay() {
-  const wrap = document.getElementById('card-of-day-wrap');
-  if (!wrap) return;
-  const today = new Date().toISOString().split('T')[0];
-  const stored = JSON.parse(localStorage.getItem('tarot_cod') || 'null');
-  let cardName, isInv;
-  if (stored && stored.date === today) {
-    cardName = stored.name; isInv = stored.inv;
-  } else {
-    const keys = Object.keys(TAROT_CARDS);
-    cardName = keys[Math.floor(Math.random() * keys.length)];
-    isInv = Math.random() < 0.3;
-    localStorage.setItem('tarot_cod', JSON.stringify({ date: today, name: cardName, inv: isInv }));
-    saveCodToHistory({ date: today, name: cardName, inv: isInv });
-  }
-  const data = TAROT_CARDS[cardName] || {};
-  const img  = CARD_IMAGES[findCardExact(cardName)] || '';
-  const lunar = lunarPhase(today);
-  const meaning = isInv && data.rev ? data.rev : data.meaning || '';
-  wrap.innerHTML = `
-    <div class="card-of-day" onclick="showCardPopup('${cardName.replace(/'/g,"\\'")}', ${isInv})">
-      ${img ? `<img class="cod-img${isInv?' inv':''}" src="${img}" alt="${cardName}" loading="lazy" onerror="this.style.display='none'">` : ''}
-      <div class="cod-body">
-        <div class="cod-label">✦ Carta do Dia</div>
-        <div class="cod-name">${cardName}${isInv?' <span style="color:var(--rose);font-size:.75rem">↩</span>':''}</div>
-        <div class="cod-meaning">${meaning.slice(0,90)}${meaning.length>90?'…':''}</div>
-        <div class="cod-lunar">${lunar.emoji} ${lunar.name}</div>
-        <button class="cod-history-btn" onclick="openCodHistory()">Ver histórico das cartas do dia ›</button>
-      </div>
-    </div>`;
-}
-
 // ── TIMER ──
 let timerInterval = null, timerTotal = 60, timerLeft = 60;
 const timerDisplay = document.getElementById('timer-display');
@@ -2688,60 +2633,58 @@ document.getElementById('cal-btn').addEventListener('click', openCalendar);
 document.getElementById('cal-close').addEventListener('click', ()=>
   document.getElementById('cal-overlay').classList.remove('open'));
 
-// ── HISTÓRICO CARTA DO DIA ──
-function openCodHistory() {
-  const raw = {};
-  for (let i=0; i<localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key === 'tarot_cod') {
-      try { const v = JSON.parse(localStorage.getItem(key)); if (v?.date) raw[v.date] = v; } catch(e){}
-    }
-  }
-  // recuperar histórico salvo separadamente
-  let hist = [];
-  try { hist = JSON.parse(localStorage.getItem('tarot_cod_history') || '[]'); } catch(e){}
+// ── MENU LATERAL: atalho calendário ──
+document.getElementById('side-cal-btn').addEventListener('click', openCalendar);
 
-  // adiciona carta de hoje se existir
-  try {
-    const today = JSON.parse(localStorage.getItem('tarot_cod') || 'null');
-    if (today && !hist.find(h=>h.date===today.date)) hist.unshift(today);
-  } catch(e){}
+// ── MENU LATERAL: busca rápida de tiragens ──
+const sideSearchBtn   = document.getElementById('side-search-btn');
+const sideSearchPop   = document.getElementById('side-search-pop');
+const sideSearchInput = document.getElementById('side-search-input');
+const sideSearchResults = document.getElementById('side-search-results');
 
-  const list = document.getElementById('cod-history-list');
-  if (!hist.length) {
-    list.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:2rem;font-style:italic">Nenhum histórico ainda. A carta de hoje será registrada automaticamente.</p>';
-  } else {
-    list.innerHTML = [...hist].sort((a,b)=>b.date.localeCompare(a.date)).map(item => {
-      const img = CARD_IMAGES[findCardExact(item.name)] || CARD_IMAGES[item.name] || '';
-      const [y,m,d] = item.date.split('-');
-      const lunar = lunarPhase(item.date);
-      return `<div class="cod-history-item" onclick="showCardPopup('${item.name.replace(/'/g,"\\'")}',${item.inv||false})">
-        ${img?`<img class="cod-history-img${item.inv?' inv':''}" src="${img}" alt="${item.name}" loading="lazy">`:''}
-        <div class="cod-history-info">
-          <div class="cod-history-name">${item.name}${item.inv?' ↩':''}</div>
-          <div class="cod-history-date">${d}/${m}/${y} · ${lunar.emoji} ${lunar.name}</div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-  document.getElementById('cod-history-overlay').classList.add('open');
+function renderSideSearchResults() {
+  const q = sideSearchInput.value.toLowerCase().trim();
+  if (!q) { sideSearchResults.innerHTML = '<div class="side-search-empty">Digite o nome de uma carta ou palavra-chave.</div>'; return; }
+  const matches = entries.filter(e =>
+    e.cards.some(c => c.name.toLowerCase().includes(q)) ||
+    (e.analysis||'').toLowerCase().includes(q) ||
+    (e.notes||'').toLowerCase().includes(q)
+  ).sort((a,b)=>b.date.localeCompare(a.date));
+  if (!matches.length) { sideSearchResults.innerHTML = '<div class="side-search-empty">Nenhuma tiragem encontrada.</div>'; return; }
+  sideSearchResults.innerHTML = matches.slice(0,30).map(e => {
+    const [y,m,d] = e.date.split('-');
+    const cardsLabel = e.cards.map(c=>c.name).join(', ');
+    return `<div class="side-search-item" onclick="goToEntry('${e.id}')">
+      <span class="side-search-item-cards">${cardsLabel}</span>
+      <span class="side-search-item-date">${d}/${m}/${y}</span>
+    </div>`;
+  }).join('');
 }
 
-// salva carta do dia no histórico automaticamente
-function saveCodToHistory(entry) {
-  try {
-    let hist = JSON.parse(localStorage.getItem('tarot_cod_history') || '[]');
-    if (!hist.find(h=>h.date===entry.date)) {
-      hist.unshift(entry);
-      if (hist.length > 365) hist = hist.slice(0, 365); // máx 1 ano
-      localStorage.setItem('tarot_cod_history', JSON.stringify(hist));
-    }
-  } catch(e){}
-}
+window.goToEntry = function(id) {
+  sideSearchPop.classList.remove('open');
+  sideSearchBtn.classList.remove('active');
+  const el = document.getElementById('entry-'+id);
+  if (!el) return;
+  el.classList.add('open');
+  el.scrollIntoView({ behavior:'smooth', block:'center' });
+  el.classList.add('flash-highlight');
+  setTimeout(()=>el.classList.remove('flash-highlight'), 1600);
+};
 
-window.openCodHistory = openCodHistory;
-document.getElementById('cod-history-close').addEventListener('click', ()=>
-  document.getElementById('cod-history-overlay').classList.remove('open'));
+sideSearchBtn.addEventListener('click', () => {
+  const willOpen = !sideSearchPop.classList.contains('open');
+  sideSearchPop.classList.toggle('open', willOpen);
+  sideSearchBtn.classList.toggle('active', willOpen);
+  if (willOpen) { renderSideSearchResults(); sideSearchInput.focus(); }
+});
+sideSearchInput.addEventListener('input', renderSideSearchResults);
+document.addEventListener('click', (ev) => {
+  if (!sideSearchPop.contains(ev.target) && !sideSearchBtn.contains(ev.target)) {
+    sideSearchPop.classList.remove('open');
+    sideSearchBtn.classList.remove('active');
+  }
+});
 
 // ── FILTRO POR FASE LUNAR ──
 let activeLunarFilter = null;
@@ -3508,7 +3451,6 @@ auth.onAuthStateChanged(user => {
     }
     loadEntries();
     loadCustomData().then(()=>{ renderCustomCombosList(); });
-    renderCardOfDay();
   } else {
     document.getElementById('login-screen').style.display  = '';
     document.getElementById('main-screen').style.display   = 'none';
