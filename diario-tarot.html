@@ -653,7 +653,7 @@
   }
   .settings-btn:hover { border-color:var(--gold-dim); transform:scale(1.08); }
 
-  /* ── MENU LATERAL (busca + calendário) ── */
+  /* ── MENU LATERAL (busca de significados + calendário) ── */
   .side-menu {
     position:fixed; top:50%; right:1.2rem; transform:translateY(-50%);
     display:flex; flex-direction:column; gap:.6rem; z-index:500;
@@ -666,42 +666,6 @@
     transition:border-color .2s, transform .15s; color:var(--text-dim);
   }
   .side-menu-btn:hover { border-color:var(--gold-dim); transform:scale(1.08); }
-  .side-menu-btn.active { border-color:var(--gold); color:var(--gold-light); }
-
-  .side-search-pop {
-    display:none; position:fixed; top:50%; right:4.4rem; transform:translateY(-50%);
-    width:280px; max-width:calc(100vw - 6rem);
-    background:var(--bg2); border:1px solid var(--border);
-    border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,.5);
-    padding:.9rem; z-index:501; animation:fadeIn .15s ease;
-  }
-  .side-search-pop.open { display:block; }
-  .side-search-pop input {
-    width:100%; background:var(--bg3); border:1px solid var(--border);
-    border-radius:8px; padding:.55rem .8rem; color:var(--text);
-    font-family:'Crimson Text',serif; font-size:.95rem; outline:none;
-    transition:border-color .2s;
-  }
-  .side-search-pop input:focus { border-color:var(--gold-dim); }
-  .side-search-results { max-height:280px; overflow-y:auto; margin-top:.6rem; }
-  .side-search-empty {
-    color:var(--text-dim); font-style:italic; font-size:.82rem;
-    text-align:center; padding:.9rem .3rem;
-  }
-  .side-search-item {
-    display:flex; align-items:baseline; justify-content:space-between; gap:.6rem;
-    padding:.5rem .3rem; border-bottom:1px solid rgba(58,46,98,.4);
-    cursor:pointer; transition:background .15s;
-  }
-  .side-search-item:last-child { border-bottom:none; }
-  .side-search-item:hover { background:rgba(122,78,184,.12); }
-  .side-search-item-cards { font-size:.85rem; color:var(--text); }
-  .side-search-item-date { font-size:.7rem; color:var(--text-dim); flex-shrink:0; }
-  .entry.flash-highlight { animation:entryFlash 1.6s ease; }
-  @keyframes entryFlash {
-    0%,100% { box-shadow:none; }
-    20% { box-shadow:0 0 0 2px var(--gold-dim); }
-  }
 
   .settings-overlay {
     display:none; position:fixed; inset:0;
@@ -945,17 +909,6 @@
     font-family:'Cinzel',serif; color:var(--border); font-size:1.2rem;
     padding:.5rem 0;
   }
-  .consult-btn {
-    width: 100%; background: none;
-    border: 1px solid var(--border); border-radius: 10px;
-    padding: .85rem 1.2rem; color: var(--text-dim);
-    font-family: 'Cinzel', serif; font-size: .78rem;
-    letter-spacing: .1em; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: .6rem;
-    margin-bottom: 1.5rem; transition: border-color .2s, color .2s;
-  }
-  .consult-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
-
   /* ── AUTOCOMPLETE DE CARTAS ── */
   .card-autocomplete {
     position: absolute; left: 0; right: 0; top: calc(100% + 4px);
@@ -997,17 +950,19 @@
   .ac-dot.sim    { background: #70dc90; }
   .ac-dot.nao    { background: #e888a0; }
   .ac-dot.talvez { background: var(--gold); }
-    display: none; position: fixed; inset: 0;
-    background: rgba(8,5,20,.9); z-index: 6000;
-    align-items: flex-start; justify-content: center;
-    padding: 1rem; overflow-y: auto;
+
+  /* ── CONSULTAR SIGNIFICADO ── */
+  .consult-overlay {
+    display: none; position: fixed; inset: 0; z-index: 6000;
   }
-  .consult-overlay.open { display: flex; }
+  .consult-overlay.open { display: block; }
   .consult-box {
+    position: fixed; top: 50%; right: 4.4rem; transform: translateY(-50%);
     background: var(--bg2); border: 1px solid var(--purple);
-    border-radius: 14px; width: 100%; max-width: 500px;
-    margin: 2rem auto; overflow: hidden; animation: fadeIn .2s ease;
-    display: flex; flex-direction: column; max-height: 88vh;
+    border-radius: 14px; width: 320px; max-width: calc(100vw - 6rem);
+    overflow: hidden; animation: fadeIn .2s ease;
+    display: flex; flex-direction: column; max-height: 70vh;
+    box-shadow: 0 10px 32px rgba(0,0,0,.55);
   }
   .consult-header {
     padding: 1rem 1.2rem .8rem; border-bottom: 1px solid var(--border);
@@ -1071,7 +1026,7 @@
   .oracle-dot.talvez { background: var(--gold); }
 
   @media(max-width:600px){
-    .consult-box { margin: .5rem auto; max-height: 95vh; }
+    .consult-box { top:50%; left:50%; right:auto; transform:translate(-50%,-50%); width:90vw; max-height:80vh; }
   }
     .stat{padding:.6rem .8rem}
     .stat-num{font-size:1.3rem}
@@ -1129,14 +1084,10 @@
 <button class="timer-btn" id="timer-btn" title="Timer de meditação">🔔</button>
 <button class="settings-btn" id="settings-btn" title="Configurações">⚙️</button>
 
-<!-- MENU LATERAL: busca + calendário -->
+<!-- MENU LATERAL: significados + calendário -->
 <div class="side-menu">
-  <button class="side-menu-btn" id="side-search-btn" title="Buscar carta">🔍</button>
+  <button class="side-menu-btn" id="side-search-btn" title="Consultar significado de uma carta">🔍</button>
   <button class="side-menu-btn" id="side-cal-btn" title="Calendário">📅</button>
-</div>
-<div class="side-search-pop" id="side-search-pop">
-  <input type="text" id="side-search-input" placeholder="🔍  Buscar por carta ou palavra..." autocomplete="off">
-  <div class="side-search-results" id="side-search-results"></div>
 </div>
 
 <!-- SETTINGS -->
@@ -1317,10 +1268,6 @@
       <button class="btn-save" id="save-entry">Salvar no Diário ✦</button>
     </div>
   </div>
-
-  <button class="consult-btn" id="consult-btn">
-    🔮 Consultar Significado de uma Carta
-  </button>
 
   <div class="filter-bar" id="filter-bar" style="display:none">
     <input type="text" id="filter-input" placeholder="🔍  Buscar por carta ou palavra...">
@@ -2636,56 +2583,6 @@ document.getElementById('cal-close').addEventListener('click', ()=>
 // ── MENU LATERAL: atalho calendário ──
 document.getElementById('side-cal-btn').addEventListener('click', openCalendar);
 
-// ── MENU LATERAL: busca rápida de tiragens ──
-const sideSearchBtn   = document.getElementById('side-search-btn');
-const sideSearchPop   = document.getElementById('side-search-pop');
-const sideSearchInput = document.getElementById('side-search-input');
-const sideSearchResults = document.getElementById('side-search-results');
-
-function renderSideSearchResults() {
-  const q = sideSearchInput.value.toLowerCase().trim();
-  if (!q) { sideSearchResults.innerHTML = '<div class="side-search-empty">Digite o nome de uma carta ou palavra-chave.</div>'; return; }
-  const matches = entries.filter(e =>
-    e.cards.some(c => c.name.toLowerCase().includes(q)) ||
-    (e.analysis||'').toLowerCase().includes(q) ||
-    (e.notes||'').toLowerCase().includes(q)
-  ).sort((a,b)=>b.date.localeCompare(a.date));
-  if (!matches.length) { sideSearchResults.innerHTML = '<div class="side-search-empty">Nenhuma tiragem encontrada.</div>'; return; }
-  sideSearchResults.innerHTML = matches.slice(0,30).map(e => {
-    const [y,m,d] = e.date.split('-');
-    const cardsLabel = e.cards.map(c=>c.name).join(', ');
-    return `<div class="side-search-item" onclick="goToEntry('${e.id}')">
-      <span class="side-search-item-cards">${cardsLabel}</span>
-      <span class="side-search-item-date">${d}/${m}/${y}</span>
-    </div>`;
-  }).join('');
-}
-
-window.goToEntry = function(id) {
-  sideSearchPop.classList.remove('open');
-  sideSearchBtn.classList.remove('active');
-  const el = document.getElementById('entry-'+id);
-  if (!el) return;
-  el.classList.add('open');
-  el.scrollIntoView({ behavior:'smooth', block:'center' });
-  el.classList.add('flash-highlight');
-  setTimeout(()=>el.classList.remove('flash-highlight'), 1600);
-};
-
-sideSearchBtn.addEventListener('click', () => {
-  const willOpen = !sideSearchPop.classList.contains('open');
-  sideSearchPop.classList.toggle('open', willOpen);
-  sideSearchBtn.classList.toggle('active', willOpen);
-  if (willOpen) { renderSideSearchResults(); sideSearchInput.focus(); }
-});
-sideSearchInput.addEventListener('input', renderSideSearchResults);
-document.addEventListener('click', (ev) => {
-  if (!sideSearchPop.contains(ev.target) && !sideSearchBtn.contains(ev.target)) {
-    sideSearchPop.classList.remove('open');
-    sideSearchBtn.classList.remove('active');
-  }
-});
-
 // ── FILTRO POR FASE LUNAR ──
 let activeLunarFilter = null;
 window.toggleLunarFilter = function(btn) {
@@ -3206,7 +3103,7 @@ window.consultCard = function(name) {
   }, 80);
 };
 
-document.getElementById('consult-btn').addEventListener('click', ()=>{
+document.getElementById('side-search-btn').addEventListener('click', ()=>{
   buildConsultList();
   document.getElementById('consult-overlay').classList.add('open');
   setTimeout(()=> document.getElementById('consult-search').focus(), 150);
