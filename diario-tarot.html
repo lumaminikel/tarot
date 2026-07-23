@@ -667,6 +667,25 @@
   }
   .side-menu-btn:hover { border-color:var(--gold-dim); transform:scale(1.08); }
 
+  .entry.flash-highlight { animation:entryFlash 1.8s ease; }
+  @keyframes entryFlash {
+    0%,100% { box-shadow:none; }
+    15% { box-shadow:0 0 0 2px var(--gold-dim); }
+  }
+
+  /* ── VOLTAR AO TOPO ── */
+  .top-btn {
+    position:fixed; bottom:1.5rem; left:1.2rem;
+    background:var(--bg2); border:1px solid var(--border);
+    border-radius:50%; width:46px; height:46px; font-size:1.2rem;
+    cursor:pointer; z-index:500; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 16px rgba(0,0,0,.4); color:var(--text-dim);
+    opacity:0; pointer-events:none; transform:translateY(8px);
+    transition:opacity .2s, transform .2s, border-color .2s;
+  }
+  .top-btn.show { opacity:1; pointer-events:auto; transform:translateY(0); }
+  .top-btn:hover { border-color:var(--gold-dim); }
+
   .settings-overlay {
     display:none; position:fixed; inset:0;
     background:rgba(8,5,20,.88); z-index:7000;
@@ -1083,6 +1102,7 @@
 <!-- TIMER (botão flutuante) -->
 <button class="timer-btn" id="timer-btn" title="Timer de meditação">🔔</button>
 <button class="settings-btn" id="settings-btn" title="Configurações">⚙️</button>
+<button class="top-btn" id="top-btn" title="Voltar ao topo">↑</button>
 
 <!-- MENU LATERAL: significados + calendário -->
 <div class="side-menu">
@@ -2558,9 +2578,9 @@ window.showCalDay = function(dateStr) {
   let html = `<div style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold-dim);margin-bottom:.7rem">${d}/${m}/${y} · ${lunar.emoji} ${lunar.name}</div>`;
   dayEntries.forEach(e => {
     const badges = e.cards.map(c=>
-      `<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv})">${c.name}${c.inv?' ↩':''}</span>`
+      `<span class="entry-card-badge${c.inv?' invertida':''}" onclick="event.stopPropagation();showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv})">${c.name}${c.inv?' ↩':''}</span>`
     ).join('');
-    html += `<div style="margin-bottom:.7rem">
+    html += `<div style="margin-bottom:.7rem;cursor:pointer" onclick="goToEntry('${e.id}')" title="Ver essa tiragem no diário">
       <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.3rem">${badges}</div>
       ${e.analysis?`<div style="font-size:.82rem;color:var(--text-dim);line-height:1.5">${e.analysis.slice(0,120).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')}${e.analysis.length>120?'…':''}</div>`:''}
     </div>`;
@@ -2579,6 +2599,26 @@ document.getElementById('cal-next').addEventListener('click', () => {
 document.getElementById('cal-btn').addEventListener('click', openCalendar);
 document.getElementById('cal-close').addEventListener('click', ()=>
   document.getElementById('cal-overlay').classList.remove('open'));
+
+// ── IR PARA A TIRAGEM (a partir do calendário) ──
+window.goToEntry = function(id) {
+  document.getElementById('cal-overlay').classList.remove('open');
+  const el = document.getElementById('entry-'+id);
+  if (!el) return;
+  el.classList.add('open');
+  setTimeout(() => {
+    el.scrollIntoView({ behavior:'smooth', block:'center' });
+    el.classList.add('flash-highlight');
+    setTimeout(()=>el.classList.remove('flash-highlight'), 1800);
+  }, 200);
+};
+
+// ── VOLTAR AO TOPO ──
+const topBtn = document.getElementById('top-btn');
+window.addEventListener('scroll', () => {
+  topBtn.classList.toggle('show', window.scrollY > 400);
+});
+topBtn.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
 
 // ── MENU LATERAL: atalho calendário ──
 document.getElementById('side-cal-btn').addEventListener('click', openCalendar);
