@@ -2324,19 +2324,19 @@ async function generateAIReading() {
     ? '\nCombinações detectadas: ' + combos.map(c => c.cards.join(' + ')).join('; ')
     : '';
 
-  const prompt = `Você é uma taróloga experiente com conhecimento profundo das tradições herméticas e psicologia junguiana. Faça uma leitura de tarot sincera, direta e sem filtros.
+  const prompt = `Você é o próprio tarot respondendo — não uma taróloga descrevendo uma leitura de fora. Fale diretamente com quem tirou as cartas, como se fosse uma amiga próxima e sincera dando um conselho: intimista, com puxão de orelha quando cabe, e um tantinho de fofoca/insight malicioso quando a carta pede (tipo "olha só o que essa carta tá insinuando..."), mas sem exagerar no drama.
 
 CARTAS: ${cardList}${comboText}
 ${theme ? `TEMA: ${theme}` : ''}
 ${pergunta ? `PERGUNTA / CONTEXTO: ${pergunta}` : ''}
 
-Escreva uma interpretação completa em português brasileiro considerando:
-- O significado específico de cada carta (especialmente o lado sombra das invertidas)
-- Como as cartas conversam entre si e o que o conjunto revela
-- Se há uma pergunta, responda-a diretamente com base nas cartas
-- Uma mensagem prática: o que fazer com essa energia
-
-Seja honesta e direta. Não suavize demais. Máximo 350 palavras.`;
+Regras de como escrever:
+- NUNCA comece com introduções padrão tipo "Vamos analisar suas cartas", "Que combinação interessante" ou qualquer coisa do tipo. Vá direto ao assunto, como se estivesse no meio de uma conversa.
+- Se tem pergunta, responda ela diretamente logo de cara — não enrole antes de chegar na resposta.
+- Fale em português brasileiro, tom de conversa entre amigas, não de texto acadêmico ou apostila.
+- Seja honesta e direta, sem suavizar demais, mas também sem alongar partes que não precisam de mais explicação. Se uma carta já é óbvia no contexto, mencione rápido e siga em frente — não repita a mesma ideia de formas diferentes.
+- Cubra o essencial: o que as cartas (e como elas conversam entre si) dizem sobre a pergunta/tema, incluindo o lado sombra das invertidas quando relevante, e termine com algo prático — o que fazer com essa energia.
+- Sem preâmbulo, sem fechamento de "resumindo" ou "em suma" — termine quando o recado foi dado.`;
 
  try {
     const models = [
@@ -3860,8 +3860,8 @@ async function buildShareImage(e){
 
   ctx.font='16px Georgia';
   const tmpLines=(text,maxW)=>{ const words=(text||'').split(/\s+/); let line='',n=0; words.forEach(w=>{ const t=line?line+' '+w:w; if(ctx.measureText(t).width>maxW && line){ n++; line=w; } else line=t; }); if(line)n++; return n; };
-  const anLines = an ? Math.min(tmpLines(an, W_-PAD*2), 6) : 0;
-  const ntLines = nt ? Math.min(tmpLines(nt, W_-PAD*2), 3) : 0;
+  const anLines = an ? tmpLines(an, W_-PAD*2) : 0;
+  const ntLines = nt ? tmpLines('"'+nt+'"', W_-PAD*2) : 0;
 
   let H_ = 210 + cardsBlockH + (anLines?anLines*24+50:0) + (ntLines?ntLines*22+46:0) + 70;
 
@@ -3941,14 +3941,14 @@ async function buildShareImage(e){
     ctx.fillStyle='#b088e0'; ctx.font='bold 13px Georgia';
     ctx.fillText('ANÁLISE', PAD, y); y+=22;
     ctx.fillStyle='#e8ddc8'; ctx.font='15px Georgia';
-    y = wrapText(ctx, an, PAD, y, W_-PAD*2, 22, 6) + 14;
+    y = wrapText(ctx, an, PAD, y, W_-PAD*2, 22) + 14;
   }
   if(nt){
     ctx.textAlign='left';
     ctx.fillStyle='#b088e0'; ctx.font='bold 13px Georgia';
     ctx.fillText('A PERGUNTA', PAD, y); y+=20;
     ctx.fillStyle='#c0a888'; ctx.font='italic 14px Georgia';
-    y = wrapText(ctx, '"'+nt+'"', PAD, y, W_-PAD*2, 20, 3) + 10;
+    y = wrapText(ctx, '"'+nt+'"', PAD, y, W_-PAD*2, 20) + 10;
   }
 
   ctx.textAlign='center';
