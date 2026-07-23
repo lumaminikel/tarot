@@ -3858,12 +3858,13 @@ async function buildShareImage(e){
   const an=(e.analysis||'').replace(/\*\*/g,'');
   const nt=(e.notes||'');
 
-  ctx.font='16px Georgia';
   const tmpLines=(text,maxW)=>{ const words=(text||'').split(/\s+/); let line='',n=0; words.forEach(w=>{ const t=line?line+' '+w:w; if(ctx.measureText(t).width>maxW && line){ n++; line=w; } else line=t; }); if(line)n++; return n; };
+  ctx.font='15px Georgia';
   const anLines = an ? tmpLines(an, W_-PAD*2) : 0;
+  ctx.font='italic 14px Georgia';
   const ntLines = nt ? tmpLines('"'+nt+'"', W_-PAD*2) : 0;
 
-  let H_ = 210 + cardsBlockH + (anLines?anLines*24+50:0) + (ntLines?ntLines*22+46:0) + 70;
+  let H_ = 210 + cardsBlockH + (anLines?anLines*22+50:0) + (ntLines?ntLines*20+46:0) + 70;
 
   const scale=2;
   canvas.width=W_*scale; canvas.height=H_*scale;
