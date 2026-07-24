@@ -2594,6 +2594,49 @@ function calcularArcanosPessoais(dataNascimento) {
   };
 }
 
+const ARCANO_POSICAO_LABEL = {
+  missao: 'Missão / Arcano Pessoal',
+  personalidade: 'Personalidade',
+  modoDeAgir: 'Modo de Agir',
+  essencia: 'Essência',
+};
+
+const ARCANO_POSICAO_DESC = {
+  missao: 'o propósito de vida maior, o arcano que resume toda a jornada da pessoa',
+  personalidade: 'como a pessoa se apresenta e é percebida no dia a dia',
+  modoDeAgir: 'como a pessoa toma decisões e age diante dos desafios',
+  essencia: 'a energia mais profunda e estável da pessoa, o que não muda com o tempo',
+};
+
+async function gerarSignificadoArcanoPosicao(chave, nomeCarta, numero) {
+  const el = document.getElementById(`arcano-meaning-${chave}`);
+  if (!el) return;
+  el.style.display = 'block';
+
+  const apiKey = localStorage.getItem('gemini_key');
+  if (!apiKey) {
+    const data = TAROT_CARDS[nomeCarta] || {};
+    el.textContent = data.meaning || 'Configure sua chave Gemini em ⚙️ para um significado personalizado dessa posição.';
+    return;
+  }
+
+  el.innerHTML = '<span style="font-style:italic">Gerando...</span>';
+  const prompt = `Você é o próprio tarot falando diretamente com a pessoa, tom de conversa entre amigas, sincero, sem preâmbulo nem introdução padrão — vá direto ao ponto e não alongue o que não precisa.
+
+CARTA: ${nomeCarta} (arcano ${numero})
+POSIÇÃO NO MAPA PESSOAL: ${ARCANO_POSICAO_LABEL[chave]} — essa posição representa ${ARCANO_POSICAO_DESC[chave]}.
+
+Escreva um significado curto (2-4 frases) do que significa ter especificamente essa carta nessa posição da vida da pessoa.`;
+
+  try {
+    const { text } = await callGeminiText(prompt);
+    el.textContent = text;
+  } catch (e) {
+    const data = TAROT_CARDS[nomeCarta] || {};
+    el.textContent = (data.meaning || '') + ` (Não consegui gerar com IA agora: ${e.message})`;
+  }
+}
+
 function computeNatalSigns(chart) {
   const [y,m,d] = chart.date.split('-').map(Number);
   const sun = sunSignFromDate(m, d);
@@ -2633,17 +2676,21 @@ function renderAstroOverlay() {
     const signs = computeNatalSigns(chart);
     const arcanos = calcularArcanosPessoais(chart.date);
     const arcanoBlocos = [
-      ['missao', 'Missão'], ['personalidade', 'Personalidade'],
+      ['missao', 'Missão / Arcano Pessoal'], ['personalidade', 'Personalidade'],
       ['modoDeAgir', 'Modo de Agir'], ['essencia', 'Essência'],
     ].map(([chave, label]) => {
       const numero = arcanos[chave];
       const nome = ARCANO_NUMERO_NOME[numero] || '—';
       const img = CARD_IMAGES[nome] || '';
       return `
-        <div class="astro-chart-item" style="cursor:pointer" onclick="showCardPopup('${nome.replace(/'/g,"\\'")}', false)">
+        <div class="astro-chart-item">
           <div class="lbl">${label}</div>
-          ${img ? `<img src="${img}" alt="${nome}" style="width:100%;border-radius:6px;margin:.3rem 0" loading="lazy">` : ''}
-          <div class="val">${nome} (${numero})</div>
+          <div onclick="showCardPopup('${nome.replace(/'/g,"\\'")}', false)" style="cursor:pointer">
+            ${img ? `<img src="${img}" alt="${nome}" style="width:100%;border-radius:6px;margin:.3rem 0" loading="lazy">` : ''}
+            <div class="val">${nome} (${numero})</div>
+          </div>
+          <div class="arcano-posicao-meaning" id="arcano-meaning-${chave}" style="display:none;font-size:.78rem;color:var(--text-dim);margin-top:.4rem;text-align:left"></div>
+          <button class="btn-cancel" style="margin-top:.4rem;font-size:.72rem;padding:.3rem .5rem" onclick="gerarSignificadoArcanoPosicao('${chave}','${nome.replace(/'/g,"\\'")}',${numero})">✦ O que significa aqui</button>
         </div>`;
     }).join('');
 
