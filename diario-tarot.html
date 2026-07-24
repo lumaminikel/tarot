@@ -719,11 +719,25 @@
   .settings-box {
     background:var(--bg2); border:1px solid var(--border);
     border-radius:14px; padding:1.8rem; width:100%; max-width:440px;
-    animation:fadeIn .2s ease;
+    animation:fadeIn .2s ease; max-height:90vh; overflow-y:auto;
   }
   .settings-box h3 { font-family:'Cinzel',serif; color:var(--gold-light); margin-bottom:1rem; }
   .settings-box p  { font-size:.85rem; color:var(--text-dim); margin-bottom:1rem; line-height:1.6; }
   .settings-box a  { color:var(--gold-dim); }
+
+  .astro-section { padding-top:0; margin-top:0; }
+  .astro-section + .astro-section { border-top:1px solid var(--border); padding-top:.9rem; margin-top:.9rem; }
+  .astro-section-title { font-family:'Cinzel',serif; color:var(--purple-light); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.6rem; }
+  .astro-line { display:flex; align-items:baseline; gap:.5rem; font-size:.92rem; color:var(--text); margin-bottom:.4rem; }
+  .astro-line b { color:var(--gold-light); font-weight:600; }
+  .astro-banner { background:rgba(208,96,128,.12); border:1px solid rgba(208,96,128,.4); border-radius:8px; padding:.6rem .8rem; font-size:.82rem; color:var(--rose); margin-top:.5rem; line-height:1.5; }
+  .astro-chart-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.6rem; text-align:center; }
+  .astro-chart-item { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:.7rem .4rem; }
+  .astro-chart-item .lbl { font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); margin-bottom:.3rem; }
+  .astro-chart-item .val { font-size:.85rem; color:var(--gold-light); font-weight:600; }
+  .astro-daily-card { display:flex; gap:.9rem; align-items:flex-start; margin-top:.6rem; }
+  .astro-daily-card img { width:80px; border-radius:8px; border:1px solid var(--border); }
+  .astro-daily-card .txt { font-size:.88rem; color:var(--text); line-height:1.6; white-space:pre-wrap; }
 
   /* ── QUIZ ── */
   .quiz-overlay {
@@ -1132,6 +1146,7 @@
 <div class="side-menu">
   <button class="side-menu-btn" id="side-search-btn" title="Consultar significado de uma carta">🔍</button>
   <button class="side-menu-btn" id="side-cal-btn" title="Calendário">📅</button>
+  <button class="side-menu-btn" id="side-astro-btn" title="Astrologia">🪐</button>
 </div>
 
 <!-- SETTINGS -->
@@ -1146,6 +1161,57 @@
     <div style="display:flex;gap:.8rem;margin-top:1rem;justify-content:flex-end">
       <button class="btn-cancel" id="settings-close">Fechar</button>
       <button class="btn-save" id="settings-save">Salvar ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASTROLOGIA -->
+<div class="settings-overlay" id="astro-overlay">
+  <div class="settings-box" style="max-width:480px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
+      <h3 style="margin:0">🪐 Astrologia</h3>
+      <button class="consult-close" id="astro-close">×</button>
+    </div>
+
+    <div class="astro-section">
+      <div class="astro-section-title">✦ Trânsitos de hoje</div>
+      <div id="astro-transits-today"></div>
+    </div>
+
+    <div class="astro-section">
+      <div class="astro-section-title">✦ Seu mapa astral</div>
+      <div id="astro-chart-display"></div>
+      <div id="astro-chart-form" style="display:none">
+        <p style="color:var(--text-dim); font-size:.82rem; margin:.2rem 0 .8rem;">Isso fica salvo só no seu navegador. Não sabe a latitude/longitude? Busque "[sua cidade] latitude longitude" no Google.</p>
+        <div class="form-row">
+          <label>Data de nascimento</label>
+          <input type="date" id="astro-birth-date">
+        </div>
+        <div class="form-row">
+          <label>Hora de nascimento (se souber, melhora o Ascendente)</label>
+          <input type="time" id="astro-birth-time">
+        </div>
+        <div style="display:flex; gap:.8rem;">
+          <div class="form-row" style="flex:1"><label>Latitude</label><input type="number" step="any" id="astro-birth-lat" placeholder="-30.03"></div>
+          <div class="form-row" style="flex:1"><label>Longitude</label><input type="number" step="any" id="astro-birth-lon" placeholder="-51.23"></div>
+        </div>
+        <div class="form-row">
+          <label>Fuso horário (UTC, ex: -3)</label>
+          <input type="number" step="any" id="astro-birth-tz" value="-3">
+        </div>
+      </div>
+    </div>
+
+    <div class="astro-section">
+      <div class="astro-section-title">✦ Tiragem do dia</div>
+      <div id="astro-daily-result"></div>
+      <button class="btn-save" id="astro-daily-btn" style="width:100%; margin-top:.6rem">🔮 Tirar carta do dia</button>
+    </div>
+
+    <div style="display:flex;gap:.8rem;margin-top:1rem;justify-content:flex-end">
+      <button class="btn-cancel" id="astro-close2">Fechar</button>
+      <button class="btn-save" id="astro-save-chart" style="display:none">Salvar mapa ✦</button>
+      <button class="btn-edit" id="astro-edit-chart" style="display:none">✎ Editar mapa</button>
     </div>
   </div>
 </div>
@@ -2301,6 +2367,48 @@ function updateAIBtn() {
   if (btn) btn.style.display = cardTags.length > 0 ? '' : 'none';
 }
 
+async function callGeminiText(prompt) {
+  const apiKey = localStorage.getItem('gemini_key');
+  if (!apiKey) throw new Error('NO_KEY');
+  const models = [
+    'gemini-3.5-flash',
+    'gemini-3.1-flash-lite',
+    'gemini-3-flash-preview'
+  ];
+  let text = '';
+  let lastErr = '';
+  for (const model of models) {
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { maxOutputTokens: 10024, temperature: 0.8 }
+          })
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        lastErr = data?.error?.message || `HTTP ${res.status}`;
+        if (data?.error?.status === 'RESOURCE_EXHAUSTED' || lastErr.includes('high demand')) continue;
+        throw new Error(lastErr);
+      }
+      text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      if (text) return { text, model };
+    } catch(e) {
+      if (e.message.includes('RESOURCE_EXHAUSTED') || e.message.includes('quota') || e.message.includes('high demand') || e.message.includes('503')) {
+        lastErr = e.message;
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw new Error('Cota esgotada em todos os modelos. ' + lastErr);
+}
+
 async function generateAIReading() {
   const apiKey = localStorage.getItem('gemini_key');
   if (!apiKey) {
@@ -2338,49 +2446,9 @@ Regras de como escrever:
 - Cubra o essencial: o que as cartas (e como elas conversam entre si) dizem sobre a pergunta/tema, incluindo o lado sombra das invertidas quando relevante, e termine com algo prático — o que fazer com essa energia.
 - Sem preâmbulo, sem fechamento de "resumindo" ou "em suma" — termine quando o recado foi dado.`;
 
- try {
-    const models = [
-      'gemini-3.5-flash',
-      'gemini-3.1-flash-lite',
-      'gemini-3-flash-preview'
-    ];
-
-    let text = '';
-    let lastErr = '';
-
-    for (const model of models) {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { maxOutputTokens: 10024, temperature: 0.8 }
-            })
-          }
-        );
-        const data = await res.json();
-        if (!res.ok) {
-          lastErr = data?.error?.message || `HTTP ${res.status}`;
-          if (data?.error?.status === 'RESOURCE_EXHAUSTED' || lastErr.includes('high demand')) continue; // tenta próximo modelo
-          throw new Error(lastErr);
-        }
-        text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        if (text) { showToast(`✦ Interpretação gerada (${model})`); break; }
-     } catch(e) {
-        // Adicionamos a verificação para 'high demand' ou erro '503'
-        if (e.message.includes('RESOURCE_EXHAUSTED') || e.message.includes('quota') || e.message.includes('high demand') || e.message.includes('503')) {
-          lastErr = e.message; 
-          continue; // Pula para o próximo modelo da sua lista
-        }
-        throw e;
-      }
-    }
-
-    if (!text) throw new Error('Cota esgotada em todos os modelos. ' + lastErr);
-
+  try {
+    const { text, model } = await callGeminiText(prompt);
+    showToast(`✦ Interpretação gerada (${model})`);
     document.getElementById('f-analysis').value = text;
   } catch(e) {
     showToast('Erro: ' + e.message);
@@ -2391,6 +2459,245 @@ Regras de como escrever:
 }
 
 document.getElementById('ai-btn').addEventListener('click', generateAIReading);
+
+// ── ASTROLOGIA ──
+const ZODIAC = [
+  {name:'Áries', emoji:'♈'},{name:'Touro', emoji:'♉'},{name:'Gêmeos', emoji:'♊'},
+  {name:'Câncer', emoji:'♋'},{name:'Leão', emoji:'♌'},{name:'Virgem', emoji:'♍'},
+  {name:'Libra', emoji:'♎'},{name:'Escorpião', emoji:'♏'},{name:'Sagitário', emoji:'♐'},
+  {name:'Capricórnio', emoji:'♑'},{name:'Aquário', emoji:'♒'},{name:'Peixes', emoji:'♓'}
+];
+
+function zodiacFromLongitude(lambda) {
+  const norm = ((lambda % 360) + 360) % 360;
+  return ZODIAC[Math.floor(norm / 30)];
+}
+
+// Signo solar a partir só da data (datas de cúspide padrão)
+function sunSignFromDate(month, day) {
+  const cusps = [
+    [1,20,'Capricórnio'],[2,19,'Aquário'],[3,20,'Peixes'],[4,20,'Áries'],
+    [5,21,'Touro'],[6,21,'Gêmeos'],[7,22,'Câncer'],[8,23,'Leão'],
+    [9,23,'Virgem'],[10,23,'Libra'],[11,22,'Escorpião'],[12,21,'Sagitário'],[12,32,'Capricórnio']
+  ];
+  for (const [m,d,sign] of cusps) { if (month < m || (month === m && day <= d)) return sign; }
+  return 'Capricórnio';
+}
+
+function toJulianDay(dateUTC) {
+  return dateUTC.getTime() / 86400000 + 2440587.5;
+}
+
+// Longitude eclíptica da Lua (fórmula de baixa precisão, Meeus — precisão ~0.3°)
+function moonEclipticLongitude(dateUTC) {
+  const JD = toJulianDay(dateUTC);
+  const T = (JD - 2451545.0) / 36525;
+  const rad = Math.PI/180;
+  const L  = 218.3164477 + 481267.88123421*T;
+  const D  = (297.8501921 + 445267.1114034*T) * rad;
+  const M  = (357.5291092 + 35999.0502909*T) * rad;
+  const Mp = (134.9633964 + 477198.8675055*T) * rad;
+  const F  = (93.2720950 + 483202.0175233*T) * rad;
+  let lon = L
+    + 6.288774*Math.sin(Mp)
+    + 1.274027*Math.sin(2*D - Mp)
+    + 0.658314*Math.sin(2*D)
+    + 0.213618*Math.sin(2*Mp)
+    - 0.185116*Math.sin(M)
+    - 0.114332*Math.sin(2*F)
+    + 0.058793*Math.sin(2*D - 2*Mp)
+    + 0.057066*Math.sin(2*D - M - Mp)
+    + 0.053322*Math.sin(2*D + Mp);
+  return ((lon % 360) + 360) % 360;
+}
+
+function greenwichSiderealTimeDeg(dateUTC) {
+  const JD = toJulianDay(dateUTC);
+  const T = (JD - 2451545.0) / 36525;
+  let gmst = 280.46061837 + 360.98564736629*(JD - 2451545.0) + 0.000387933*T*T - (T*T*T)/38710000;
+  return ((gmst % 360) + 360) % 360;
+}
+
+// Ascendente a partir de data/hora UTC de nascimento + latitude/longitude (graus, longitude leste positiva)
+function computeAscendant(dateUTC, latDeg, lonDeg) {
+  const rad = Math.PI/180, deg = 180/Math.PI;
+  const gmst = greenwichSiderealTimeDeg(dateUTC);
+  const lst = ((gmst + lonDeg) % 360 + 360) % 360; // Local Sidereal Time em graus
+  const eps = 23.4392911 * rad; // obliquidade da eclíptica (aprox.)
+  const lstRad = lst * rad;
+  const latRad = latDeg * rad;
+  const y = Math.cos(lstRad);
+  const x = -(Math.sin(lstRad)*Math.cos(eps) + Math.tan(latRad)*Math.sin(eps));
+  let asc = Math.atan2(y, x) * deg;
+  asc = ((asc % 360) + 360) % 360;
+  return asc;
+}
+
+// ── Retrogradações conhecidas (datas verificadas manualmente — precisam ser
+// atualizadas a cada ano; não são calculadas por efeméride em tempo real) ──
+const RETROGRADE_PERIODS = [
+  {planet:'Mercúrio', emoji:'☿', start:'2026-02-26', end:'2026-03-20', sign:'Peixes'},
+  {planet:'Mercúrio', emoji:'☿', start:'2026-06-29', end:'2026-07-23', sign:'Câncer'},
+  {planet:'Mercúrio', emoji:'☿', start:'2026-10-24', end:'2026-11-13', sign:'Escorpião'},
+  {planet:'Vênus',    emoji:'♀', start:'2026-10-03', end:'2026-11-13', sign:'Escorpião/Libra'},
+];
+
+function activeRetrogrades(dateStr) {
+  return RETROGRADE_PERIODS.filter(p => dateStr >= p.start && dateStr <= p.end);
+}
+
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ── Mapa astral (armazenado localmente) ──
+const NATAL_KEY = 'tarotNatalChart';
+function loadNatalChart() {
+  try { return JSON.parse(localStorage.getItem(NATAL_KEY) || 'null'); }
+  catch { return null; }
+}
+function saveNatalChart(chart) {
+  localStorage.setItem(NATAL_KEY, JSON.stringify(chart));
+}
+
+function computeNatalSigns(chart) {
+  const [y,m,d] = chart.date.split('-').map(Number);
+  const sun = sunSignFromDate(m, d);
+  const [hh,mm] = (chart.time || '12:00').split(':').map(Number);
+  const tz = Number(chart.tz || 0);
+  const dateUTC = new Date(Date.UTC(y, m-1, d, hh - tz, mm));
+  const moon = zodiacFromLongitude(moonEclipticLongitude(dateUTC)).name;
+  let asc = null;
+  if (chart.time && chart.lat !== '' && chart.lon !== '' && chart.lat != null && chart.lon != null) {
+    asc = zodiacFromLongitude(computeAscendant(dateUTC, Number(chart.lat), Number(chart.lon))).name;
+  }
+  return { sun, moon, asc };
+}
+
+function renderAstroOverlay() {
+  const now = new Date();
+  const iso = todayISO();
+  const moonSign = zodiacFromLongitude(moonEclipticLongitude(now));
+  const lunar = lunarPhase(iso);
+  const retros = activeRetrogrades(iso);
+
+  const transitsEl = document.getElementById('astro-transits-today');
+  transitsEl.innerHTML = `
+    <div class="astro-line"><span>${lunar.emoji}</span> Fase da Lua: <b>${lunar.name}</b></div>
+    <div class="astro-line"><span>${moonSign.emoji}</span> Lua em: <b>${moonSign.name}</b></div>
+  ` + (retros.length
+    ? retros.map(r => `<div class="astro-banner">${r.emoji} <b>${r.planet} retrógrado</b> (em ${r.sign}) — ótimo momento pra revisar, não pra iniciar coisas novas.</div>`).join('')
+    : `<div class="astro-line" style="color:var(--text-dim); font-size:.82rem">Nenhum planeta pessoal retrógrado hoje.</div>`);
+
+  const chart = loadNatalChart();
+  const displayEl = document.getElementById('astro-chart-display');
+  const formEl = document.getElementById('astro-chart-form');
+  const saveBtn = document.getElementById('astro-save-chart');
+  const editBtn = document.getElementById('astro-edit-chart');
+
+  if (chart && !astroEditing) {
+    const signs = computeNatalSigns(chart);
+    displayEl.style.display = '';
+    formEl.style.display = 'none';
+    displayEl.innerHTML = `
+      <div class="astro-chart-grid">
+        <div class="astro-chart-item"><div class="lbl">☉ Sol</div><div class="val">${signs.sun}</div></div>
+        <div class="astro-chart-item"><div class="lbl">☾ Lua</div><div class="val">${signs.moon}</div></div>
+        <div class="astro-chart-item"><div class="lbl">↑ Ascendente</div><div class="val">${signs.asc || '—'}</div></div>
+      </div>
+      ${!signs.asc ? '<p style="font-size:.75rem;color:var(--text-dim);margin-top:.5rem">Adicione hora e local de nascimento para calcular o Ascendente.</p>' : ''}
+    `;
+    saveBtn.style.display = 'none';
+    editBtn.style.display = '';
+  } else {
+    displayEl.style.display = 'none';
+    formEl.style.display = '';
+    if (chart) {
+      document.getElementById('astro-birth-date').value = chart.date || '';
+      document.getElementById('astro-birth-time').value = chart.time || '';
+      document.getElementById('astro-birth-lat').value = chart.lat ?? '';
+      document.getElementById('astro-birth-lon').value = chart.lon ?? '';
+      document.getElementById('astro-birth-tz').value = chart.tz ?? -3;
+    }
+    saveBtn.style.display = '';
+    editBtn.style.display = 'none';
+  }
+}
+
+let astroEditing = false;
+
+document.getElementById('side-astro-btn').addEventListener('click', () => {
+  astroEditing = false;
+  renderAstroOverlay();
+  document.getElementById('astro-overlay').classList.add('open');
+});
+document.getElementById('astro-close').addEventListener('click', () => document.getElementById('astro-overlay').classList.remove('open'));
+document.getElementById('astro-close2').addEventListener('click', () => document.getElementById('astro-overlay').classList.remove('open'));
+document.getElementById('astro-edit-chart').addEventListener('click', () => { astroEditing = true; renderAstroOverlay(); });
+document.getElementById('astro-save-chart').addEventListener('click', () => {
+  const date = document.getElementById('astro-birth-date').value;
+  if (!date) { showToast('⚠ Preencha ao menos a data de nascimento'); return; }
+  saveNatalChart({
+    date,
+    time: document.getElementById('astro-birth-time').value,
+    lat: document.getElementById('astro-birth-lat').value,
+    lon: document.getElementById('astro-birth-lon').value,
+    tz: document.getElementById('astro-birth-tz').value,
+  });
+  astroEditing = false;
+  renderAstroOverlay();
+  showToast('✦ Mapa astral salvo');
+});
+
+// ── Tiragem do dia personalizada ──
+document.getElementById('astro-daily-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('astro-daily-btn');
+  const resultEl = document.getElementById('astro-daily-result');
+  const eligible = Object.keys(TAROT_CARDS).filter(n => CARD_IMAGES[n]);
+  const name = eligible[Math.floor(Math.random()*eligible.length)];
+  const inv = Math.random() < 0.35;
+  const data = TAROT_CARDS[name] || {};
+  const meaning = inv ? (data.reversed || data.meaning || '') : (data.meaning || '');
+
+  const now = new Date();
+  const iso = todayISO();
+  const moonSign = zodiacFromLongitude(moonEclipticLongitude(now)).name;
+  const lunar = lunarPhase(iso);
+  const retros = activeRetrogrades(iso);
+  const chart = loadNatalChart();
+  const signs = chart ? computeNatalSigns(chart) : null;
+
+  resultEl.innerHTML = `
+    <div class="astro-daily-card">
+      <img src="${CARD_IMAGES[name]}" style="${inv?'transform:rotate(180deg)':''}">
+      <div class="txt"><b style="color:var(--gold-light)">${name}${inv?' (invertida)':''}</b><br><span style="color:var(--text-dim); font-size:.8rem">Gerando leitura do dia...</span></div>
+    </div>`;
+
+  const apiKey = localStorage.getItem('gemini_key');
+  if (!apiKey) {
+    resultEl.querySelector('.txt').innerHTML = `<b style="color:var(--gold-light)">${name}${inv?' (invertida)':''}</b><br>${meaning}<br><span style="color:var(--text-dim); font-size:.78rem">Configure sua chave Gemini em ⚙️ para uma leitura personalizada com base no seu mapa e nos trânsitos de hoje.</span>`;
+    return;
+  }
+
+  btn.disabled = true;
+  const prompt = `Você é o próprio tarot falando diretamente com a pessoa, tom de conversa entre amigas, sincero, sem preâmbulo nem introdução padrão — vá direto ao ponto e não alongue o que não precisa.
+
+CARTA DO DIA: ${name}${inv ? ' (invertida)' : ''}
+CONTEXTO ASTROLÓGICO DE HOJE: Lua em ${moonSign}, fase ${lunar.name}.${retros.length ? ' Retrógrado ativo: ' + retros.map(r=>`${r.planet} em ${r.sign}`).join(', ') + '.' : ''}
+${signs ? `MAPA ASTRAL DA PESSOA: Sol em ${signs.sun}, Lua em ${signs.moon}${signs.asc ? `, Ascendente em ${signs.asc}` : ''}.` : ''}
+
+Escreva uma mensagem curta (3-5 frases) para o dia, cruzando o que a carta diz com o clima astrológico de hoje${signs ? ' e o mapa da pessoa' : ''}. Termine com um conselho prático pro dia.`;
+
+  try {
+    const { text } = await callGeminiText(prompt);
+    resultEl.querySelector('.txt').innerHTML = `<b style="color:var(--gold-light)">${name}${inv?' (invertida)':''}</b><br>${text}`;
+  } catch(e) {
+    resultEl.querySelector('.txt').innerHTML = `<b style="color:var(--gold-light)">${name}${inv?' (invertida)':''}</b><br>${meaning}<br><span style="color:var(--rose); font-size:.78rem">Não consegui gerar a leitura com IA agora: ${e.message}</span>`;
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 // ── QUIZ ──
 let quizCards = [], quizIdx = 0, quizCorrect = 0, quizAnswered = false, quizMode = 'random';
