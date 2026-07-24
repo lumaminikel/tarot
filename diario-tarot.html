@@ -2561,6 +2561,39 @@ function saveNatalChart(chart) {
   localStorage.setItem(NATAL_KEY, JSON.stringify(chart));
 }
 
+// ── Arcanos pessoais (numerologia a partir da data de nascimento) ──
+// Segue a mesma convenção numérica já usada no app: A Louca fecha o ciclo como carta 22.
+const ARCANO_NUMERO_NOME = {
+  1: 'O Mago', 2: 'A Sacerdotisa', 3: 'A Imperatriz', 4: 'O Imperador',
+  5: 'O Hierofante', 6: 'Os Amantes', 7: 'O Carro', 8: 'A Força',
+  9: 'O Eremita', 10: 'Roda da Fortuna', 11: 'A Justiça', 12: 'A Enforcada',
+  13: 'A Morte', 14: 'A Temperança', 15: 'O Diabo', 16: 'A Torre',
+  17: 'A Estrela', 18: 'A Lua', 19: 'O Sol', 20: 'O Julgamento',
+  21: 'O Mundo', 22: 'A Louca',
+};
+
+function reduzirArcano(numero) {
+  while (numero > 22) {
+    numero = String(numero).split('').reduce((soma, d) => soma + Number(d), 0);
+  }
+  return numero;
+}
+
+function somarDigitos(str) {
+  return str.split('').reduce((soma, d) => soma + Number(d), 0);
+}
+
+function calcularArcanosPessoais(dataNascimento) {
+  // dataNascimento no formato "YYYY-MM-DD"
+  const [ano, mes, dia] = dataNascimento.split('-');
+  return {
+    missao:        reduzirArcano(somarDigitos(dia + mes + ano)),
+    personalidade: reduzirArcano(Number(dia)),
+    modoDeAgir:    reduzirArcano(Number(mes)),
+    essencia:      reduzirArcano(somarDigitos(ano)),
+  };
+}
+
 function computeNatalSigns(chart) {
   const [y,m,d] = chart.date.split('-').map(Number);
   const sun = sunSignFromDate(m, d);
@@ -2598,6 +2631,22 @@ function renderAstroOverlay() {
 
   if (chart && !astroEditing) {
     const signs = computeNatalSigns(chart);
+    const arcanos = calcularArcanosPessoais(chart.date);
+    const arcanoBlocos = [
+      ['missao', 'Missão'], ['personalidade', 'Personalidade'],
+      ['modoDeAgir', 'Modo de Agir'], ['essencia', 'Essência'],
+    ].map(([chave, label]) => {
+      const numero = arcanos[chave];
+      const nome = ARCANO_NUMERO_NOME[numero] || '—';
+      const img = CARD_IMAGES[nome] || '';
+      return `
+        <div class="astro-chart-item" style="cursor:pointer" onclick="showCardPopup('${nome.replace(/'/g,"\\'")}', false)">
+          <div class="lbl">${label}</div>
+          ${img ? `<img src="${img}" alt="${nome}" style="width:100%;border-radius:6px;margin:.3rem 0" loading="lazy">` : ''}
+          <div class="val">${nome} (${numero})</div>
+        </div>`;
+    }).join('');
+
     displayEl.style.display = '';
     formEl.style.display = 'none';
     displayEl.innerHTML = `
@@ -2607,6 +2656,10 @@ function renderAstroOverlay() {
         <div class="astro-chart-item"><div class="lbl">↑ Ascendente</div><div class="val">${signs.asc || '—'}</div></div>
       </div>
       ${!signs.asc ? '<p style="font-size:.75rem;color:var(--text-dim);margin-top:.5rem">Adicione hora e local de nascimento para calcular o Ascendente.</p>' : ''}
+      <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin:1rem 0 .4rem">Seus Arcanos Pessoais</div>
+      <div class="astro-chart-grid" style="grid-template-columns:1fr 1fr;gap:.8rem">
+        ${arcanoBlocos}
+      </div>
     `;
     saveBtn.style.display = 'none';
     editBtn.style.display = '';
