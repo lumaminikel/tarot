@@ -1210,6 +1210,7 @@
 
     <div style="display:flex;gap:.8rem;margin-top:1rem;justify-content:flex-end">
       <button class="btn-cancel" id="astro-close2">Fechar</button>
+      <button class="btn-cancel" id="astro-share-chart" style="display:none">📤 Compartilhar mapa</button>
       <button class="btn-save" id="astro-save-chart" style="display:none">Salvar mapa ✦</button>
       <button class="btn-edit" id="astro-edit-chart" style="display:none">✎ Editar mapa</button>
     </div>
@@ -1368,6 +1369,10 @@
       <div class="combos-panel" id="combos-panel">
         <div class="combos-panel-title">🔗 Combinações detectadas</div>
         <div id="combos-list"></div>
+      </div>
+      <div class="combos-panel" id="arcano-pessoal-panel">
+        <div class="combos-panel-title">✦ Arcano pessoal na tiragem</div>
+        <div id="arcano-pessoal-list"></div>
       </div>
       <!-- botão IA -->
       <button type="button" class="ai-btn" id="ai-btn" style="display:none">
@@ -2594,6 +2599,14 @@ function calcularArcanosPessoais(dataNascimento) {
   };
 }
 
+function calcularAnoPessoal(dataNascimento, anoReferencia) {
+  // Ano pessoal numerológico: dia + mês de nascimento + o ano de referência (padrão: ano atual)
+  const [, mes, dia] = dataNascimento.split('-');
+  const anoRef = String(anoReferencia || new Date().getFullYear());
+  const numero = reduzirArcano(somarDigitos(dia + mes + anoRef));
+  return { numero, nome: ARCANO_NUMERO_NOME[numero] };
+}
+
 const ARCANO_POSICAO_LABEL = {
   missao: 'Missão / Arcano Pessoal',
   personalidade: 'Personalidade',
@@ -2675,6 +2688,8 @@ function renderAstroOverlay() {
   if (chart && !astroEditing) {
     const signs = computeNatalSigns(chart);
     const arcanos = calcularArcanosPessoais(chart.date);
+    const anoPessoal = calcularAnoPessoal(chart.date);
+    const anoPessoalImg = CARD_IMAGES[anoPessoal.nome] || '';
     const arcanoBlocos = [
       ['missao', 'Missão / Arcano Pessoal'], ['personalidade', 'Personalidade'],
       ['modoDeAgir', 'Modo de Agir'], ['essencia', 'Essência'],
@@ -2707,9 +2722,15 @@ function renderAstroOverlay() {
       <div class="astro-chart-grid" style="grid-template-columns:1fr 1fr;gap:.8rem">
         ${arcanoBlocos}
       </div>
+      <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin:1rem 0 .4rem">Seu Ano Pessoal (${new Date().getFullYear()})</div>
+      <div class="astro-chart-item" style="cursor:pointer" onclick="showCardPopup('${anoPessoal.nome ? anoPessoal.nome.replace(/'/g,"\\'") : ''}', false)">
+        ${anoPessoalImg ? `<img src="${anoPessoalImg}" alt="${anoPessoal.nome}" style="width:90px;border-radius:6px;margin:.3rem auto;display:block" loading="lazy">` : ''}
+        <div class="val">${anoPessoal.nome || '—'} (${anoPessoal.numero})</div>
+      </div>
     `;
     saveBtn.style.display = 'none';
     editBtn.style.display = '';
+    document.getElementById('astro-share-chart').style.display = '';
   } else {
     displayEl.style.display = 'none';
     formEl.style.display = '';
@@ -2722,6 +2743,7 @@ function renderAstroOverlay() {
     }
     saveBtn.style.display = '';
     editBtn.style.display = 'none';
+    document.getElementById('astro-share-chart').style.display = 'none';
   }
 }
 
@@ -3785,6 +3807,32 @@ function renderCombosPanel(tags) {
   panel.classList.add('visible');
 }
 
+function renderArcanoPessoalPanel(tags) {
+  const panel = document.getElementById('arcano-pessoal-panel');
+  const list  = document.getElementById('arcano-pessoal-list');
+  const chart = loadNatalChart();
+  if (!chart || !tags || !tags.length) { panel.classList.remove('visible'); return; }
+
+  const arcanos = calcularArcanosPessoais(chart.date);
+  const cleanName = n => n.replace(/inverti.*|inversa.*/gi,'').trim().toLowerCase();
+  const found = [];
+  Object.entries(arcanos).forEach(([chave, numero]) => {
+    const nome = ARCANO_NUMERO_NOME[numero];
+    if (!nome) return;
+    const match = tags.find(t => cleanName(t.name).includes(nome.toLowerCase()) || nome.toLowerCase().includes(cleanName(t.name)));
+    if (match) found.push({ chave, nome, numero, inv: match.inv });
+  });
+
+  if (!found.length) { panel.classList.remove('visible'); return; }
+  list.innerHTML = found.map(f => `
+    <div class="combo-detected">
+      <div class="combo-detected-cards">${f.nome}${f.inv ? ' <span style="color:var(--rose);font-size:.7rem">↩</span>' : ''} é a sua ${ARCANO_POSICAO_LABEL[f.chave]}</div>
+      <div class="combo-detected-meaning">Essa carta saindo na tiragem toca direto num arcano que já é seu — vale prestar atenção redobrada no que ela está dizendo agora.</div>
+    </div>`
+  ).join('');
+  panel.classList.add('visible');
+}
+
 
 // ── CARD PREVIEW (formulário) ──
 function findCard(input) {
@@ -3948,6 +3996,7 @@ function renderTags(){
     tagsWrap.insertBefore(div,tagInput);
   });
   renderCombosPanel(cardTags);
+  renderArcanoPessoalPanel(cardTags);
   renderSpread(cardTags, 'form-spread');
   updateAIBtn();
 }
@@ -4085,6 +4134,7 @@ function resetForm(){
   document.getElementById('f-theme').value = '';
   document.querySelectorAll('.theme-selector .theme-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('combos-panel').classList.remove('visible');
+  document.getElementById('arcano-pessoal-panel').classList.remove('visible');
   const spread = document.getElementById('form-spread');
   if (spread) { spread.style.display='none'; spread.innerHTML=''; }
   cardTags=[]; tagInput.value=''; renderTags();
@@ -4382,6 +4432,112 @@ function wrapTextCentered(ctx,text,cx,y,maxWidth,lineHeight,maxLines){
     if(truncated && i===lines.length-1) txt=txt.replace(/\s*$/,'')+'…';
     ctx.fillText(txt,cx,y+i*lineHeight);
   });
+}
+
+document.getElementById('astro-share-chart').addEventListener('click', shareMapaPessoal);
+
+async function shareMapaPessoal(){
+  const chart = loadNatalChart();
+  if (!chart) return;
+  document.getElementById('share-overlay').classList.add('open');
+  document.getElementById('share-loading').style.display='block';
+  document.getElementById('share-canvas').style.display='none';
+  document.getElementById('share-native').style.display='none';
+  try{
+    const blob = await buildShareImageMapaPessoal(chart);
+    lastShareBlob = blob;
+    document.getElementById('share-loading').style.display='none';
+    document.getElementById('share-canvas').style.display='block';
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[new File([blob],'mapa-pessoal.png',{type:'image/png'})]})){
+      document.getElementById('share-native').style.display='';
+    }
+  }catch(err){
+    document.getElementById('share-loading').textContent='Não foi possível gerar a imagem. Tente novamente.';
+    console.error(err);
+  }
+}
+
+async function buildShareImageMapaPessoal(chart){
+  const W_=760, PAD=44;
+  const canvas=document.getElementById('share-canvas');
+  const ctx=canvas.getContext('2d');
+
+  const signs = computeNatalSigns(chart);
+  const arcanos = calcularArcanosPessoais(chart.date);
+  const anoPessoal = calcularAnoPessoal(chart.date);
+
+  const posicoes = [
+    ['Missão', ARCANO_NUMERO_NOME[arcanos.missao]],
+    ['Personalidade', ARCANO_NUMERO_NOME[arcanos.personalidade]],
+    ['Modo de Agir', ARCANO_NUMERO_NOME[arcanos.modoDeAgir]],
+    ['Essência', ARCANO_NUMERO_NOME[arcanos.essencia]],
+    ['Ano Pessoal', anoPessoal.nome],
+  ];
+  const cardsData = await Promise.all(posicoes.map(async ([label, nome])=>{
+    const img = await loadImgSafe(CARD_IMAGES[nome]||'');
+    return {label, nome, img};
+  }));
+
+  const cardW=118, cardH=180, cardGap=16;
+  const perRow=Math.max(1,Math.floor((W_-PAD*2+cardGap)/(cardW+cardGap)));
+  const rows=Math.ceil(cardsData.length/perRow) || 1;
+  const cardsBlockH = rows*(cardH+42)+10;
+
+  const H_ = 200 + cardsBlockH + 60;
+
+  const scale=2;
+  canvas.width=W_*scale; canvas.height=H_*scale;
+  canvas.style.width=W_+'px'; canvas.style.height=H_+'px';
+  ctx.scale(scale,scale);
+
+  const grad=ctx.createLinearGradient(0,0,W_,H_);
+  grad.addColorStop(0,'#0e0b1a'); grad.addColorStop(1,'#19132e');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,W_,H_);
+
+  ctx.strokeStyle='rgba(212,170,80,.35)'; ctx.lineWidth=1.5;
+  roundRect(ctx,10,10,W_-20,H_-20,16); ctx.stroke();
+
+  let y=54;
+  ctx.textAlign='center';
+  ctx.fillStyle='#d4aa50';
+  ctx.font='16px Georgia';
+  ctx.fillText('✦ MEU MAPA PESSOAL ✦', W_/2, y);
+
+  y+=36;
+  ctx.fillStyle='#f0e8d8';
+  ctx.font='bold 22px Georgia';
+  ctx.fillText(`☉ ${signs.sun}   ☾ ${signs.moon}   ↑ ${signs.asc || '—'}`, W_/2, y);
+
+  y+=40;
+  const totalRowW = Math.min(cardsData.length,perRow)*(cardW+cardGap)-cardGap;
+  cardsData.forEach((c,i)=>{
+    const row=Math.floor(i/perRow), col=i%perRow;
+    const itemsInRow=Math.min(perRow, cardsData.length-row*perRow);
+    const rowW=itemsInRow*(cardW+cardGap)-cardGap;
+    const startX=(W_-rowW)/2;
+    const x=startX+col*(cardW+cardGap);
+    const cy=y+row*(cardH+42);
+
+    ctx.save();
+    roundRect(ctx,x,cy,cardW,cardH,10);
+    ctx.fillStyle='#150f28'; ctx.fill();
+    ctx.strokeStyle='rgba(212,170,80,.4)'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.clip();
+    if(c.img) ctx.drawImage(c.img,x,cy,cardW,cardH);
+    else { ctx.restore(); ctx.save(); ctx.fillStyle='#231848'; ctx.fillRect(x,cy,cardW,cardH); ctx.fillStyle='#7a4eb8'; ctx.font='36px Georgia'; ctx.textAlign='center'; ctx.fillText('🃏', x+cardW/2, cy+cardH/2+12); }
+    ctx.restore();
+
+    ctx.fillStyle='#d4aa50'; ctx.font='bold 11px Georgia'; ctx.textAlign='center';
+    ctx.fillText(c.label.toUpperCase(), x+cardW/2, cy+cardH+16);
+    ctx.fillStyle='#f0e8d8'; ctx.font='12px Georgia';
+    wrapTextCentered(ctx, c.nome||'—', x+cardW/2, cy+cardH+32, cardW+10, 14, 2);
+  });
+
+  ctx.textAlign='center';
+  ctx.fillStyle='rgba(212,170,80,.7)'; ctx.font='italic 12px Georgia';
+  ctx.fillText('lumaminikel.github.io/tarot', W_/2, H_-24);
+
+  return new Promise(resolve=>canvas.toBlob(b=>resolve(b),'image/png',0.95));
 }
 
 document.getElementById('share-close').addEventListener('click', ()=>document.getElementById('share-overlay').classList.remove('open'));

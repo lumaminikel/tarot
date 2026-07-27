@@ -1,5 +1,5 @@
 // sw.js — cache offline para o Guia e Diário de Tarot
-const CACHE_VERSION = 'tarot-cache-v1';
+const CACHE_VERSION = 'tarot-cache-v2';
 const APP_SHELL = [
   './',
   './index.html',
@@ -52,7 +52,10 @@ self.addEventListener('fetch', (event) => {
     caches.match(req).then((cached) => {
       const networkFetch = fetch(req)
         .then((res) => {
-          if (res && res.status === 200) {
+          // Aceita respostas normais (200) e também opacas (cross-origin sem CORS,
+          // caso das imagens das cartas vindas do Wikimedia) — sem isso, elas nunca
+          // eram salvas de fato e o app ficava sem imagens quando offline.
+          if (res && (res.status === 200 || res.type === 'opaque')) {
             const copy = res.clone();
             caches.open(CACHE_VERSION).then((cache) => cache.put(req, copy));
           }
