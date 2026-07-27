@@ -1373,6 +1373,16 @@
       <!-- preview visual das cartas adicionadas -->
       <div class="entry-spread" id="form-spread" style="display:none;margin-top:.7rem"></div>
       <div class="card-preview-panel" id="card-preview-panel"></div>
+      <div class="form-row" style="margin-top:.9rem">
+        <label>Carta de Fundo do Deck <span style="color:var(--text-dim);font-family:serif;text-transform:none;letter-spacing:0;font-size:.85rem">(a que sobra embaixo do monte — energia oculta)</span></label>
+        <div style="display:flex;gap:.5rem;align-items:center;position:relative">
+          <input type="text" id="bottom-card-input" placeholder="Digite o nome da carta... (opcional)" autocomplete="off" autocorrect="off" spellcheck="false"
+            style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.55rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none">
+          <button type="button" id="bottom-card-clear" style="background:none;border:1px solid var(--border);border-radius:7px;width:36px;height:36px;color:var(--text-dim);cursor:pointer;flex-shrink:0" title="Limpar">×</button>
+          <div class="card-autocomplete" id="bottom-card-autocomplete"></div>
+        </div>
+        <div id="bottom-card-preview" style="display:none;margin-top:.5rem;font-size:.85rem;color:var(--gold-light)"></div>
+      </div>
       <div class="combos-panel" id="combos-panel">
         <div class="combos-panel-title">🔗 Combinações detectadas</div>
         <div id="combos-list"></div>
@@ -4102,6 +4112,71 @@ autocomplete.addEventListener('keydown', e => {
   if (e.key==='Escape')   { autocomplete.classList.remove('open'); tagInput.focus(); }
 });
 
+// ── CARTA DE FUNDO DO DECK ──
+let bottomCard = null; // { name, inv } | null
+const bottomCardInput = document.getElementById('bottom-card-input');
+const bottomCardAC = document.getElementById('bottom-card-autocomplete');
+
+function renderBottomCardPreview() {
+  const preview = document.getElementById('bottom-card-preview');
+  if (!bottomCard) { preview.style.display = 'none'; preview.innerHTML = ''; return; }
+  preview.style.display = 'block';
+  preview.innerHTML = `🂠 ${bottomCard.name}${bottomCard.inv ? ' ↩ (invertida)' : ''}`;
+}
+
+function openBottomCardAutocomplete(q) {
+  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const nq = norm(q.replace(/inverti.*/i,'').trim());
+  if (!nq || nq.length < 2) { bottomCardAC.classList.remove('open'); return; }
+  const matches = allCardNames.filter(n => norm(n).includes(nq)).slice(0, 10);
+  if (!matches.length) { bottomCardAC.classList.remove('open'); return; }
+
+  let html = '<div class="ac-group-label">Normal</div>';
+  matches.forEach(name => {
+    const img = CARD_IMAGES[name] || '';
+    html += `<div class="ac-item" tabindex="0" onclick="selectBottomCard('${name.replace(/'/g,"\\'")}', false)">
+      ${img ? `<img class="ac-thumb" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:28px;flex-shrink:0"></div>'}
+      <div class="ac-info"><div class="ac-name">${name}</div></div>
+    </div>`;
+  });
+  html += '<div class="ac-group-label" style="color:var(--rose)">↩ Invertida</div>';
+  matches.forEach(name => {
+    const img = CARD_IMAGES[name] || '';
+    html += `<div class="ac-item ac-inv" tabindex="0" onclick="selectBottomCard('${name.replace(/'/g,"\\'")}', true)">
+      ${img ? `<img class="ac-thumb inv" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:28px;flex-shrink:0"></div>'}
+      <div class="ac-info"><div class="ac-name">${name} ↩</div></div>
+    </div>`;
+  });
+  bottomCardAC.innerHTML = html;
+  bottomCardAC.classList.add('open');
+}
+
+window.selectBottomCard = function(name, inv) {
+  bottomCard = { name, inv };
+  renderBottomCardPreview();
+  bottomCardInput.value = '';
+  bottomCardAC.classList.remove('open');
+};
+
+bottomCardInput.addEventListener('input', e => openBottomCardAutocomplete(e.target.value));
+bottomCardInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const found = findCard(bottomCardInput.value);
+    if (found) selectBottomCard(found, /inverti|inversa/i.test(bottomCardInput.value));
+  }
+});
+document.getElementById('bottom-card-clear').addEventListener('click', () => {
+  bottomCard = null;
+  bottomCardInput.value = '';
+  renderBottomCardPreview();
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#bottom-card-input') && !e.target.closest('#bottom-card-autocomplete')) {
+    bottomCardAC.classList.remove('open');
+  }
+});
+
 tagInput.addEventListener('keydown', e => {
   if (e.key==='Escape') { autocomplete.classList.remove('open'); return; }
   if (e.key==='ArrowDown') {
@@ -4156,6 +4231,7 @@ function resetForm(){
   const spread = document.getElementById('form-spread');
   if (spread) { spread.style.display='none'; spread.innerHTML=''; }
   cardTags=[]; tagInput.value=''; renderTags();
+  bottomCard=null; bottomCardInput.value=''; renderBottomCardPreview();
   editingId=null;
 }
 
@@ -4172,6 +4248,7 @@ document.getElementById('save-entry').addEventListener('click', async ()=>{
   const entry={
     id: editingId||genId(),
     date, cards:[...cardTags], analysis,
+    bottomCard: bottomCard ? {...bottomCard} : null,
     notes: document.getElementById('f-notes').value.trim(),
     theme: document.getElementById('f-theme').value || '',
     createdAt: editingId?(entries.find(e=>e.id===editingId)?.createdAt||Date.now()):Date.now()
@@ -4211,6 +4288,9 @@ window.editEntry=function(id){
     b.classList.toggle('active', b.dataset.theme === (e.theme||''));
   });
   cardTags=[...e.cards]; renderTags();
+  bottomCard = e.bottomCard ? {...e.bottomCard} : null;
+  bottomCardInput.value = '';
+  renderBottomCardPreview();
   form.classList.add('open'); toggleBtn.textContent='✕ Fechar';
   form.scrollIntoView({behavior:'smooth',block:'start'});
 };
@@ -4339,7 +4419,7 @@ async function buildShareImage(e){
   ctx.font='italic 14px Georgia';
   const ntLines = nt ? tmpLines('"'+nt+'"', W_-PAD*2) : 0;
 
-  let H_ = 210 + cardsBlockH + (anLines?anLines*22+50:0) + (ntLines?ntLines*20+46:0) + 70;
+  let H_ = 210 + cardsBlockH + (e.bottomCard?26:0) + (anLines?anLines*22+50:0) + (ntLines?ntLines*20+46:0) + 70;
 
   const scale=2;
   canvas.width=W_*scale; canvas.height=H_*scale;
@@ -4409,6 +4489,14 @@ async function buildShareImage(e){
       wrapTextCentered(ctx,label,x+cardW/2,cy+cardH+16,cardW+10,14,2);
     });
     y += rows*(cardH+34) + 14;
+  }
+
+  // carta de fundo do deck
+  if (e.bottomCard) {
+    ctx.textAlign='center';
+    ctx.fillStyle='#d4aa50'; ctx.font='14px Georgia';
+    ctx.fillText(`🂠 Carta de fundo: ${e.bottomCard.name}${e.bottomCard.inv?' ↩':''}`, W_/2, y);
+    y += 26;
   }
 
   // análise
@@ -4579,7 +4667,7 @@ document.getElementById('share-native').addEventListener('click', async ()=>{
 // ── RENDER ──
 function render(){
   const q=(document.getElementById('filter-input')?.value||'').toLowerCase().trim();
-  let filtered=q?entries.filter(e=>e.cards.some(c=>c.name.toLowerCase().includes(q))||e.analysis.toLowerCase().includes(q)||(e.notes||'').toLowerCase().includes(q)):[...entries];
+  let filtered=q?entries.filter(e=>e.cards.some(c=>c.name.toLowerCase().includes(q))||e.analysis.toLowerCase().includes(q)||(e.notes||'').toLowerCase().includes(q)||(e.bottomCard?.name||'').toLowerCase().includes(q)):[...entries];
   if(activeThemeFilter) filtered=filtered.filter(e=>e.theme===activeThemeFilter);
   if(activeLunarFilter) filtered=filtered.filter(e=>lunarPhase(e.date).name===activeLunarFilter);
 
@@ -4629,6 +4717,7 @@ function render(){
           }).join('');
           return `<div class="entry-spread">${imgs}</div>`;
         })()}
+        ${e.bottomCard ? `<div style="margin-top:.6rem;font-size:.85rem;color:var(--gold-light);cursor:pointer" onclick="showCardPopup('${e.bottomCard.name.replace(/'/g,"\\'")}',${e.bottomCard.inv?'true':'false'})">🂠 Carta de fundo: ${e.bottomCard.name}${e.bottomCard.inv?' ↩':''}</div>` : ''}
         ${an?`<div class="entry-section-label">Análise</div><div class="entry-analysis">${an}</div>`:''}
         ${nt?`<div class="entry-section-label">Qual foi a pergunta</div><div class="entry-notes">${nt}</div>`:''}
         ${(()=>{
