@@ -76,7 +76,7 @@
   .card-tag.invertida{background:rgba(192,80,112,.2);color:#e08090;border-color:rgba(192,80,112,.3)}
   .card-tag button{background:none;border:none;color:var(--rose);cursor:pointer;font-size:.85rem;padding:0;line-height:1}
   .card-tag-input{background:none;border:none;outline:none;color:var(--text);font-family:'Crimson Text',serif;font-size:.9rem;min-width:120px;flex:1}
-  .form-actions{display:flex;gap:.8rem;margin-top:1.2rem;justify-content:flex-end}
+  .form-actions{display:flex;gap:.8rem;margin-top:1.2rem;justify-content:flex-end;flex-wrap:wrap}
   .btn-cancel{background:none;border:1px solid var(--border);border-radius:7px;padding:.6rem 1.2rem;color:var(--text-dim);font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;cursor:pointer;transition:border-color .2s}
   .btn-cancel:hover{border-color:var(--text-dim)}
   .btn-save{background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:7px;padding:.6rem 1.4rem;color:#0e0b1a;font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:opacity .2s}
@@ -1158,7 +1158,7 @@
       <label>Chave API Google Gemini</label>
       <input type="password" id="anthropic-key-input" placeholder="AIza..." style="margin-top:.35rem">
     </div>
-    <div style="display:flex;gap:.8rem;margin-top:1rem;justify-content:flex-end">
+    <div class="form-actions">
       <button class="btn-cancel" id="settings-close">Fechar</button>
       <button class="btn-save" id="settings-save">Salvar ✦</button>
     </div>
@@ -1208,7 +1208,7 @@
       <button class="btn-save" id="astro-daily-btn" style="width:100%; margin-top:.6rem">🔮 Tirar carta do dia</button>
     </div>
 
-    <div style="display:flex;gap:.8rem;margin-top:1rem;justify-content:flex-end">
+    <div class="form-actions">
       <button class="btn-cancel" id="astro-close2">Fechar</button>
       <button class="btn-cancel" id="astro-share-chart" style="display:none">📤 Compartilhar mapa</button>
       <button class="btn-save" id="astro-save-chart" style="display:none">Salvar mapa ✦</button>
@@ -2372,6 +2372,17 @@ function updateAIBtn() {
   if (btn) btn.style.display = cardTags.length > 0 ? '' : 'none';
 }
 
+// Converte marcação simples de negrito vinda da IA (**assim** ou *assim*) para <strong>,
+// escapando HTML antes pra nunca renderizar tag crua que a IA tenha devolvido.
+function formatAIText(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+}
+
 async function callGeminiText(prompt) {
   const apiKey = localStorage.getItem('gemini_key');
   if (!apiKey) throw new Error('NO_KEY');
@@ -2643,7 +2654,7 @@ Escreva um significado curto (2-4 frases) do que significa ter especificamente e
 
   try {
     const { text } = await callGeminiText(prompt);
-    el.textContent = text;
+    el.innerHTML = formatAIText(text);
   } catch (e) {
     const data = TAROT_CARDS[nomeCarta] || {};
     el.textContent = (data.meaning || '') + ` (Não consegui gerar com IA agora: ${e.message})`;
@@ -2813,7 +2824,7 @@ Escreva uma mensagem curta (3-5 frases) para o dia, cruzando o que a carta diz c
 
   try {
     const { text } = await callGeminiText(prompt);
-    resultEl.querySelector('.txt').innerHTML = `<b style="color:var(--gold-light)">${name}${inv?' (invertida)':''}</b><br>${text}`;
+    resultEl.querySelector('.txt').innerHTML = `<b style="color:var(--gold-light)">${name}${inv?' (invertida)':''}</b><br>${formatAIText(text)}`;
   } catch(e) {
     resultEl.querySelector('.txt').innerHTML = `<b style="color:var(--gold-light)">${name}${inv?' (invertida)':''}</b><br>${meaning}<br><span style="color:var(--rose); font-size:.78rem">Não consegui gerar a leitura com IA agora: ${e.message}</span>`;
   } finally {
@@ -3110,7 +3121,7 @@ window.showCalDay = function(dateStr) {
     ).join('');
     html += `<div style="margin-bottom:.7rem;cursor:pointer" onclick="goToEntry('${e.id}')" title="Ver essa tiragem no diário">
       <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.3rem">${badges}</div>
-      ${e.analysis?`<div style="font-size:.82rem;color:var(--text-dim);line-height:1.5">${e.analysis.slice(0,120).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')}${e.analysis.length>120?'…':''}</div>`:''}
+      ${e.analysis?`<div style="font-size:.82rem;color:var(--text-dim);line-height:1.5">${e.analysis.slice(0,120).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<strong>$1</strong>')}${e.analysis.length>120?'…':''}</div>`:''}
     </div>`;
   });
   const detail = document.getElementById('cal-day-detail');
@@ -4312,7 +4323,7 @@ async function buildShareImage(e){
 
   const lunar=lunarPhase(e.date);
   const themeLabel = e.theme ? (THEME_LABELS[e.theme]||e.theme) : '';
-  const an=(e.analysis||'').replace(/\*\*/g,'');
+  const an=(e.analysis||'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1');
   const nt=(e.notes||'');
 
   const tmpLines=(text,maxW)=>{ const words=(text||'').split(/\s+/); let line='',n=0; words.forEach(w=>{ const t=line?line+' '+w:w; if(ctx.measureText(t).width>maxW && line){ n++; line=w; } else line=t; }); if(line)n++; return n; };
@@ -4580,7 +4591,7 @@ function render(){
     const m=monthLabel(e.date);
     if(m!==lastMonth){ html+=`<div class="timeline-month">${m}</div>`; lastMonth=m }
     const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv?'true':'false'})"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
-    const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+    const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<strong>$1</strong>');
     const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const lunar=lunarPhase(e.date);
     const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
