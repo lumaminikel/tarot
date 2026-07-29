@@ -2385,6 +2385,7 @@ document.getElementById('settings-save').addEventListener('click', () => {
   else localStorage.removeItem('gemini_key');
   document.getElementById('settings-overlay').classList.remove('open');
   showToast(key ? '✦ Chave API salva!' : 'Chave removida');
+  if (currentUser) profileDocRef(currentUser.uid).set({ geminiKey: key }, { merge:true }).catch(()=>{});
 });
 
 // ── IA: GERAR ANÁLISE (Gemini) ──
@@ -2834,13 +2835,19 @@ document.getElementById('astro-edit-chart').addEventListener('click', () => { as
 document.getElementById('astro-save-chart').addEventListener('click', () => {
   const date = document.getElementById('astro-birth-date').value;
   if (!date) { showToast('⚠ Preencha ao menos a data de nascimento'); return; }
-  saveNatalChart({
+  const chart = {
     date,
     time: document.getElementById('astro-birth-time').value,
     lat: document.getElementById('astro-birth-lat').value,
     lon: document.getElementById('astro-birth-lon').value,
     tz: document.getElementById('astro-birth-tz').value,
-  });
+  };
+  saveNatalChart(chart);
+  if (currentUser) {
+    profileDocRef(currentUser.uid).set({
+      birthDate: chart.date, birthTime: chart.time, birthLat: chart.lat, birthLon: chart.lon, birthTz: chart.tz
+    }, { merge:true }).catch(()=>{});
+  }
   astroEditing = false;
   renderAstroOverlay();
   showToast('✦ Mapa astral salvo');
@@ -4051,16 +4058,51 @@ auth.onAuthStateChanged(user => {
     if(!ub){
       ub = document.createElement('div');
       ub.id='user-bar'; ub.className='user-bar';
-      ub.innerHTML=`<span class="user-email">${user.email}</span><button class="btn-signout" onclick="auth.signOut()">Sair</button>`;
+      ub.innerHTML=`<span class="user-email">${user.email}</span><a href="perfil.html" class="btn-signout" style="text-decoration:none;display:inline-block">👤 Perfil</a><button class="btn-signout" onclick="auth.signOut()">Sair</button>`;
       document.getElementById('header-bottom').appendChild(ub);
     }
     loadEntries();
     loadCustomData().then(()=>{ renderCustomCombosList(); });
+    syncProfileWithCloud(user);
   } else {
     document.getElementById('login-screen').style.display  = '';
     document.getElementById('main-screen').style.display   = 'none';
   }
 });
+
+// ── PERFIL (vinculado à conta) ──
+function profileDocRef(uid){ return db.collection('users').doc(uid).collection('profile').doc('data') }
+
+// Ao logar: puxa o perfil da nuvem (chave Gemini + mapa astral) pro localStorage deste
+// navegador. Se ainda não existir perfil na nuvem (conta antiga), migra o que já estava
+// salvo localmente pra nuvem, sem sobrescrever nada digitado pela pessoa.
+async function syncProfileWithCloud(user){
+  try {
+    const snap = await profileDocRef(user.uid).get();
+    if (snap.exists) {
+      const p = snap.data();
+      if (p.geminiKey) localStorage.setItem('gemini_key', p.geminiKey);
+      if (p.birthDate) {
+        saveNatalChart({ date: p.birthDate, time: p.birthTime || '', lat: p.birthLat || '', lon: p.birthLon || '', tz: p.birthTz != null ? String(p.birthTz) : '' });
+      }
+    } else {
+      const localKey = localStorage.getItem('gemini_key');
+      const localChart = loadNatalChart();
+      if (localKey || localChart) {
+        const payload = {};
+        if (localKey) payload.geminiKey = localKey;
+        if (localChart) {
+          payload.birthDate = localChart.date || '';
+          payload.birthTime = localChart.time || '';
+          payload.birthLat  = localChart.lat  || '';
+          payload.birthLon  = localChart.lon  || '';
+          payload.birthTz   = localChart.tz   || '';
+        }
+        await profileDocRef(user.uid).set(payload, { merge:true });
+      }
+    }
+  } catch(e) { console.error('Erro ao sincronizar perfil:', e); }
+}
 
 // ── FIRESTORE ──
 function col(){ return db.collection('users').doc(currentUser.uid).collection('entries') }

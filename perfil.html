@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0e0b1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tarot">
+<link rel="manifest" href="manifest.json">
+<title>Meu Perfil · Tarot</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+  :root {
+    --bg:#0e0b1a; --bg2:#19132e; --bg3:#231848;
+    --gold:#d4aa50; --gold-light:#f0d878; --gold-dim:#a07c3a;
+    --purple:#7a4eb8; --purple-light:#b088e0;
+    --rose:#d06080; --text:#f0e8d8; --text-dim:#c0a888;
+    --border:#3a2e62; --card-bg:#150f28;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:18px;line-height:1.7;min-height:100vh}
+
+  header{background:linear-gradient(180deg,#080514 0%,var(--bg2) 100%);border-bottom:1px solid var(--border);padding:2rem 2rem 1.6rem;text-align:center;position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(107,63,160,.2) 0%,transparent 70%);pointer-events:none}
+  .header-symbol{font-size:2.5rem;display:block;margin-bottom:.4rem;filter:drop-shadow(0 0 10px var(--rose))}
+  header h1{font-family:'Cinzel',serif;font-size:clamp(1.4rem,3.5vw,2.2rem);font-weight:700;color:var(--gold-light);letter-spacing:.1em}
+  header p{color:var(--text-dim);font-style:italic;margin-top:.3rem;font-size:.95rem}
+  .back-link{display:inline-flex;align-items:center;gap:.4rem;color:var(--gold-dim);text-decoration:none;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.1em;margin-top:.8rem;transition:color .2s}
+  .back-link:hover{color:var(--gold)}
+
+  .page{max-width:560px;margin:0 auto;padding:2.2rem 1.5rem 4rem}
+
+  .profile-box{background:var(--bg2);border:1px solid var(--purple);border-radius:14px;padding:1.8rem}
+  .profile-box + .profile-box{margin-top:1.5rem}
+  .section-title{font-family:'Cinzel',serif;color:var(--purple-light);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.1rem;display:flex;align-items:center;gap:.5rem}
+
+  .form-row{margin-bottom:1rem}
+  .form-row label{display:block;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:.35rem}
+  .form-row input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.65rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:1rem;outline:none;transition:border-color .2s}
+  .form-row input:focus{border-color:var(--purple-light)}
+  .form-row input:disabled{opacity:.6;cursor:not-allowed}
+  .form-row small{display:block;color:var(--text-dim);font-size:.78rem;margin-top:.35rem;font-style:italic}
+  .form-row small a{color:var(--gold-dim)}
+
+  .row-2{display:flex;gap:.8rem}
+  .row-2 .form-row{flex:1}
+
+  .btn-primary{background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:8px;padding:.7rem 1.3rem;color:#0e0b1a;font-family:'Cinzel',serif;font-size:.8rem;font-weight:700;letter-spacing:.1em;cursor:pointer;transition:opacity .2s}
+  .btn-primary:hover{opacity:.85}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+  .btn-ghost{background:none;border:1px solid var(--border);border-radius:8px;padding:.55rem 1rem;color:var(--text-dim);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.08em;cursor:pointer;transition:border-color .2s;white-space:nowrap}
+  .btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold-dim)}
+  .btn-ghost:disabled{opacity:.5;cursor:not-allowed}
+
+  .geo-row{display:flex;gap:.6rem;align-items:flex-end}
+  .geo-row .form-row{flex:1;margin-bottom:0}
+  .geo-status{font-size:.8rem;color:var(--text-dim);margin-top:.6rem;font-style:italic;min-height:1.2em}
+  .geo-status.ok{color:var(--gold-light);font-style:normal}
+  .geo-status.err{color:#e08090;font-style:normal}
+
+  details.advanced{margin-top:.9rem}
+  details.advanced summary{cursor:pointer;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.08em;color:var(--text-dim);text-transform:uppercase;user-select:none}
+  details.advanced summary:hover{color:var(--gold-dim)}
+  details.advanced .row-2{margin-top:.9rem}
+
+  .save-bar{display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.4rem}
+
+  .loading-screen{text-align:center;color:var(--text-dim);font-style:italic;padding:4rem 1rem}
+
+  .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--gold-dim);border-radius:8px;padding:.7rem 1.4rem;font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;color:var(--gold-light);opacity:0;transition:transform .3s,opacity .3s;z-index:9999;white-space:nowrap}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+  @media (max-width:480px){
+    .row-2{flex-direction:column;gap:0}
+    .geo-row{flex-direction:column;align-items:stretch}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-symbol">👤</span>
+  <h1>Meu Perfil</h1>
+  <p>Seus dados, vinculados à sua conta</p>
+  <a href="diario-tarot.html" class="back-link">← Voltar ao Diário</a>
+</header>
+
+<div id="loading-screen" class="loading-screen">Carregando perfil...</div>
+
+<div class="page" id="profile-page" style="display:none">
+
+  <div class="profile-box">
+    <div class="section-title">✦ Conta</div>
+    <div class="form-row">
+      <label>E-mail cadastrado</label>
+      <input type="email" id="p-email" disabled>
+    </div>
+    <div class="form-row">
+      <label>Nome completo</label>
+      <input type="text" id="p-name" placeholder="Seu nome completo">
+    </div>
+  </div>
+
+  <div class="profile-box">
+    <div class="section-title">✦ Inteligência Artificial</div>
+    <div class="form-row">
+      <label>Chave API Google Gemini</label>
+      <input type="password" id="p-gemini-key" placeholder="AIza...">
+      <small>Usada para gerar interpretações e o mapa astral. Obtenha gratuitamente em <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>.</small>
+    </div>
+  </div>
+
+  <div class="profile-box">
+    <div class="section-title">✦ Dados de Nascimento</div>
+    <div class="row-2">
+      <div class="form-row">
+        <label>Data de nascimento</label>
+        <input type="date" id="p-birth-date">
+      </div>
+      <div class="form-row">
+        <label>Hora de nascimento</label>
+        <input type="time" id="p-birth-time">
+      </div>
+    </div>
+    <div class="geo-row">
+      <div class="form-row">
+        <label>Cidade de nascimento</label>
+        <input type="text" id="p-birth-city" placeholder="Ex: Porto Alegre, Brasil">
+      </div>
+      <button type="button" class="btn-ghost" id="p-geo-btn">🔍 Buscar</button>
+    </div>
+    <div class="geo-status" id="p-geo-status"></div>
+
+    <details class="advanced" id="p-advanced">
+      <summary>Ajustar coordenadas manualmente</summary>
+      <div class="row-2">
+        <div class="form-row"><label>Latitude</label><input type="number" step="any" id="p-birth-lat" placeholder="-30.03"></div>
+        <div class="form-row"><label>Longitude</label><input type="number" step="any" id="p-birth-lon" placeholder="-51.23"></div>
+      </div>
+      <div class="form-row" style="max-width:140px">
+        <label>Fuso (UTC)</label>
+        <input type="number" step="any" id="p-birth-tz" placeholder="-3">
+      </div>
+    </details>
+  </div>
+
+  <div class="save-bar">
+    <button type="button" class="btn-primary" id="p-save-btn">Salvar Perfil ✦</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase v9 compat -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey:            "AIzaSyCLiNjncG8mK6Pq3vPL9v4x6GnHeEbqJag",
+  authDomain:        "luma-tarot.firebaseapp.com",
+  projectId:         "luma-tarot",
+  storageBucket:     "luma-tarot.firebasestorage.app",
+  messagingSenderId: "1040468498780",
+  appId:             "1:1040468498780:web:57a8f6e29f41fad0e2c999"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+const NATAL_KEY = 'tarotNatalChart';
+let currentUser = null;
+let geocodedLat = null, geocodedLon = null;
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function profileDocRef(uid) {
+  return db.collection('users').doc(uid).collection('profile').doc('data');
+}
+
+// ── Carrega dados existentes (nuvem, com fallback pro que já estava salvo localmente) ──
+async function loadProfile(user) {
+  document.getElementById('p-email').value = user.email || '';
+
+  let profile = null;
+  try {
+    const snap = await profileDocRef(user.uid).get();
+    if (snap.exists) profile = snap.data();
+  } catch (e) {
+    console.error('Erro ao carregar perfil:', e);
+  }
+
+  // Fallback: se ainda não existe perfil na nuvem, usa o que já estava no navegador
+  let localChart = null;
+  try { localChart = JSON.parse(localStorage.getItem(NATAL_KEY) || 'null'); } catch {}
+  const localKey = localStorage.getItem('gemini_key') || '';
+
+  const fullName   = profile?.fullName   ?? '';
+  const geminiKey  = profile?.geminiKey  ?? localKey;
+  const birthDate  = profile?.birthDate  ?? localChart?.date ?? '';
+  const birthTime  = profile?.birthTime  ?? localChart?.time ?? '';
+  const birthCity  = profile?.birthCity  ?? '';
+  const birthLat   = profile?.birthLat   ?? localChart?.lat  ?? '';
+  const birthLon   = profile?.birthLon   ?? localChart?.lon  ?? '';
+  const birthTz    = profile?.birthTz    ?? localChart?.tz   ?? '';
+
+  document.getElementById('p-name').value       = fullName;
+  document.getElementById('p-gemini-key').value  = geminiKey;
+  document.getElementById('p-birth-date').value  = birthDate;
+  document.getElementById('p-birth-time').value  = birthTime;
+  document.getElementById('p-birth-city').value  = birthCity;
+  document.getElementById('p-birth-lat').value   = birthLat;
+  document.getElementById('p-birth-lon').value   = birthLon;
+  document.getElementById('p-birth-tz').value    = birthTz;
+
+  if (birthLat !== '' && birthLon !== '') {
+    document.getElementById('p-advanced').open = !birthCity;
+  }
+
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('profile-page').style.display = '';
+}
+
+// ── Busca coordenadas a partir do nome da cidade (Nominatim/OpenStreetMap, gratuito) ──
+document.getElementById('p-geo-btn').addEventListener('click', async () => {
+  const city = document.getElementById('p-birth-city').value.trim();
+  const statusEl = document.getElementById('p-geo-status');
+  const btn = document.getElementById('p-geo-btn');
+  if (!city) { statusEl.textContent = 'Digite o nome da cidade primeiro.'; statusEl.className = 'geo-status err'; return; }
+
+  btn.disabled = true;
+  statusEl.textContent = 'Buscando...';
+  statusEl.className = 'geo-status';
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(city)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!data.length) throw new Error('Cidade não encontrada. Tente ser mais específico (ex: "Cidade, Estado, País").');
+
+    const lat = parseFloat(data[0].lat);
+    const lon = parseFloat(data[0].lon);
+    const tz  = Math.round(lon / 15);
+
+    geocodedLat = lat; geocodedLon = lon;
+    document.getElementById('p-birth-lat').value = lat.toFixed(4);
+    document.getElementById('p-birth-lon').value = lon.toFixed(4);
+    document.getElementById('p-birth-tz').value  = tz;
+
+    statusEl.textContent = `📍 Encontrado: ${data[0].display_name} (fuso estimado: UTC${tz>=0?'+':''}${tz})`;
+    statusEl.className = 'geo-status ok';
+  } catch (e) {
+    statusEl.textContent = '⚠ ' + e.message;
+    statusEl.className = 'geo-status err';
+  }
+  btn.disabled = false;
+});
+
+// ── Salvar perfil ──
+document.getElementById('p-save-btn').addEventListener('click', async () => {
+  if (!currentUser) return;
+  const btn = document.getElementById('p-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
+  const payload = {
+    fullName:  document.getElementById('p-name').value.trim(),
+    geminiKey: document.getElementById('p-gemini-key').value.trim(),
+    birthDate: document.getElementById('p-birth-date').value,
+    birthTime: document.getElementById('p-birth-time').value,
+    birthCity: document.getElementById('p-birth-city').value.trim(),
+    birthLat:  document.getElementById('p-birth-lat').value,
+    birthLon:  document.getElementById('p-birth-lon').value,
+    birthTz:   document.getElementById('p-birth-tz').value,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  try {
+    await profileDocRef(currentUser.uid).set(payload, { merge: true });
+
+    // Mantém compatibilidade com o restante do app, que lê essas chaves do localStorage
+    if (payload.geminiKey) localStorage.setItem('gemini_key', payload.geminiKey);
+    else localStorage.removeItem('gemini_key');
+
+    if (payload.birthDate) {
+      localStorage.setItem(NATAL_KEY, JSON.stringify({
+        date: payload.birthDate,
+        time: payload.birthTime,
+        lat:  payload.birthLat,
+        lon:  payload.birthLon,
+        tz:   payload.birthTz,
+      }));
+    }
+
+    showToast('✦ Perfil salvo!');
+  } catch (e) {
+    console.error(e);
+    showToast('⚠ Não foi possível salvar: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Salvar Perfil ✦';
+});
+
+// ── Exige login: quem não estiver autenticado volta pro diário (tela de login) ──
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if (!user) {
+    window.location.href = 'diario-tarot.html';
+    return;
+  }
+  loadProfile(user);
+});
+</script>
+</body>
+</html>
