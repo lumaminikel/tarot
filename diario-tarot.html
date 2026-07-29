@@ -2404,6 +2404,45 @@ function formatAIText(text) {
     .replace(/\n/g, '<br>');
 }
 
+async function gerarHoroscopoDoDia(sunSign) {
+  const btn = document.getElementById('horoscopo-dia-btn');
+  const resultEl = document.getElementById('horoscopo-dia-result');
+  const apiKey = localStorage.getItem('gemini_key');
+
+  if (!apiKey) {
+    resultEl.innerHTML = `<p style="font-size:.8rem;color:var(--text-dim)">Configure sua chave Gemini em ⚙️ para gerar o horóscopo do dia.</p>`;
+    return;
+  }
+
+  btn.disabled = true;
+  resultEl.innerHTML = `<p style="font-size:.82rem;color:var(--text-dim);font-style:italic">Gerando horóscopo...</p>`;
+
+  const now = new Date();
+  const iso = todayISO();
+  const moonSign = zodiacFromLongitude(moonEclipticLongitude(now)).name;
+  const lunar = lunarPhase(iso);
+  const retros = activeRetrogrades(iso);
+  const chart = loadNatalChart();
+  const signs = chart ? computeNatalSigns(chart) : null;
+
+  const prompt = `Você é uma astróloga experiente escrevendo o horóscopo do dia, tom direto e caloroso, sem preâmbulo nem introdução padrão tipo "vamos ver o que os astros reservam" — vá direto ao ponto.
+
+SIGNO SOLAR: ${sunSign}
+DATA: ${formatDate(iso)}
+TRÂNSITOS DE HOJE: Lua em ${moonSign}, fase ${lunar.name}.${retros.length ? ' Retrógrado ativo: ' + retros.map(r=>`${r.planet} em ${r.sign}`).join(', ') + '.' : ''}
+${signs && signs.moon ? `MAPA ASTRAL COMPLETO DA PESSOA: Sol em ${signs.sun}, Lua em ${signs.moon}${signs.asc ? `, Ascendente em ${signs.asc}` : ''}.` : ''}
+
+Escreva o horóscopo do dia (4-6 frases) cruzando o signo solar com os trânsitos de hoje${signs && signs.moon ? ' e o mapa completo da pessoa' : ''}. Cubra brevemente amor/relações, trabalho e bem-estar. Termine com um conselho prático pro dia.`;
+
+  try {
+    const { text } = await callGeminiText(prompt);
+    resultEl.innerHTML = `<div style="font-size:.9rem;line-height:1.55;color:var(--text)">${formatAIText(text)}</div>`;
+  } catch (e) {
+    resultEl.innerHTML = `<p style="font-size:.8rem;color:var(--rose)">Não foi possível gerar agora: ${e.message}</p>`;
+  }
+  btn.disabled = false;
+}
+
 async function callGeminiText(prompt) {
   const apiKey = localStorage.getItem('gemini_key');
   if (!apiKey) throw new Error('NO_KEY');
@@ -2759,6 +2798,9 @@ function renderAstroOverlay() {
         ${anoPessoalImg ? `<img src="${anoPessoalImg}" alt="${anoPessoal.nome}" style="width:90px;border-radius:6px;margin:.3rem auto;display:block" loading="lazy">` : ''}
         <div class="val">${anoPessoal.nome || '—'} (${anoPessoal.numero})</div>
       </div>
+      <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin:1rem 0 .4rem">Horóscopo de Hoje (${signs.sun})</div>
+      <div id="horoscopo-dia-result"></div>
+      <button class="btn-save" id="horoscopo-dia-btn" style="width:100%;margin-top:.4rem" onclick="gerarHoroscopoDoDia('${signs.sun}')">✦ Ver horóscopo de hoje</button>
     `;
     saveBtn.style.display = 'none';
     editBtn.style.display = '';
