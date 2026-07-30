@@ -54,7 +54,7 @@
   .login-info{text-align:center;font-size:.82rem;color:var(--text-dim);margin-top:1rem;font-style:italic}
 
   /* LAYOUT */
-  .page{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}
+  .page{max-width:1080px;margin:0 auto;padding:2rem 1.5rem 4rem}
 
   /* STATS */
   .stats-bar{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap}
@@ -509,6 +509,17 @@
   .timeline-month{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.18em;color:var(--text-dim);text-transform:uppercase;padding:.5rem 0;margin-bottom:.6rem;margin-top:.8rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
   .timeline-month::after{content:'';flex:1;height:1px;background:var(--border)}
 
+  /* AGRUPAMENTO POR MÊS (SANFONA) */
+  .month-group{margin-bottom:1rem}
+  .month-header{display:flex;align-items:center;gap:.7rem;cursor:pointer;padding:.7rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:9px;transition:border-color .2s;user-select:none}
+  .month-header:hover{border-color:var(--gold-dim)}
+  .month-chevron{font-size:.7rem;color:var(--gold-dim);transition:transform .25s;flex-shrink:0;transform:rotate(-90deg)}
+  .month-group.open .month-chevron{transform:rotate(0deg)}
+  .month-label{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.12em;color:var(--gold-light);text-transform:uppercase;flex:1}
+  .month-count{font-size:.75rem;color:var(--text-dim);white-space:nowrap}
+  .month-body{display:none;padding-top:.9rem}
+  .month-group.open .month-body{display:block}
+
   /* MODAL */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(8,5,20,.85);z-index:999;align-items:center;justify-content:center;padding:1rem}
   .modal-overlay.open{display:flex}
@@ -733,8 +744,8 @@
   .astro-banner { background:rgba(208,96,128,.12); border:1px solid rgba(208,96,128,.4); border-radius:8px; padding:.6rem .8rem; font-size:.82rem; color:var(--rose); margin-top:.5rem; line-height:1.5; }
   .astro-chart-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.6rem; text-align:center; }
   .astro-box .astro-daily-card { max-width:520px; margin-left:auto; margin-right:auto; }
-  .astro-chart-item { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:.7rem .4rem; }
-  .astro-chart-item .lbl { font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); margin-bottom:.3rem; }
+  .astro-chart-item { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:.7rem .4rem; display:flex; flex-direction:column; }
+  .astro-chart-item .lbl { font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); margin-bottom:.3rem; min-height:2.1em; display:flex; align-items:center; justify-content:center; line-height:1.3; }
   .astro-chart-item .val { font-size:.85rem; color:var(--gold-light); font-weight:600; }
   .astro-daily-card { display:flex; gap:.9rem; align-items:flex-start; margin-top:.6rem; }
   .astro-daily-card img { width:80px; border-radius:8px; border:1px solid var(--border); }
@@ -843,7 +854,7 @@
   .cal-overlay.open { display:flex; }
   .cal-box {
     background:var(--bg2); border:1px solid var(--border);
-    border-radius:14px; width:100%; max-width:520px;
+    border-radius:14px; width:min(94vw,720px);
     margin:1rem auto; animation:fadeIn .2s ease;
   }
   .cal-header {
@@ -1175,7 +1186,7 @@
 
 <!-- ASTROLOGIA -->
 <div class="settings-overlay" id="astro-overlay">
-  <div class="settings-box astro-box" style="max-width:760px">
+  <div class="settings-box astro-box" style="width:min(94vw,960px);max-width:960px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
       <h3 style="margin:0">🪐 Astrologia</h3>
       <button class="consult-close" id="astro-close">×</button>
@@ -4795,9 +4806,24 @@ function render(){
   if(entries.length===0){ hist.innerHTML='<div class="history-empty"><span>🌙</span>Ainda não há tiragens registradas.<br>Clique em <em>Registrar Tiragem de Hoje</em> para começar.</div>'; return }
   if(filtered.length===0){ hist.innerHTML=`<div class="history-empty"><span>🔍</span>Nenhuma tiragem encontrada.</div>`; return }
   let lastMonth='', html='';
-  [...filtered].sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
-    const m=monthLabel(e.date);
-    if(m!==lastMonth){ html+=`<div class="timeline-month">${m}</div>`; lastMonth=m }
+  const sorted=[...filtered].sort((a,b)=>b.date.localeCompare(a.date));
+  const groups=[];
+  sorted.forEach(e=>{
+    const key=e.date.slice(0,7);
+    let g=groups.find(g=>g.key===key);
+    if(!g){ g={key, label:monthLabel(e.date), entries:[]}; groups.push(g); }
+    g.entries.push(e);
+  });
+  groups.forEach((g,idx)=>{
+    const openClass=(hasFilter||idx===0)?' open':'';
+    html+=`<div class="month-group${openClass}" id="month-${g.key}">
+      <div class="month-header" onclick="toggleMonth('${g.key}')">
+        <span class="month-chevron">▼</span>
+        <span class="month-label">${g.label}</span>
+        <span class="month-count">${g.entries.length} tiragem${g.entries.length!==1?'s':''}</span>
+      </div>
+      <div class="month-body">`;
+    g.entries.forEach(e=>{
     const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv?'true':'false'})"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
     const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<strong>$1</strong>');
     const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -4851,9 +4877,13 @@ function render(){
         </div>
       </div>
     </div>`;
+    });
+    html+=`</div></div>`;
   });
   hist.innerHTML=html;
 }
+
+window.toggleMonth=function(key){ document.getElementById('month-'+key)?.classList.toggle('open') };
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
