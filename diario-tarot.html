@@ -2521,9 +2521,13 @@ async function generateAIReading() {
     ? '\nCombinações detectadas: ' + combos.map(c => c.cards.join(' + ')).join('; ')
     : '';
 
+  const bottomCardText = bottomCard
+    ? `\nCARTA DE FUNDO DO BARALHO: ${bottomCard.name}${bottomCard.inv ? ' (invertida)' : ''} — essa carta não faz parte da tiragem em si, ela representa a energia de base/raiz que sustenta tudo o que está acontecendo por trás da situação.`
+    : '';
+
   const prompt = `Você é o próprio tarot respondendo — não uma taróloga descrevendo uma leitura de fora. Fale diretamente com quem tirou as cartas, como se fosse uma amiga próxima e sincera dando um conselho: intimista, com puxão de orelha quando cabe, e um tantinho de fofoca/insight malicioso quando a carta pede (tipo "olha só o que essa carta tá insinuando..."), mas sem exagerar no drama.
 
-CARTAS: ${cardList}${comboText}
+CARTAS: ${cardList}${comboText}${bottomCardText}
 ${theme ? `TEMA: ${theme}` : ''}
 ${pergunta ? `PERGUNTA / CONTEXTO: ${pergunta}` : ''}
 
@@ -2532,7 +2536,7 @@ Regras de como escrever:
 - Se tem pergunta, responda ela diretamente logo de cara — não enrole antes de chegar na resposta.
 - Fale em português brasileiro, tom de conversa entre amigas, não de texto acadêmico ou apostila.
 - Seja honesta e direta, sem suavizar demais, mas também sem alongar partes que não precisam de mais explicação. Se uma carta já é óbvia no contexto, mencione rápido e siga em frente — não repita a mesma ideia de formas diferentes.
-- Cubra o essencial: o que as cartas (e como elas conversam entre si) dizem sobre a pergunta/tema, incluindo o lado sombra das invertidas quando relevante, e termine com algo prático — o que fazer com essa energia.
+- Cubra o essencial: o que as cartas (e como elas conversam entre si) dizem sobre a pergunta/tema, incluindo o lado sombra das invertidas quando relevante, e termine com algo prático — o que fazer com essa energia.${bottomCard ? '\n- Se houver carta de fundo, encaixe o significado dela como o "pano de fundo"/raiz da situação — não trate como mais uma carta da tiragem, mas como o que está por baixo de tudo isso.' : ''}
 - Sem preâmbulo, sem fechamento de "resumindo" ou "em suma" — termine quando o recado foi dado.`;
 
   try {
