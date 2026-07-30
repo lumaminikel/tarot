@@ -2650,6 +2650,17 @@ function saveNatalChart(chart) {
   localStorage.setItem(NATAL_KEY, JSON.stringify(chart));
 }
 
+// ── Cache das interpretações de IA (arcanos pessoais e ano pessoal) — evita
+// gerar de novo toda vez que o popup de Astrologia é aberto ──
+const ARCANO_CACHE_KEY = 'tarotArcanoInterpretCache';
+function loadArcanoCache() {
+  try { return JSON.parse(localStorage.getItem(ARCANO_CACHE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveArcanoCache(cache) {
+  localStorage.setItem(ARCANO_CACHE_KEY, JSON.stringify(cache));
+}
+
 // ── Arcanos pessoais (numerologia a partir da data de nascimento) ──
 // Segue a mesma convenção numérica já usada no app: A Louca fecha o ciclo como carta 22.
 const ARCANO_NUMERO_NOME = {
@@ -2710,6 +2721,10 @@ async function gerarSignificadoArcanoPosicao(chave, nomeCarta, numero) {
   if (!el) return;
   el.style.display = 'block';
 
+  const cacheKey = `${chave}:${nomeCarta}:${numero}`;
+  const cache = loadArcanoCache();
+  if (cache[cacheKey]) { el.innerHTML = formatAIText(cache[cacheKey]); return; }
+
   const apiKey = localStorage.getItem('gemini_key');
   if (!apiKey) {
     const data = TAROT_CARDS[nomeCarta] || {};
@@ -2728,6 +2743,44 @@ Escreva um significado curto (2-4 frases) do que significa ter especificamente e
   try {
     const { text } = await callGeminiText(prompt);
     el.innerHTML = formatAIText(text);
+    cache[cacheKey] = text;
+    saveArcanoCache(cache);
+  } catch (e) {
+    const data = TAROT_CARDS[nomeCarta] || {};
+    el.textContent = (data.meaning || '') + ` (Não consegui gerar com IA agora: ${e.message})`;
+  }
+}
+
+// ── Ano Pessoal: mesma lógica, com contexto e cache próprios (a carta muda todo ano) ──
+async function gerarSignificadoAnoPessoal(nomeCarta, numero, ano) {
+  const el = document.getElementById('arcano-meaning-anoPessoal');
+  if (!el) return;
+  el.style.display = 'block';
+
+  const cacheKey = `anoPessoal:${ano}:${nomeCarta}:${numero}`;
+  const cache = loadArcanoCache();
+  if (cache[cacheKey]) { el.innerHTML = formatAIText(cache[cacheKey]); return; }
+
+  const apiKey = localStorage.getItem('gemini_key');
+  if (!apiKey) {
+    const data = TAROT_CARDS[nomeCarta] || {};
+    el.textContent = data.meaning || 'Configure sua chave Gemini em ⚙️ para um significado personalizado do seu ano pessoal.';
+    return;
+  }
+
+  el.innerHTML = '<span style="font-style:italic">Gerando...</span>';
+  const prompt = `Você é o próprio tarot falando diretamente com a pessoa, tom de conversa entre amigas, sincero, sem preâmbulo nem introdução padrão — vá direto ao ponto e não alongue o que não precisa.
+
+CARTA: ${nomeCarta} (arcano ${numero})
+CONTEXTO: essa é a carta do Ano Pessoal ${ano} da pessoa, calculada pela numerologia do tarot — representa o tema e a energia geral que marca esse ano específico da vida dela.
+
+Escreva um significado curto (2-4 frases) do que esse ano representa pra pessoa, com essa carta guiando o período.`;
+
+  try {
+    const { text } = await callGeminiText(prompt);
+    el.innerHTML = formatAIText(text);
+    cache[cacheKey] = text;
+    saveArcanoCache(cache);
   } catch (e) {
     const data = TAROT_CARDS[nomeCarta] || {};
     el.textContent = (data.meaning || '') + ` (Não consegui gerar com IA agora: ${e.message})`;
@@ -2793,6 +2846,18 @@ function renderAstroOverlay() {
         </div>`;
     }).join('');
 
+    const anoAtual = new Date().getFullYear();
+    const anoPessoalBloco = `
+      <div class="astro-chart-item">
+        <div class="lbl">Ano Pessoal (${anoAtual})</div>
+        <div onclick="showCardPopup('${anoPessoal.nome ? anoPessoal.nome.replace(/'/g,"\\'") : ''}', false)" style="cursor:pointer">
+          ${anoPessoalImg ? `<img src="${anoPessoalImg}" alt="${anoPessoal.nome}" style="width:100%;border-radius:6px;margin:.3rem 0" loading="lazy">` : ''}
+          <div class="val">${anoPessoal.nome || '—'} (${anoPessoal.numero})</div>
+        </div>
+        <div class="arcano-posicao-meaning" id="arcano-meaning-anoPessoal" style="display:none;font-size:.78rem;color:var(--text-dim);margin-top:.4rem;text-align:left"></div>
+        <button class="btn-cancel" style="margin-top:.4rem;font-size:.72rem;padding:.3rem .5rem" onclick="gerarSignificadoAnoPessoal('${anoPessoal.nome ? anoPessoal.nome.replace(/'/g,"\\'") : ''}',${anoPessoal.numero},${anoAtual})">✦ O que significa esse ano</button>
+      </div>`;
+
     displayEl.style.display = '';
     formEl.style.display = 'none';
     displayEl.innerHTML = `
@@ -2805,11 +2870,7 @@ function renderAstroOverlay() {
       <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin:1rem 0 .4rem">Seus Arcanos Pessoais</div>
       <div class="astro-chart-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem">
         ${arcanoBlocos}
-      </div>
-      <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin:1rem 0 .4rem">Seu Ano Pessoal (${new Date().getFullYear()})</div>
-      <div class="astro-chart-item" style="cursor:pointer;max-width:220px;margin:0 auto" onclick="showCardPopup('${anoPessoal.nome ? anoPessoal.nome.replace(/'/g,"\\'") : ''}', false)">
-        ${anoPessoalImg ? `<img src="${anoPessoalImg}" alt="${anoPessoal.nome}" style="width:90px;border-radius:6px;margin:.3rem auto;display:block" loading="lazy">` : ''}
-        <div class="val">${anoPessoal.nome || '—'} (${anoPessoal.numero})</div>
+        ${anoPessoalBloco}
       </div>
       <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin:1rem 0 .4rem">Horóscopo de Hoje (${signs.sun})</div>
       <div id="horoscopo-dia-result"></div>
