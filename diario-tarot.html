@@ -609,6 +609,10 @@
   .theme-btn[data-theme="espiritual"].active { background:#7a4eb8; border-color:#7a4eb8; }
   .theme-btn[data-theme="geral"].active      { background:#4a6090; border-color:#4a6090; }
   .theme-btn[data-theme="outro"].active      { background:#606060; border-color:#606060; }
+  .theme-btn[data-subject="mim"].active      { background:#4a6090; border-color:#4a6090; }
+  .theme-btn[data-subject="amigo"].active    { background:#c07840; border-color:#c07840; }
+  .theme-btn[data-subject="familiar"].active { background:#3a9060; border-color:#3a9060; }
+  .theme-btn[data-subject="outra"].active    { background:#7a4eb8; border-color:#7a4eb8; }
 
   .theme-badge {
     display: inline-block; font-family: 'Cinzel', serif;
@@ -1411,6 +1415,17 @@
       <button type="button" class="ai-btn" id="ai-btn" style="display:none">
         <span>✨</span> Gerar Interpretação com IA
       </button>
+    </div>
+    <div class="form-row">
+      <label>Essa leitura é sobre...</label>
+      <div class="theme-selector" id="subject-selector">
+        <button type="button" class="theme-btn active" data-subject="mim" onclick="selectSubject(this)">🧍 Mim</button>
+        <button type="button" class="theme-btn" data-subject="amigo" onclick="selectSubject(this)">👥 Amigo(a)</button>
+        <button type="button" class="theme-btn" data-subject="familiar" onclick="selectSubject(this)">👪 Familiar</button>
+        <button type="button" class="theme-btn" data-subject="outra" onclick="selectSubject(this)">❓ Outra pessoa</button>
+      </div>
+      <input type="hidden" id="f-subject" value="mim">
+      <input type="text" id="f-subject-name" placeholder="Nome da pessoa (opcional)" style="display:none;margin-top:.5rem;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.55rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none">
     </div>
     <div class="form-row">
       <label>Tema da Tiragem</label>
@@ -2315,6 +2330,17 @@ window.toggleThemeFilter = function(theme) {
   render();
 };
 
+// ── SOBRE QUEM É A LEITURA ──
+window.selectSubject = function(btn) {
+  document.querySelectorAll('#subject-selector .theme-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const val = btn.dataset.subject;
+  document.getElementById('f-subject').value = val;
+  const nameInput = document.getElementById('f-subject-name');
+  nameInput.style.display = val === 'mim' ? 'none' : '';
+  if (val === 'mim') nameInput.value = '';
+};
+
 const THEME_LABELS = { amor:'❤️ Amor', trabalho:'💼 Trabalho', saude:'🌿 Saúde', espiritual:'🌙 Espiritual', geral:'✦ Geral', outro:'◈ Outro' };
 
 // ── EXPORTAR ──
@@ -2525,9 +2551,16 @@ async function generateAIReading() {
     ? `\nCARTA DE FUNDO DO BARALHO: ${bottomCard.name}${bottomCard.inv ? ' (invertida)' : ''} — essa carta não faz parte da tiragem em si, ela representa a energia de base/raiz que sustenta tudo o que está acontecendo por trás da situação.`
     : '';
 
+  const subject = document.getElementById('f-subject').value || 'mim';
+  const subjectName = document.getElementById('f-subject-name').value.trim();
+  const SUBJECT_LABELS = { amigo: 'amigo(a)', familiar: 'familiar', outra: 'outra pessoa' };
+  const subjectText = subject !== 'mim'
+    ? `\nSOBRE QUEM É ESSA LEITURA: essa tiragem não é sobre quem está fazendo a pergunta — é sobre ${subjectName || `um(a) ${SUBJECT_LABELS[subject] || 'outra pessoa'}`} da vida dela (${SUBJECT_LABELS[subject] || 'outra pessoa'}).`
+    : '';
+
   const prompt = `Você é o próprio tarot respondendo — não uma taróloga descrevendo uma leitura de fora. Fale diretamente com quem tirou as cartas, como se fosse uma amiga próxima e sincera dando um conselho: intimista, com puxão de orelha quando cabe, e um tantinho de fofoca/insight malicioso quando a carta pede (tipo "olha só o que essa carta tá insinuando..."), mas sem exagerar no drama.
 
-CARTAS: ${cardList}${comboText}${bottomCardText}
+CARTAS: ${cardList}${comboText}${bottomCardText}${subjectText}
 ${theme ? `TEMA: ${theme}` : ''}
 ${pergunta ? `PERGUNTA / CONTEXTO: ${pergunta}` : ''}
 
@@ -2536,7 +2569,7 @@ Regras de como escrever:
 - Se tem pergunta, responda ela diretamente logo de cara — não enrole antes de chegar na resposta.
 - Fale em português brasileiro, tom de conversa entre amigas, não de texto acadêmico ou apostila.
 - Seja honesta e direta, sem suavizar demais, mas também sem alongar partes que não precisam de mais explicação. Se uma carta já é óbvia no contexto, mencione rápido e siga em frente — não repita a mesma ideia de formas diferentes.
-- Cubra o essencial: o que as cartas (e como elas conversam entre si) dizem sobre a pergunta/tema, incluindo o lado sombra das invertidas quando relevante, e termine com algo prático — o que fazer com essa energia.${bottomCard ? '\n- Se houver carta de fundo, encaixe o significado dela como o "pano de fundo"/raiz da situação — não trate como mais uma carta da tiragem, mas como o que está por baixo de tudo isso.' : ''}
+- Cubra o essencial: o que as cartas (e como elas conversam entre si) dizem sobre a pergunta/tema, incluindo o lado sombra das invertidas quando relevante, e termine com algo prático — o que fazer com essa energia.${bottomCard ? '\n- Se houver carta de fundo, encaixe o significado dela como o "pano de fundo"/raiz da situação — não trate como mais uma carta da tiragem, mas como o que está por baixo de tudo isso.' : ''}${subject !== 'mim' ? `\n- Essa leitura é sobre ${subjectName || `${SUBJECT_LABELS[subject] || 'outra pessoa'} de quem perguntou`}, NÃO sobre quem tirou as cartas. Fale COM quem tirou as cartas, mas SOBRE ${subjectName || 'essa pessoa'} na terceira pessoa (ex: "${subjectName || 'ela'} tá...", "isso mostra que ${subjectName || 'ele(a)'}..."). Nunca use "você" para se referir ao que as cartas revelam — "você" só pode se referir a quem está perguntando, se for o caso de dar um conselho sobre como agir em relação a essa pessoa.` : ''}
 - Sem preâmbulo, sem fechamento de "resumindo" ou "em suma" — termine quando o recado foi dado.`;
 
   try {
@@ -4415,6 +4448,12 @@ function resetForm(){
   document.getElementById('f-notes').value='';
   document.getElementById('f-theme').value = '';
   document.querySelectorAll('.theme-selector .theme-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('f-subject').value = 'mim';
+  document.getElementById('f-subject-name').value = '';
+  document.getElementById('f-subject-name').style.display = 'none';
+  document.querySelectorAll('#subject-selector .theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.subject === 'mim');
+  });
   document.getElementById('combos-panel').classList.remove('visible');
   document.getElementById('arcano-pessoal-panel').classList.remove('visible');
   const spread = document.getElementById('form-spread');
@@ -4440,6 +4479,8 @@ document.getElementById('save-entry').addEventListener('click', async ()=>{
     bottomCard: bottomCard ? {...bottomCard} : null,
     notes: document.getElementById('f-notes').value.trim(),
     theme: document.getElementById('f-theme').value || '',
+    subject: document.getElementById('f-subject').value || 'mim',
+    subjectName: document.getElementById('f-subject-name').value.trim(),
     createdAt: editingId?(entries.find(e=>e.id===editingId)?.createdAt||Date.now()):Date.now()
   };
   try {
@@ -4475,6 +4516,14 @@ window.editEntry=function(id){
   document.getElementById('f-theme').value = e.theme || '';
   document.querySelectorAll('.theme-selector .theme-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.theme === (e.theme||''));
+  });
+  // restaurar sobre quem é a leitura
+  const subjectVal = e.subject || 'mim';
+  document.getElementById('f-subject').value = subjectVal;
+  document.getElementById('f-subject-name').value = e.subjectName || '';
+  document.getElementById('f-subject-name').style.display = subjectVal === 'mim' ? 'none' : '';
+  document.querySelectorAll('#subject-selector .theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.subject === subjectVal);
   });
   cardTags=[...e.cards]; renderTags();
   bottomCard = e.bottomCard ? {...e.bottomCard} : null;
@@ -4894,11 +4943,13 @@ function render(){
     const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const lunar=lunarPhase(e.date);
     const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
+    const SUBJECT_BADGE_LABELS={amigo:'👥 Amigo(a)',familiar:'👪 Familiar',outra:'❓ Outra pessoa'};
+    const subjectBadge=(e.subject && e.subject!=='mim')?`<span class="theme-badge" style="background:rgba(122,78,184,.18);border:1px solid var(--purple);color:var(--purple-light)">${SUBJECT_BADGE_LABELS[e.subject]||'Outra pessoa'}${e.subjectName?': '+e.subjectName.replace(/</g,'&lt;'):''}</span>`:'';
     html+=`
     <div class="entry" id="entry-${e.id}">
       <div class="entry-header" onclick="toggleEntry('${e.id}')">
         <div class="entry-date-wrap">
-          <span class="entry-date">${formatDate(e.date)}${themeBadge}</span>
+          <span class="entry-date">${formatDate(e.date)}${themeBadge}${subjectBadge}</span>
           <span class="entry-weekday">${weekday(e.date)}</span>
           <span class="lunar-badge">${lunar.emoji} ${lunar.name}</span>
         </div>
