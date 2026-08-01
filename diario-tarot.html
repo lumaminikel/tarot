@@ -682,6 +682,36 @@
   }
   .side-menu-btn:hover { border-color:var(--gold-dim); transform:scale(1.08); }
 
+  /* ── MENU HAMBÚRGUER (MOBILE) ──
+     No mobile, os botões flutuantes (timer, config, busca, calendário, astrologia)
+     se escondem atrás de um único botão fixo no topo direito, pra não ficarem
+     sobrepondo o conteúdo da tela. O botão de voltar ao topo fica de fora disso. */
+  .mobile-menu-btn {
+    display:none; position:fixed; top:1rem; right:1rem; z-index:600;
+    background:var(--bg2); border:1px solid var(--border); border-radius:50%;
+    width:44px; height:44px; font-size:1.15rem; cursor:pointer;
+    align-items:center; justify-content:center; box-shadow:0 4px 16px rgba(0,0,0,.4);
+    color:var(--text-dim); transition:border-color .2s;
+  }
+  .mobile-menu-btn:hover { border-color:var(--gold-dim); }
+
+  @media (max-width:640px) {
+    .mobile-menu-btn { display:flex; }
+    #fab-menu {
+      display:none; position:fixed; top:4.2rem; right:1rem; z-index:599;
+      flex-direction:column; gap:.6rem; align-items:center;
+      background:var(--bg2); border:1px solid var(--border); border-radius:16px;
+      padding:.9rem .8rem; box-shadow:0 10px 32px rgba(0,0,0,.55);
+    }
+    #fab-menu.open { display:flex; }
+    #fab-menu .timer-btn, #fab-menu .settings-btn, #fab-menu .side-menu-btn {
+      position:static;
+    }
+    #fab-menu .side-menu {
+      position:static; display:flex; flex-direction:column; gap:.6rem;
+    }
+  }
+
   .entry.flash-highlight { animation:entryFlash 1.8s ease; }
   @keyframes entryFlash {
     0%,100% { box-shadow:none; }
@@ -1161,16 +1191,19 @@
 <div id="main-screen" style="display:none">
 
 <!-- TIMER (botão flutuante) -->
-<button class="timer-btn" id="timer-btn" title="Timer de meditação">🔔</button>
-<button class="settings-btn" id="settings-btn" title="Configurações">⚙️</button>
-<button class="top-btn" id="top-btn" title="Voltar ao topo">↑</button>
+<button class="mobile-menu-btn" id="mobile-menu-btn" title="Menu">☰</button>
+<div class="fab-menu" id="fab-menu">
+  <button class="timer-btn" id="timer-btn" title="Timer de meditação">🔔</button>
+  <button class="settings-btn" id="settings-btn" title="Configurações">⚙️</button>
 
-<!-- MENU LATERAL: significados + calendário -->
-<div class="side-menu">
-  <button class="side-menu-btn" id="side-search-btn" title="Consultar significado de uma carta">🔍</button>
-  <button class="side-menu-btn" id="side-cal-btn" title="Calendário">📅</button>
-  <button class="side-menu-btn" id="side-astro-btn" title="Astrologia">🪐</button>
+  <!-- MENU LATERAL: significados + calendário -->
+  <div class="side-menu">
+    <button class="side-menu-btn" id="side-search-btn" title="Consultar significado de uma carta">🔍</button>
+    <button class="side-menu-btn" id="side-cal-btn" title="Calendário">📅</button>
+    <button class="side-menu-btn" id="side-astro-btn" title="Astrologia">🪐</button>
+  </div>
 </div>
+<button class="top-btn" id="top-btn" title="Voltar ao topo">↑</button>
 
 <!-- SETTINGS -->
 <div class="settings-overlay" id="settings-overlay">
@@ -1415,6 +1448,10 @@
       <button type="button" class="ai-btn" id="ai-btn" style="display:none">
         <span>✨</span> Gerar Interpretação com IA
       </button>
+      <button type="button" class="ai-btn" id="ai-pure-btn" style="display:none;background:var(--bg3);border:1px solid var(--purple);color:var(--purple-light);margin-top:.5rem">
+        <span>🔬</span> Gerar Leitura Pura (sem viés)
+      </button>
+      <div id="ai-pure-result" style="display:none;background:var(--bg3);border:1px solid var(--purple);border-radius:10px;padding:1rem;margin-top:.6rem;font-size:.92rem;line-height:1.6"></div>
     </div>
     <div class="form-row">
       <label>Essa leitura é sobre...</label>
@@ -2417,6 +2454,27 @@ document.getElementById('settings-btn').addEventListener('click', () => {
 });
 document.getElementById('settings-close').addEventListener('click', () =>
   document.getElementById('settings-overlay').classList.remove('open'));
+
+// ── MENU HAMBÚRGUER (MOBILE) ──
+(() => {
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const fabMenu = document.getElementById('fab-menu');
+  function closeFabMenu() {
+    fabMenu.classList.remove('open');
+    menuBtn.textContent = '☰';
+  }
+  menuBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const isOpen = fabMenu.classList.toggle('open');
+    menuBtn.textContent = isOpen ? '✕' : '☰';
+  });
+  fabMenu.querySelectorAll('button').forEach(b => b.addEventListener('click', closeFabMenu));
+  document.addEventListener('click', (ev) => {
+    if (fabMenu.classList.contains('open') && !fabMenu.contains(ev.target) && ev.target !== menuBtn) {
+      closeFabMenu();
+    }
+  });
+})();
 document.getElementById('settings-save').addEventListener('click', () => {
   const key = document.getElementById('anthropic-key-input').value.trim();
   if (key) localStorage.setItem('gemini_key', key);
@@ -2430,6 +2488,8 @@ document.getElementById('settings-save').addEventListener('click', () => {
 function updateAIBtn() {
   const btn = document.getElementById('ai-btn');
   if (btn) btn.style.display = cardTags.length > 0 ? '' : 'none';
+  const pureBtn = document.getElementById('ai-pure-btn');
+  if (pureBtn) pureBtn.style.display = cardTags.length > 0 ? '' : 'none';
 }
 
 // Converte marcação simples de negrito vinda da IA (**assim** ou *assim*) para <strong>,
@@ -2585,6 +2645,60 @@ Regras de como escrever:
 }
 
 document.getElementById('ai-btn').addEventListener('click', generateAIReading);
+
+// ── IA: LEITURA PURA (sem tema, pergunta, "sobre quem" ou personalidade —
+// só as cartas e como elas se relacionam, pra fins de estudo/comparação) ──
+async function generateAIReadingPure() {
+  const apiKey = localStorage.getItem('gemini_key');
+  if (!apiKey) {
+    showToast('⚠ Configure sua chave API em ⚙️');
+    document.getElementById('settings-overlay').classList.add('open');
+    return;
+  }
+  const btn = document.getElementById('ai-pure-btn');
+  const resultEl = document.getElementById('ai-pure-result');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ai-loading">⟳</span> Gerando leitura pura...';
+  resultEl.style.display = 'none';
+
+  const cardList = cardTags.map(c =>
+    `${c.name}${c.inv ? ' (invertida)' : ''}`
+  ).join(', ');
+
+  const combos = detectCombinations(cardTags);
+  const comboText = combos.length
+    ? '\nCombinações detectadas: ' + combos.map(c => c.cards.join(' + ')).join('; ')
+    : '';
+
+  const bottomCardText = bottomCard
+    ? `\nCARTA DE FUNDO DO BARALHO: ${bottomCard.name}${bottomCard.inv ? ' (invertida)' : ''} — representa a energia de base/raiz da situação.`
+    : '';
+
+  const prompt = `Analise as cartas de tarot abaixo de forma estritamente objetiva e neutra, baseada apenas nos significados tradicionais das cartas e em como elas se relacionam entre si.
+
+CARTAS: ${cardList}${comboText}${bottomCardText}
+
+Regras:
+- NÃO leve em conta nenhum tema, pergunta, contexto pessoal ou "para quem" a leitura seria — essas informações não existem aqui de propósito. Analise só as cartas em si.
+- NÃO adote nenhuma personalidade, tom de amiga, humor, opinião ou conselho de vida — escreva de forma direta e didática, como um material de estudo de tarot.
+- Baseie-se nos significados tradicionais de cada carta (considerando se está invertida) e no arcano (maior ou menor) usado.
+- Descreva o que a combinação das cartas sugere em conjunto de forma analítica — não invente contexto de vida que não foi dado.
+- Português brasileiro, sem preâmbulo, sem fechamento tipo "resumindo" ou "em suma".`;
+
+  try {
+    const { text, model } = await callGeminiText(prompt);
+    resultEl.innerHTML = `<div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--purple-light);text-transform:uppercase;margin-bottom:.5rem">🔬 Leitura Pura — só as cartas, sem tema/pergunta/personalidade</div>${formatAIText(text)}`;
+    resultEl.style.display = '';
+    showToast(`✦ Leitura pura gerada (${model})`);
+  } catch(e) {
+    showToast('Erro: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>🔬</span> Gerar Leitura Pura (sem viés)';
+  }
+}
+document.getElementById('ai-pure-btn').addEventListener('click', generateAIReadingPure);
 
 // ── ASTROLOGIA ──
 const ZODIAC = [
@@ -4454,6 +4568,8 @@ function resetForm(){
   document.querySelectorAll('#subject-selector .theme-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.subject === 'mim');
   });
+  document.getElementById('ai-pure-result').style.display = 'none';
+  document.getElementById('ai-pure-result').innerHTML = '';
   document.getElementById('combos-panel').classList.remove('visible');
   document.getElementById('arcano-pessoal-panel').classList.remove('visible');
   const spread = document.getElementById('form-spread');
@@ -4525,6 +4641,8 @@ window.editEntry=function(id){
   document.querySelectorAll('#subject-selector .theme-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.subject === subjectVal);
   });
+  document.getElementById('ai-pure-result').style.display = 'none';
+  document.getElementById('ai-pure-result').innerHTML = '';
   cardTags=[...e.cards]; renderTags();
   bottomCard = e.bottomCard ? {...e.bottomCard} : null;
   bottomCardInput.value = '';
