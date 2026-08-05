@@ -1409,6 +1409,13 @@
   <div class="new-entry-form" id="entry-form">
     <div class="form-title">✦ Nova Entrada</div>
     <div class="form-row">
+      <label>Baralho</label>
+      <div class="theme-selector" id="deck-selector">
+        <button type="button" class="theme-btn active" data-formdeck="tarot" onclick="selectFormDeck(this)">🔮 Tarot</button>
+        <button type="button" class="theme-btn" data-formdeck="cigano" onclick="selectFormDeck(this)">🍀 Baralho Cigano</button>
+      </div>
+    </div>
+    <div class="form-row">
       <label>Data</label>
       <input type="date" id="f-date">
     </div>
@@ -2254,6 +2261,84 @@ const CARD_EXTRAS = {
   },
 };
 
+const CIGANO_CARDS = {
+  'Cavaleiro': {num:'1', oracle:'talvez', keywords:["Notícias", "Movimento", "Chegada"], meaning:'Uma novidade está a caminho — visita, mensagem ou mudança rápida de cenário. Sempre indica algo se aproximando rápido. Perto de cartas boas, a notícia é boa; perto de cartas pesadas, a chegada traz tensão junto.'},
+  'Trevo': {num:'2', oracle:'talvez', keywords:["Sorte pequena", "Oportunidade", "Leveza"], meaning:'Uma chance breve e simples aparece — não é o grande prêmio, é o empurrãozinho. O trevo não dura: aproveite a janela de oportunidade enquanto ela está aberta, sem esperar que se repita.'},
+  'Navio': {num:'3', oracle:'talvez', keywords:["Viagem", "Comércio", "Distância"], meaning:'Deslocamento, negócio à distância ou algo vindo de longe — física ou emocionalmente. Fala de movimento para fora do território conhecido: uma viagem, um negócio internacional, ou alguém que está se distanciando.'},
+  'Casa': {num:'4', oracle:'sim', keywords:["Lar", "Família", "Segurança"], meaning:'Tudo que é base, raiz, o núcleo familiar ou a sensação de \'chegar em casa\'. Representa fundações — pode ser a própria casa, a família ou uma sensação de pertencimento que está sendo construída ou testada.'},
+  'Árvore': {num:'5', oracle:'talvez', keywords:["Saúde", "Crescimento lento", "Raízes"], meaning:'Crescimento devagar e constante — corpo, saúde ou algo que precisa de tempo para amadurecer. Tudo que envolve a Árvore tem raiz profunda e não se resolve rápido: saúde física, um vínculo antigo, um processo que já vem de longe.'},
+  'Nuvens': {num:'6', oracle:'nao', keywords:["Confusão", "Dúvida", "Instabilidade"], meaning:'Um momento nebuloso — incerteza, indecisão ou uma fase que ainda não está clara. As Nuvens indicam que a situação está turva agora, mas o lado mais claro do céu mostra que a confusão tende a se dissipar.'},
+  'Cobra': {num:'7', oracle:'nao', keywords:["Desvio", "Complicação", "Astúcia"], meaning:'Um caminho torto, uma complicação inesperada ou alguém que não age de frente. A Cobra raramente é boa notícia perto de outra pessoa: sinaliza desvio de rota, terceira pessoa envolvida ou uma solução que exige rodeios.'},
+  'Caixão': {num:'8', oracle:'nao', keywords:["Fim de ciclo", "Transformação", "Encerramento"], meaning:'Um fim necessário — não é sempre morte literal, mas o encerramento definitivo de uma fase. Junto de cartas positivas, mostra que algo precisa morrer para que o novo nasça. Junto de cartas pesadas, aponta perda real e período de luto.'},
+  'Buquê': {num:'9', oracle:'sim', keywords:["Beleza", "Presente", "Gentileza"], meaning:'Um gesto bonito, um presente, um convite — algo que traz leveza e é bem-vindo. Uma das cartas mais gentis do baralho: geralmente reforça o campo positivo ao redor dela, suavizando até combinações difíceis.'},
+  'Foice': {num:'10', oracle:'nao', keywords:["Corte súbito", "Decisão rápida", "Ruptura"], meaning:'Um corte rápido e definitivo — decisão, ruptura ou fim que chega sem aviso prévio. A Foice age depressa; o que ela corta não volta. Pode ser libertador (cortar o que não serve) ou doloroso, dependendo do contexto ao redor.'},
+  'Chicote': {num:'11', oracle:'nao', keywords:["Conflito", "Repetição", "Discussão"], meaning:'Discussão, atrito ou um padrão que se repete — algo indo e voltando sem se resolver. O Chicote fala de repetição: uma briga antiga que volta, uma rotina desgastante ou um esforço físico repetitivo (inclusive exercício).'},
+  'Pássaros': {num:'12', oracle:'talvez', keywords:["Conversa", "Ansiedade", "Dupla"], meaning:'Papo, troca de mensagens, um casal ou dupla — e também a agitação mental de quem pensa demais. Sempre envolve comunicação entre duas partes; perto de cartas tensas, vira fofoca ou ansiedade; perto de boas cartas, é conversa leve e produtiva.'},
+  'Criança': {num:'13', oracle:'talvez', keywords:["Começo", "Inocência", "Algo novo e pequeno"], meaning:'Algo no início — um projeto recém-nascido, uma ideia simples, ou literalmente uma criança. Marca o começo de algo que ainda vai crescer. Também pode apontar falta de experiência ou uma abordagem ingênua diante da situação.'},
+  'Raposa': {num:'14', oracle:'nao', keywords:["Astúcia", "Trabalho", "Desconfiança"], meaning:'Esperteza aplicada — no trabalho, em uma negociação, ou em alguém que não é totalmente transparente. Fala de estratégia e cautela: pode ser você agindo com inteligência, ou um alerta para desconfiar de quem está por perto.'},
+  'Urso': {num:'15', oracle:'talvez', keywords:["Poder", "Proteção", "Autoridade"], meaning:'Força bruta usada para proteger — um chefe, uma figura de autoridade, ou recursos financeiros. Representa quem detém o poder na situação (patrão, mãe, Estado) e também questões de dinheiro e possessividade emocional.'},
+  'Estrelas': {num:'16', oracle:'sim', keywords:["Esperança", "Orientação", "Sucesso a longo prazo"], meaning:'Um objetivo iluminado no horizonte — inspiração, direção clara, sucesso que ainda está a caminho. As Estrelas mostram o rumo certo, mas geralmente a longo prazo — não é a resposta imediata, é a bússola.'},
+  'Cegonha': {num:'17', oracle:'sim', keywords:["Mudança", "Transição", "Melhoria"], meaning:'Uma mudança se aproxima — de casa, de trabalho, de fase de vida, geralmente para melhor. Sempre fala de movimento e renovação. É rara ser negativa, mas pode indicar uma transição que ainda dá um friozinho na barriga.'},
+  'Cachorro': {num:'18', oracle:'sim', keywords:["Amizade", "Lealdade", "Confiança"], meaning:'Um amigo de verdade, apoio leal, ou a própria qualidade da amizade sendo testada. Aponta para relações de confiança mútua — quem está ao seu lado de verdade. Perto de cartas tensas, pode indicar lealdade mal correspondida.'},
+  'Torre': {num:'19', oracle:'talvez', keywords:["Instituição", "Estrutura", "Ambição"], meaning:'Empresas, governo, hierarquia — o mundo institucional, formal e estruturado. Fala de estabilidade de longo prazo construída com esforço (carreira, empresa própria) mas também de solidão em posições de autoridade.'},
+  'Jardim': {num:'20', oracle:'talvez', keywords:["Sociedade", "Vida pública", "Eventos sociais"], meaning:'A vida social, redes de contato, eventos, festas — tudo que acontece em público. Representa o campo social como um todo: networking, reputação pública, ou o convite para sair da bolha e se misturar.'},
+  'Montanha': {num:'21', oracle:'nao', keywords:["Obstáculo", "Bloqueio", "Distância"], meaning:'Um obstáculo real pela frente — algo grande, difícil de contornar, mas não impossível. A Montanha nomeia o bloqueio com honestidade: pode ser uma pessoa, uma burocracia ou uma limitação prática que exige rota alternativa.'},
+  'Caminhos': {num:'22', oracle:'talvez', keywords:["Escolha", "Decisão", "Opções"], meaning:'Um momento de bifurcação — mais de uma opção sobre a mesa, e a decisão é sua. Convida a pesar as alternativas com calma; raramente há só um caminho certo, mas há sempre um mais alinhado com o que você quer.'},
+  'Ratos': {num:'23', oracle:'nao', keywords:["Desgaste", "Perda gradual", "Estresse"], meaning:'Algo sendo corroído aos poucos — energia, dinheiro, saúde ou paz, escapando devagar. Os Ratos raramente indicam catástrofe súbita; indicam um vazamento lento que precisa ser identificado e estancado antes que piore.'},
+  'Coração': {num:'24', oracle:'sim', keywords:["Amor", "Emoção genuína", "Afeto"], meaning:'Sentimento verdadeiro — amor romântico, afeto profundo ou o próprio coração da questão. Uma das cartas mais bem-vindas do baralho: onde ela cai, há emoção real envolvida, seja em relação a alguém ou a um projeto amado.'},
+  'Anel': {num:'25', oracle:'sim', keywords:["Compromisso", "Contrato", "Ciclo"], meaning:'Um vínculo formal — casamento, contrato, parceria séria, ou um ciclo que se fecha em círculo. Fala de continuidade e compromisso; perto de cartas boas, une; perto de cartas tensas, pode indicar um ciclo repetitivo do qual é hora de sair.'},
+  'Livro': {num:'26', oracle:'talvez', keywords:["Segredo", "Conhecimento", "Estudo"], meaning:'Algo ainda não revelado — um segredo, um estudo em curso, ou conhecimento por vir. O Livro fechado guarda o que ainda não é hora de saber; aberto perto de outras cartas, sugere que a informação está prestes a vir à tona.'},
+  'Carta': {num:'27', oracle:'talvez', keywords:["Mensagem", "Documento", "Comunicação escrita"], meaning:'Uma comunicação formal ou escrita — e-mail, mensagem de texto, documento oficial. Sempre aponta para algo que chega por escrito; o tom da notícia depende inteiramente das cartas vizinhas.'},
+  'Homem': {num:'28', oracle:'talvez', keywords:["Figura masculina", "O consulente (se homem)"], meaning:'Representa um homem importante na situação, ou o próprio consulente, se for homem. Serve como \'personagem\' da leitura: as cartas ao redor dele mostram como ele pensa e age na situação perguntada.'},
+  'Mulher': {num:'29', oracle:'talvez', keywords:["Figura feminina", "A consulente (se mulher)"], meaning:'Representa uma mulher importante na situação, ou a própria consulente, se for mulher. Assim como o Homem, funciona como \'personagem\'; observe as cartas ao lado dela para entender seu estado emocional na leitura.'},
+  'Lírios': {num:'30', oracle:'sim', keywords:["Maturidade", "Paz", "Família estabelecida"], meaning:'Estabilidade que vem com o tempo — paz, experiência de vida, uma relação madura e duradoura. Os Lírios trazem serenidade construída, muitas vezes ligada a família, idade ou uma relação de longa data — inclusive aspectos de intimidade madura.'},
+  'Sol': {num:'31', oracle:'sim', keywords:["Sucesso", "Vitalidade", "Clareza"], meaning:'Uma das cartas mais positivas do baralho — energia, sucesso visível e clareza total. Onde o Sol cai, ilumina: fortalece tudo ao redor, trazendo vitalidade, reconhecimento e a sensação de que o caminho está certo.'},
+  'Lua': {num:'32', oracle:'talvez', keywords:["Reconhecimento", "Emoção", "Intuição"], meaning:'Sentimentos, reputação e reconhecimento público — o lado emocional e intuitivo da situação. Fala de como você é visto e do que sente por dentro; pode indicar honrarias, mas também oscilação emocional se as cartas ao redor forem tensas.'},
+  'Chave': {num:'33', oracle:'sim', keywords:["Solução", "Certeza", "Ponto decisivo"], meaning:'A resposta certa, a solução que destrava tudo — uma das cartas mais afirmativas do baralho. Quando a Chave aparece perto de outra carta, ela confirma e reforça o significado dela com quase certeza absoluta.'},
+  'Peixes': {num:'34', oracle:'sim', keywords:["Dinheiro", "Abundância", "Fluxo"], meaning:'Fluxo de recursos — dinheiro entrando (ou saindo), negócios, ou abundância em movimento. Os Peixes nadam em cardume: raramente vêm sozinhos, então costumam indicar múltiplas fontes ou movimentações financeiras simultâneas.'},
+  'Âncora': {num:'35', oracle:'sim', keywords:["Estabilidade", "Trabalho fixo", "Segurança"], meaning:'Algo firme e duradouro — um emprego estável, uma base segura, um compromisso de longo prazo. A Âncora prende no bom sentido (segurança) e no sentido mais pesado (dificuldade de se mover); o contexto ao redor decide qual predomina.'},
+  'Cruz': {num:'36', oracle:'nao', keywords:["Fardo", "Destino", "Fé"], meaning:'Algo que precisa ser carregado — um fardo, uma prova, ou uma questão de destino maior que a vontade individual. É a carta mais pesada do baralho, mas também fala de fé e de superação: o que dói agora costuma carregar um propósito maior.'},
+};
+
+const CIGANO_ICONS_RAW = {
+  'Cavaleiro': '🐎',
+  'Trevo': '🍀',
+  'Navio': '🚢',
+  'Casa': '🏠',
+  'Árvore': '🌳',
+  'Nuvens': '☁️',
+  'Cobra': '🐍',
+  'Caixão': '⚰️',
+  'Buquê': '💐',
+  'Foice': '✂️',
+  'Chicote': '〰️',
+  'Pássaros': '🐦',
+  'Criança': '👶',
+  'Raposa': '🦊',
+  'Urso': '🐻',
+  'Estrelas': '✨',
+  'Cegonha': '🦢',
+  'Cachorro': '🐕',
+  'Torre': '🗼',
+  'Jardim': '🌷',
+  'Montanha': '⛰️',
+  'Caminhos': '🛤️',
+  'Ratos': '🐭',
+  'Coração': '❤️',
+  'Anel': '💍',
+  'Livro': '📖',
+  'Carta': '✉️',
+  'Homem': '🧑',
+  'Mulher': '👩',
+  'Lírios': '⚜️',
+  'Sol': '☀️',
+  'Lua': '🌙',
+  'Chave': '🔑',
+  'Peixes': '🐟',
+  'Âncora': '⚓',
+  'Cruz': '✝️',
+};
+
 // injeta luz, sombra e meme em cada carta
 Object.entries(CARD_EXTRAS).forEach(([name, extra]) => {
   if (TAROT_CARDS[name]) Object.assign(TAROT_CARDS[name], extra);
@@ -2368,6 +2453,22 @@ window.toggleThemeFilter = function(theme) {
 };
 
 // ── SOBRE QUEM É A LEITURA ──
+window.selectFormDeck = function(btn) {
+  const newDeck = btn.dataset.formdeck;
+  if (newDeck === formDeck) return;
+  if (cardTags.length > 0 || bottomCard) {
+    if (!confirm('Trocar de baralho limpa as cartas já adicionadas nessa tiragem. Continuar?')) return;
+  }
+  document.querySelectorAll('#deck-selector .theme-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  formDeck = newDeck;
+  cardTags = [];
+  bottomCard = null;
+  renderBottomCardPreview();
+  renderTags();
+  tagInput.placeholder = formDeck === 'cigano' ? 'Digite para buscar carta cigana...' : 'Digite para buscar carta...';
+};
+
 window.selectSubject = function(btn) {
   document.querySelectorAll('#subject-selector .theme-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -2431,10 +2532,10 @@ function renderSpread(tags, containerId) {
   if (!tags || !tags.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
   el.style.display = 'flex';
   el.innerHTML = tags.map(c => {
-    const img = CARD_IMAGES[findCardExact(c.name)] || CARD_IMAGES[c.name] || '';
+    const img = cardImagesFor(formDeck)[findCardExact(c.name, formDeck)] || cardImagesFor(formDeck)[c.name] || '';
     const inv = c.inv ? ' inv' : '';
     const label = c.inv ? `${c.name} ↩` : c.name;
-    return `<div class="spread-card-wrap" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv})">
+    return `<div class="spread-card-wrap" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv},'${formDeck}')">
       ${img
         ? `<img class="spread-card-img${inv}" src="${img}" alt="${c.name}" loading="lazy"
              onerror="this.src='';this.style.display='none'">`
@@ -2618,7 +2719,11 @@ async function generateAIReading() {
     ? `\nSOBRE QUEM É ESSA LEITURA: essa tiragem não é sobre quem está fazendo a pergunta — é sobre ${subjectName || `um(a) ${SUBJECT_LABELS[subject] || 'outra pessoa'}`} da vida dela (${SUBJECT_LABELS[subject] || 'outra pessoa'}).`
     : '';
 
-  const prompt = `Você é o próprio tarot respondendo — não uma taróloga descrevendo uma leitura de fora. Fale diretamente com quem tirou as cartas, como se fosse uma amiga próxima e sincera dando um conselho: intimista, com puxão de orelha quando cabe, e um tantinho de fofoca/insight malicioso quando a carta pede (tipo "olha só o que essa carta tá insinuando..."), mas sem exagerar no drama.
+  const deckIsCigano = formDeck === 'cigano';
+  const prompt = `${deckIsCigano
+    ? 'Você é o próprio baralho cigano (Lenormand) respondendo — não uma leitora descrevendo a tiragem de fora. Fale diretamente com quem tirou as cartas, como se fosse uma amiga próxima e sincera dando um conselho: direta, prática e concreta (é assim que o baralho cigano fala — sem rodeios simbólicos), com um tantinho de insight malicioso quando a combinação pede, mas sem exagerar no drama. Leia as cartas SEMPRE em combinação umas com as outras (a carta ao lado modifica/contextualiza a carta "assunto"), nunca isoladamente, e não use vocabulário de tarot (nada de "arcano", "naipe" etc — aqui é só o nome da carta).'
+    : 'Você é o próprio tarot respondendo — não uma taróloga descrevendo uma leitura de fora. Fale diretamente com quem tirou as cartas, como se fosse uma amiga próxima e sincera dando um conselho: intimista, com puxão de orelha quando cabe, e um tantinho de fofoca/insight malicioso quando a carta pede (tipo "olha só o que essa carta tá insinuando..."), mas sem exagerar no drama.'
+  }
 
 CARTAS: ${cardList}${comboText}${bottomCardText}${subjectText}
 ${theme ? `TEMA: ${theme}` : ''}
@@ -2675,14 +2780,16 @@ async function generateAIReadingPure() {
     ? `\nCARTA DE FUNDO DO BARALHO: ${bottomCard.name}${bottomCard.inv ? ' (invertida)' : ''} — representa a energia de base/raiz da situação.`
     : '';
 
-  const prompt = `Analise as cartas de tarot abaixo de forma estritamente objetiva e neutra, baseada apenas nos significados tradicionais das cartas e em como elas se relacionam entre si.
+  const prompt = `Analise as cartas de ${formDeck === 'cigano' ? 'baralho cigano (Lenormand)' : 'tarot'} abaixo de forma estritamente objetiva e neutra, baseada apenas nos significados tradicionais das cartas e em como elas se relacionam entre si.
 
 CARTAS: ${cardList}${comboText}${bottomCardText}
 
 Regras:
 - NÃO leve em conta nenhum tema, pergunta, contexto pessoal ou "para quem" a leitura seria — essas informações não existem aqui de propósito. Analise só as cartas em si.
-- NÃO adote nenhuma personalidade, tom de amiga, humor, opinião ou conselho de vida — escreva de forma direta e didática, como um material de estudo de tarot.
-- Baseie-se nos significados tradicionais de cada carta (considerando se está invertida) e no arcano (maior ou menor) usado.
+- NÃO adote nenhuma personalidade, tom de amiga, humor, opinião ou conselho de vida — escreva de forma direta e didática, como um material de estudo.
+- ${formDeck === 'cigano'
+    ? 'Baseie-se nos significados tradicionais de cada carta do baralho cigano, sempre lidas em combinação com as vizinhas (o método Lenormand não interpreta cartas isoladas) — não use vocabulário de tarot.'
+    : 'Baseie-se nos significados tradicionais de cada carta (considerando se está invertida) e no arcano (maior ou menor) usado.'}
 - Descreva o que a combinação das cartas sugere em conjunto de forma analítica — não invente contexto de vida que não foi dado.
 - Português brasileiro, sem preâmbulo, sem fechamento tipo "resumindo" ou "em suma".`;
 
@@ -3409,7 +3516,7 @@ function renderCalendar() {
 
     const thumbs = dayEntries.slice(0,3).flatMap(e =>
       e.cards.slice(0,2).map(c => {
-        const img = CARD_IMAGES[findCardExact(c.name)] || CARD_IMAGES[c.name] || '';
+        const img = cardImagesFor(e.deck||'tarot')[findCardExact(c.name, e.deck||'tarot')] || cardImagesFor(e.deck||'tarot')[c.name] || '';
         return img ? `<img class="cal-card-dot" src="${img}" alt="${c.name}" loading="lazy">` : '';
       })
     ).join('');
@@ -3435,7 +3542,7 @@ window.showCalDay = function(dateStr) {
   let html = `<div style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold-dim);margin-bottom:.7rem">${d}/${m}/${y} · ${lunar.emoji} ${lunar.name}</div>`;
   dayEntries.forEach(e => {
     const badges = e.cards.map(c=>
-      `<span class="entry-card-badge${c.inv?' invertida':''}" onclick="event.stopPropagation();showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv})">${c.name}${c.inv?' ↩':''}</span>`
+      `<span class="entry-card-badge${c.inv?' invertida':''}" onclick="event.stopPropagation();showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv},'${e.deck||'tarot'}')">${c.name}${c.inv?' ↩':''}</span>`
     ).join('');
     html += `<div style="margin-bottom:.7rem;cursor:pointer" onclick="goToEntry('${e.id}')" title="Ver essa tiragem no diário">
       <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.3rem">${badges}</div>
@@ -3839,20 +3946,55 @@ const CARD_IMAGES = {
   'Rei de Paus':       W+'c/ce/Wands14.jpg',
 };
 
+// IMAGENS DAS CARTAS DO BARALHO CIGANO
+// Nao existe um baralho Lenormand unico e completo em dominio publico como o Rider-Waite,
+// entao cada carta vira um SVG (simbolo + numero + nome) no lugar de uma foto.
+function buildCiganoCardSVG(name, num, emoji) {
+  const safeName = name.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="480" viewBox="0 0 300 480">
+    <defs>
+      <radialGradient id="g" cx="50%" cy="38%" r="75%">
+        <stop offset="0%" stop-color="#231848"/>
+        <stop offset="100%" stop-color="#0e0b1a"/>
+      </radialGradient>
+    </defs>
+    <rect x="4" y="4" width="292" height="472" rx="14" fill="url(#g)" stroke="#a07c3a" stroke-width="3"/>
+    <rect x="16" y="16" width="268" height="448" rx="8" fill="none" stroke="#3a2e62" stroke-width="1.5"/>
+    <text x="34" y="56" font-family="Georgia, serif" font-size="30" fill="#d4aa50">${num}</text>
+    <text x="150" y="250" font-size="150" text-anchor="middle" dominant-baseline="middle">${emoji}</text>
+    <text x="150" y="420" font-family="Georgia, serif" font-size="26" fill="#f0e8d8" text-anchor="middle">${safeName}</text>
+  </svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+const CIGANO_IMAGES = {};
+Object.entries(CIGANO_ICONS_RAW).forEach(([name, emoji]) => {
+  const data = CIGANO_CARDS[name];
+  const num = data ? data.num : '';
+  CIGANO_IMAGES[name] = buildCiganoCardSVG(name, num, emoji);
+});
+
+// BARALHO ATIVO NO FORMULARIO DE NOVA TIRAGEM
+let formDeck = 'tarot'; // 'tarot' | 'cigano'
+function cardsDataFor(deck) { return deck === 'cigano' ? CIGANO_CARDS : TAROT_CARDS; }
+function cardImagesFor(deck) { return deck === 'cigano' ? CIGANO_IMAGES : CARD_IMAGES; }
+function deckLabel(deck) { return deck === 'cigano' ? '🍀 Cigano' : '🔮 Tarot'; }
+
+
 // ── POPUP: incluir nota personalizada ──
 const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
 
-function findCardExact(name) {
+function findCardExact(name, deck = 'tarot') {
   if (!name) return null;
+  const CARDS_SRC = cardsDataFor(deck);
   // normaliza: remove acentos, lowercase, trim
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
   const clean = norm(name.replace(/inverti.*|inversa.*/gi,'').trim());
 
   // 1. match exato
-  if (TAROT_CARDS[name]) return name;
+  if (CARDS_SRC[name]) return name;
 
   // 2. match normalizado (resolve problema de acentos)
-  const keys = Object.keys(TAROT_CARDS);
+  const keys = Object.keys(CARDS_SRC);
   const byNorm = keys.find(k => norm(k) === clean);
   if (byNorm) return byNorm;
 
@@ -3875,17 +4017,18 @@ window.switchPopupTab = function(tab, btn) {
   document.getElementById('popup-pane-' + tab)?.classList.add('active');
 };
 
-window.showCardPopup = function(name, isInv) {
+window.showCardPopup = function(name, isInv, deck) {
   if (!name) return;
+  deck = deck || 'tarot';
   // reset abas
   document.querySelectorAll('.popup-tab').forEach((b,i) => b.classList.toggle('active', i===0));
   document.querySelectorAll('.popup-pane').forEach((p,i) => p.classList.toggle('active', i===0));
 
-  const resolvedName = findCardExact(name);
-  const data = resolvedName ? TAROT_CARDS[resolvedName] : null;
+  const resolvedName = findCardExact(name, deck);
+  const data = resolvedName ? cardsDataFor(deck)[resolvedName] : null;
   const displayName = resolvedName || name;
   const oracle = data?.oracle || '';
-  const imgUrl = CARD_IMAGES[resolvedName] || CARD_IMAGES[name] || null;
+  const imgUrl = cardImagesFor(deck)[resolvedName] || cardImagesFor(deck)[name] || null;
   const meaningText = isInv && data?.rev
     ? data.rev
     : (data?.meaning || 'Carta não encontrada no guia. Adicione uma anotação na seção ✦ Personalizar.');
@@ -4164,20 +4307,20 @@ function renderArcanoPessoalPanel(tags) {
 
 
 // ── CARD PREVIEW (formulário) ──
-function findCard(input) {
+function findCard(input, deck = 'tarot') {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
   const clean = norm(input.replace(/inverti.*|inversa.*/gi,'').trim());
   if (clean.length < 3) return null;
-  const keys = Object.keys(TAROT_CARDS);
+  const keys = Object.keys(cardsDataFor(deck));
   return keys.find(k => norm(k) === clean)
       || keys.find(k => norm(k).includes(clean) || clean.includes(norm(k)))
       || null;
 }
 
-function showCardPreview(cardName, isInv) {
+function showCardPreview(cardName, isInv, deck = 'tarot') {
   const panel = document.getElementById('card-preview-panel');
   if (!cardName) { panel.classList.remove('visible'); return; }
-  const data = TAROT_CARDS[cardName];
+  const data = cardsDataFor(deck)[cardName];
   if (!data) { panel.classList.remove('visible'); return; }
   const oracle = data.oracle || '';
   const meaningText = isInv && data.rev ? data.rev : data.meaning || '';
@@ -4359,8 +4502,13 @@ function renderTags(){
     div.innerHTML=`${tag.name}${tag.inv?' ↩':''} <button onclick="removeTag(${i})">×</button>`;
     tagsWrap.insertBefore(div,tagInput);
   });
-  renderCombosPanel(cardTags);
-  renderArcanoPessoalPanel(cardTags);
+  if (formDeck === 'tarot') {
+    renderCombosPanel(cardTags);
+    renderArcanoPessoalPanel(cardTags);
+  } else {
+    document.getElementById('combos-panel').classList.remove('visible');
+    document.getElementById('arcano-pessoal-panel').classList.remove('visible');
+  }
   renderSpread(cardTags, 'form-spread');
   updateAIBtn();
 }
@@ -4383,19 +4531,20 @@ function addCardFromInput(){
 // Enter no desktop, Go/Search no mobile (keyup é mais confiável)
 // ── AUTOCOMPLETE DE CARTAS ──
 const autocomplete = document.getElementById('card-autocomplete');
-const allCardNames = Object.keys(TAROT_CARDS);
+function allCardNames() { return Object.keys(cardsDataFor(formDeck)); }
 
 function openAutocomplete(q) {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const nq = norm(q.replace(/inverti.*/i,'').trim());
   if (!nq || nq.length < 2) { autocomplete.classList.remove('open'); return; }
-  const matches = allCardNames.filter(n => norm(n).includes(nq)).slice(0, 10);
+  const matches = allCardNames().filter(n => norm(n).includes(nq)).slice(0, 10);
   if (!matches.length) { autocomplete.classList.remove('open'); return; }
+  const CARDS_SRC = cardsDataFor(formDeck), IMAGES_SRC = cardImagesFor(formDeck);
 
   let html = '<div class="ac-group-label">Normal</div>';
   matches.forEach(name => {
-    const data = TAROT_CARDS[name] || {};
-    const img  = CARD_IMAGES[name] || '';
+    const data = CARDS_SRC[name] || {};
+    const img  = IMAGES_SRC[name] || '';
     const oracle = data.oracle || '';
     html += `<div class="ac-item" tabindex="0" onclick="addCardFromAC('${name.replace(/'/g,"\\'")}', false)">
       ${img ? `<img class="ac-thumb" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:28px;flex-shrink:0"></div>'}
@@ -4407,10 +4556,11 @@ function openAutocomplete(q) {
     </div>`;
   });
 
+  if (formDeck !== 'cigano') {
   html += '<div class="ac-group-label" style="color:var(--rose)">↩ Invertida</div>';
   matches.forEach(name => {
-    const data = TAROT_CARDS[name] || {};
-    const img  = CARD_IMAGES[name] || '';
+    const data = CARDS_SRC[name] || {};
+    const img  = IMAGES_SRC[name] || '';
     html += `<div class="ac-item ac-inv" tabindex="0" onclick="addCardFromAC('${name.replace(/'/g,"\\'")}', true)">
       ${img ? `<img class="ac-thumb inv" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:28px;flex-shrink:0"></div>'}
       <div class="ac-info">
@@ -4419,6 +4569,7 @@ function openAutocomplete(q) {
       </div>
     </div>`;
   });
+  }
 
   autocomplete.innerHTML = html;
   autocomplete.classList.add('open');
@@ -4464,25 +4615,28 @@ function openBottomCardAutocomplete(q) {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const nq = norm(q.replace(/inverti.*/i,'').trim());
   if (!nq || nq.length < 2) { bottomCardAC.classList.remove('open'); return; }
-  const matches = allCardNames.filter(n => norm(n).includes(nq)).slice(0, 10);
+  const matches = allCardNames().filter(n => norm(n).includes(nq)).slice(0, 10);
   if (!matches.length) { bottomCardAC.classList.remove('open'); return; }
+  const IMAGES_SRC = cardImagesFor(formDeck);
 
   let html = '<div class="ac-group-label">Normal</div>';
   matches.forEach(name => {
-    const img = CARD_IMAGES[name] || '';
+    const img = IMAGES_SRC[name] || '';
     html += `<div class="ac-item" tabindex="0" onclick="selectBottomCard('${name.replace(/'/g,"\\'")}', false)">
       ${img ? `<img class="ac-thumb" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:28px;flex-shrink:0"></div>'}
       <div class="ac-info"><div class="ac-name">${name}</div></div>
     </div>`;
   });
+  if (formDeck !== 'cigano') {
   html += '<div class="ac-group-label" style="color:var(--rose)">↩ Invertida</div>';
   matches.forEach(name => {
-    const img = CARD_IMAGES[name] || '';
+    const img = IMAGES_SRC[name] || '';
     html += `<div class="ac-item ac-inv" tabindex="0" onclick="selectBottomCard('${name.replace(/'/g,"\\'")}', true)">
       ${img ? `<img class="ac-thumb inv" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:28px;flex-shrink:0"></div>'}
       <div class="ac-info"><div class="ac-name">${name} ↩</div></div>
     </div>`;
   });
+  }
   bottomCardAC.innerHTML = html;
   bottomCardAC.classList.add('open');
 }
@@ -4498,7 +4652,7 @@ bottomCardInput.addEventListener('input', e => openBottomCardAutocomplete(e.targ
 bottomCardInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     e.preventDefault();
-    const found = findCard(bottomCardInput.value);
+    const found = findCard(bottomCardInput.value, formDeck);
     if (found) selectBottomCard(found, /inverti|inversa/i.test(bottomCardInput.value));
   }
 });
@@ -4534,7 +4688,7 @@ tagInput.addEventListener('keyup', e => {
   if (['ArrowDown','ArrowUp','Enter','Escape',','].includes(e.key)) return;
   openAutocomplete(tagInput.value);
   const isInv = /inverti|inversa/i.test(tagInput.value);
-  showCardPreview(findCard(tagInput.value), isInv);
+  showCardPreview(findCard(tagInput.value, formDeck), isInv, formDeck);
 });
 
 document.getElementById('add-card-btn').addEventListener('click', addCardFromInput);
@@ -4562,6 +4716,11 @@ function resetForm(){
   document.getElementById('f-notes').value='';
   document.getElementById('f-theme').value = '';
   document.querySelectorAll('.theme-selector .theme-btn').forEach(b => b.classList.remove('active'));
+  formDeck = 'tarot';
+  document.querySelectorAll('#deck-selector .theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.formdeck === 'tarot');
+  });
+  tagInput.placeholder = 'Digite para buscar carta...';
   document.getElementById('f-subject').value = 'mim';
   document.getElementById('f-subject-name').value = '';
   document.getElementById('f-subject-name').style.display = 'none';
@@ -4592,6 +4751,7 @@ document.getElementById('save-entry').addEventListener('click', async ()=>{
   const entry={
     id: editingId||genId(),
     date, cards:[...cardTags], analysis,
+    deck: formDeck,
     bottomCard: bottomCard ? {...bottomCard} : null,
     notes: document.getElementById('f-notes').value.trim(),
     theme: document.getElementById('f-theme').value || '',
@@ -4625,6 +4785,11 @@ window.deleteEntry=function(id){ deleteTargetId=id; document.getElementById('del
 window.editEntry=function(id){
   const e=entries.find(x=>x.id===id); if(!e) return;
   editingId=id;
+  formDeck = e.deck || 'tarot';
+  document.querySelectorAll('#deck-selector .theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.formdeck === formDeck);
+  });
+  tagInput.placeholder = formDeck === 'cigano' ? 'Digite para buscar carta cigana...' : 'Digite para buscar carta...';
   document.getElementById('f-date').value=e.date;
   document.getElementById('f-analysis').value=e.analysis;
   document.getElementById('f-notes').value=e.notes||'';
@@ -4751,10 +4916,11 @@ async function buildShareImage(e){
   const W_=760, PAD=44;
   const canvas=document.getElementById('share-canvas');
   const ctx=canvas.getContext('2d');
+  const deck = e.deck || 'tarot';
 
   const cardsData = await Promise.all(e.cards.map(async c=>{
-    const resolved=findCardExact(c.name);
-    const url=CARD_IMAGES[resolved]||CARD_IMAGES[c.name]||'';
+    const resolved=findCardExact(c.name, deck);
+    const url=cardImagesFor(deck)[resolved]||cardImagesFor(deck)[c.name]||'';
     const img=await loadImgSafe(url);
     return {name:c.name, inv:c.inv, img};
   }));
@@ -5056,18 +5222,19 @@ function render(){
       </div>
       <div class="month-body">`;
     g.entries.forEach(e=>{
-    const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv?'true':'false'})"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
+    const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv?'true':'false'},'${e.deck||'tarot'}')"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
     const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<strong>$1</strong>');
     const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const lunar=lunarPhase(e.date);
     const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
     const SUBJECT_BADGE_LABELS={amigo:'👥 Amigo(a)',familiar:'👪 Familiar',outra:'❓ Outra pessoa'};
     const subjectBadge=(e.subject && e.subject!=='mim')?`<span class="theme-badge" style="background:rgba(122,78,184,.18);border:1px solid var(--purple);color:var(--purple-light)">${SUBJECT_BADGE_LABELS[e.subject]||'Outra pessoa'}${e.subjectName?': '+e.subjectName.replace(/</g,'&lt;'):''}</span>`:'';
+    const deckBadge = e.deck==='cigano' ? `<span class="theme-badge" style="background:rgba(37,158,88,.16);border:1px solid #3a8f5a;color:#8fd6a8">🍀 Cigano</span>` : '';
     html+=`
     <div class="entry" id="entry-${e.id}">
       <div class="entry-header" onclick="toggleEntry('${e.id}')">
         <div class="entry-date-wrap">
-          <span class="entry-date">${formatDate(e.date)}${themeBadge}${subjectBadge}</span>
+          <span class="entry-date">${formatDate(e.date)}${themeBadge}${subjectBadge}${deckBadge}</span>
           <span class="entry-weekday">${weekday(e.date)}</span>
           <span class="lunar-badge">${lunar.emoji} ${lunar.name}</span>
         </div>
@@ -5077,11 +5244,11 @@ function render(){
       <div class="entry-body">
         ${(()=>{
           const imgs = e.cards.map(c=>{
-            const resolved = findCardExact(c.name);
-            const url = CARD_IMAGES[resolved] || CARD_IMAGES[c.name] || '';
+            const resolved = findCardExact(c.name, e.deck||'tarot');
+            const url = cardImagesFor(e.deck||'tarot')[resolved] || cardImagesFor(e.deck||'tarot')[c.name] || '';
             const inv = c.inv ? ' inv' : '';
             const label = c.inv ? `${c.name} ↩` : c.name;
-            return `<div class="spread-card-wrap" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv})">
+            return `<div class="spread-card-wrap" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv},'${e.deck||'tarot'}')">
               ${url
                 ? `<img class="spread-card-img${inv}" src="${url}" alt="${c.name}" loading="lazy" onerror="this.style.display='none'">`
                 : `<div class="spread-card-img${inv}" style="height:108px;display:flex;align-items:center;justify-content:center;font-size:1.4rem">🃏</div>`}
@@ -5090,7 +5257,7 @@ function render(){
           }).join('');
           return `<div class="entry-spread">${imgs}</div>`;
         })()}
-        ${e.bottomCard ? `<div style="margin-top:.6rem;font-size:.85rem;color:var(--gold-light);cursor:pointer" onclick="showCardPopup('${e.bottomCard.name.replace(/'/g,"\\'")}',${e.bottomCard.inv?'true':'false'})">🂠 Carta de fundo: ${e.bottomCard.name}${e.bottomCard.inv?' ↩':''}</div>` : ''}
+        ${e.bottomCard ? `<div style="margin-top:.6rem;font-size:.85rem;color:var(--gold-light);cursor:pointer" onclick="showCardPopup('${e.bottomCard.name.replace(/'/g,"\\'")}',${e.bottomCard.inv?'true':'false'},'${e.deck||'tarot'}')">🂠 Carta de fundo: ${e.bottomCard.name}${e.bottomCard.inv?' ↩':''}</div>` : ''}
         ${an?`<div class="entry-section-label">Análise</div><div class="entry-analysis">${an}</div>`:''}
         ${nt?`<div class="entry-section-label">Qual foi a pergunta</div><div class="entry-notes">${nt}</div>`:''}
         ${(()=>{
