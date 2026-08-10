@@ -90,21 +90,25 @@
     font-family: 'Cinzel', serif;
     font-size: 0.82rem;
     letter-spacing: 0.04em;
-    color: var(--text-dim);
-    background: var(--card-bg);
+    color: var(--text);
+    background: var(--bg3);
     border: 1px solid var(--border);
     border-bottom: none;
     padding: 0.65rem 1.5rem;
     border-radius: 8px 8px 0 0;
     cursor: pointer;
     transition: color 0.2s, background 0.2s;
+    opacity: 0.65;
   }
-  .deck-tab:hover { color: var(--gold-light); }
+  .deck-tab:hover { opacity: 1; color: var(--gold-light); }
   .deck-tab.active {
     color: var(--gold-light);
     background: var(--bg);
-    border-color: var(--border);
-    box-shadow: 0 -2px 0 var(--gold) inset;
+    border-color: var(--gold-dim);
+    border-bottom-color: var(--bg);
+    box-shadow: 0 -3px 0 var(--gold) inset;
+    opacity: 1;
+    font-weight: 600;
   }
   .card-icon-badge {
     width: 100%;
@@ -2257,6 +2261,7 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
 });
 
 
+  const searchEl = document.getElementById('search');
   const countEl = document.getElementById('search-count');
   const noResults = document.getElementById('no-results');
 
