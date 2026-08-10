@@ -4108,7 +4108,7 @@ function filterConsultList(q) {
 
 window.consultCard = function(name) {
   // mantém o overlay de consulta visível enquanto popup abre — evita scroll
-  showCardPopup(name, false);
+  showCardPopup(name, false, formDeck);
   // fecha o overlay de consulta DEPOIS que popup já está aberto
   setTimeout(() => {
     document.getElementById('consult-overlay').classList.remove('open');
