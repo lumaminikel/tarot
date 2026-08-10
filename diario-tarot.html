@@ -4052,6 +4052,8 @@ window.showCardPopup = function(name, isInv, deck) {
 };
 
 // ── CONSULTAR CARTA ──
+const CIGANO_CONSULT_GROUP = { label: 'Baralho Cigano', cards: ['O Cavaleiro', 'As Pedras', 'O Navio', 'A Casa', 'A Árvore', 'Os Ventos', 'A Serpente', 'A Morte', 'O Ramalhete', 'A Foice', 'O Chicote', 'Os Pássaros', 'A Criança', 'A Raposa', 'O Urso', 'As Estrelas', 'A Cegonha', 'O Cão', 'A Torre', 'O Jardim', 'A Montanha', 'Os Caminhos', 'Os Ratos', 'O Coração', 'As Alianças', 'Os Livros', 'A Carta', 'O Cigano', 'A Cigana', 'Os Lírios', 'O Sol', 'A Lua', 'A Chave', 'Os Peixes', 'A Âncora', 'A Cruz'] };
+
 const CONSULT_GROUPS = [
   { label: 'Arcanos Maiores', cards: ['A Louca','O Mago','A Sacerdotisa','A Imperatriz','O Imperador','O Hierofante','Os Amantes','O Carro','A Força','O Eremita','Roda da Fortuna','A Justiça','O Enforcado','A Enforcada','A Morte','A Temperança','O Diabo','A Torre','A Estrela','A Lua','O Sol','O Julgamento','O Mundo'] },
   { label: 'Copas',   cards: ['Ás de Copas','Dois de Copas','Três de Copas','Quatro de Copas','Cinco de Copas','Seis de Copas','Sete de Copas','Oito de Copas','Nove de Copas','Dez de Copas','Valete de Copas','Cavaleiro de Copas','Rainha de Copas','Rei de Copas'] },
@@ -4062,12 +4064,15 @@ const CONSULT_GROUPS = [
 
 function buildConsultList() {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  document.getElementById('consult-groups').innerHTML = CONSULT_GROUPS.map(g => `
+  const activeGroups = formDeck === 'cigano' ? [CIGANO_CONSULT_GROUP] : CONSULT_GROUPS;
+  const IMGS = cardImagesFor(formDeck);
+  const CARDS = cardsDataFor(formDeck);
+  document.getElementById('consult-groups').innerHTML = activeGroups.map(g => `
     <div class="consult-group-label" data-group="${g.label}">${g.label}</div>
     ${g.cards.map(name => {
-      const data = TAROT_CARDS[name] || {};
+      const data = CARDS[name] || {};
       const oracle = data.oracle || '';
-      const img = IMAGES_SRC[name] || '';
+      const img = IMGS[name] || '';
       return `<div class="consult-card-item" data-name="${name}" data-norm="${norm(name)}" onclick="consultCard('${name.replace(/'/g,"\\'")}')">
         ${img ? `<img class="consult-card-thumb" src="${img}" alt="${name}" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:32px;flex-shrink:0"></div>'}
         <span class="consult-card-name">${name}</span>
