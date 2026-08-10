@@ -566,6 +566,38 @@
 
   /* ── HIDDEN ── */
   .hidden { display: none !important; }
+
+  /* BOTÃO VOLTAR AO TOPO */
+  #top-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.3rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-light);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 500;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  #top-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #top-btn:hover {
+    background: var(--bg2);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
   .no-results {
     text-align: center;
     color: var(--text-dim);
@@ -671,117 +703,6 @@
 <div id="no-results" class="no-results">Nenhum resultado encontrado. Tente outra palavra.</div>
 
 <!-- ═══════════════ CONSAGRAÇÃO ═══════════════ -->
-<section id="consagracao">
-  <h2 class="section-title"><span class="icon">✨</span> Consagração do Novo Baralho</h2>
-
-  <div class="info-block" data-search>
-    <h3>Por que consagrar?</h3>
-    <p>Nas tradições esotéricas, um baralho de tarot é um instrumento de conexão entre o consciente e o inconsciente coletivo. Consagrar significa <strong>limpar as energias de produção, transporte e manuseio alheio</strong>, e sintonizar as cartas à sua vibração pessoal. Assim, as respostas emergem do seu campo energético, não de interferências externas.</p>
-  </div>
-
-  <div class="info-block" data-search>
-    <h3>Ritual de Limpeza e Consagração — Passo a Passo</h3>
-    <p><em>Escolha uma noite de lua cheia ou lua nova para maior potência.</em></p>
-    <ol class="ritual-steps">
-      <li><span><strong>Prepare o espaço.</strong> Limpe o ambiente fisicamente e acenda incenso de sândalo, mirra ou arruda. Apague as luzes deixando apenas velas brancas ou lilás. Coloque uma toalha de tecido natural (linho, seda ou algodão) sobre a mesa — esta será a "toalha do oráculo".</span></li>
-      <li><span><strong>Centre-se.</strong> Sente-se, feche os olhos, respire fundo três vezes. Visualize uma luz branca ou dourada descendo pela coroa da cabeça até os pés, enraizando-o à terra.</span></li>
-      <li><span><strong>Primeira limpeza — Fumaça.</strong> Passe o baralho (ainda embrulhado ou fechado) sobre a fumaça do incenso em movimentos circulares no sentido anti-horário, pedindo mentalmente que todas as energias alheias sejam dissolvidas.</span></li>
-      <li><span><strong>Segunda limpeza — Som.</strong> Bata três vezes com os nós dos dedos sobre o baralho, ou use um sino/tingsha. O som quebra padrões energéticos estagnados.</span></li>
-      <li><span><strong>Apresente-se ao baralho.</strong> Segure o deck com as duas mãos ao coração e diga em voz alta ou mentalmente: <em>"Eu [seu nome] consagro este baralho como meu instrumento de sabedoria. Que ele sirva à luz, à verdade e ao bem maior de todos que consultarem este oráculo."</em></span></li>
-      <li><span><strong>Permita que o baralho o conheça.</strong> Durma com o deck sob seu travesseiro por três noites consecutivas. Isso cria um vínculo energético entre você e as cartas.</span></li>
-      <li><span><strong>Primeira tiragem de apresentação.</strong> Na quarta noite, embaralhe pedindo: <em>"Quem és tu para mim?"</em> e retire três cartas. Não interprete com regras — apenas sinta o que cada imagem comunica.</span></li>
-      <li><span><strong>Limpeza após cada uso.</strong> Após cada sessão de leitura, passe as cartas na fumaça de palo santo ou bata novamente três vezes. Guarde sempre na toalha ou em uma bolsinha de tecido natural.</span></li>
-    </ol>
-  </div>
-
-  <div class="info-block" data-search>
-    <h3>Elementos para potencializar a consagração</h3>
-    <ul>
-      <li>🌕 <strong>Lua:</strong> Deixe o baralho sob a luz da lua cheia por uma noite (proteção da chuva e umidade).</li>
-      <li>🔮 <strong>Cristal:</strong> Coloque uma pedra de quartzo transparente ou ametista sobre o deck por 24h.</li>
-      <li>🌿 <strong>Ervas:</strong> Embale com folhas secas de lavanda (proteção e clareza) ou alecrim (memória e intuição).</li>
-      <li>🧂 <strong>Sal:</strong> Coloque o deck sobre um prato com sal grosso ao redor (não em contato) por uma noite.</li>
-    </ul>
-  </div>
-</section>
-
-<!-- ═══════════════ RESPEITO ═══════════════ -->
-<section id="respeito">
-  <h2 class="section-title"><span class="icon">🙏</span> Como Ser Respeitosa com o Deck</h2>
-
-  <div class="tips-grid" data-search>
-    <div class="tip-card">
-      <h4>Guarda sagrada</h4>
-      <p>Mantenha o baralho sempre embrulhado em tecido e/ou em uma caixa de madeira. Nunca deixe outras pessoas manusearem sem sua permissão.</p>
-    </div>
-    <div class="tip-card">
-      <h4>Mãos limpas e intenção limpa</h4>
-      <p>Lave as mãos antes de consultar. Não faça tiragens quando estiver com raiva intensa, embriagada ou de coração fechado.</p>
-    </div>
-    <div class="tip-card">
-      <h4>Local específico</h4>
-      <p>Se possível, tenha um altarzinho ou canto dedicado ao tarot. Isso cria uma "memória energética" do espaço.</p>
-    </div>
-    <div class="tip-card">
-      <h4>Não consulte obsessivamente</h4>
-      <p>A mesma pergunta não deve ser refeita na mesma semana. O oráculo não gosta de ser testado; confie na primeira resposta.</p>
-    </div>
-    <div class="tip-card">
-      <h4>Agradeça sempre</h4>
-      <p>Ao terminar, agradeça ao baralho, às guias e à sua intuição. Encerre o espaço conscientemente.</p>
-    </div>
-    <div class="tip-card">
-      <h4>Limpeza regular</h4>
-      <p>Em lua cheia, faça uma limpeza completa do deck com fumaça. Principalmente após leituras para outras pessoas.</p>
-    </div>
-    <div class="tip-card">
-      <h4>Não deixe em locais frios ou escuros</h4>
-      <p>Evite gavetas esquecidas, porões ou junto à eletrônicos. Locais com boa energia, luz natural eventual e ventilação são ideais.</p>
-    </div>
-    <div class="tip-card">
-      <h4>Respeite os sinais do baralho</h4>
-      <p>Se cartas caem repetidamente ou a mesma carta aparece em tiragens distintas, é uma mensagem urgente. Pare e medite sobre ela.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ BOAS PRÁTICAS ═══════════════ -->
-<section id="boas-praticas">
-  <h2 class="section-title"><span class="icon">📿</span> Boas Práticas de Leitura</h2>
-
-  <div class="info-block" data-search>
-    <h3>Como embaralhar</h3>
-    <p>Não existe uma forma "correta" universal. Escolha a que parecer mais natural:</p>
-    <ul>
-      <li><strong>Riffle shuffle (baralhada americana):</strong> divide ao meio e intercala — comum em baralhos de cartas tradicionais.</li>
-      <li><strong>Overhand shuffle (arrastar):</strong> passa as cartas de mão em mão em pequenos grupos.</li>
-      <li><strong>Spiral (espalhar na mesa):</strong> espalha todas as cartas sobre a mesa e mistura com as mãos em movimentos circulares — muito intuitivo e poderoso.</li>
-    </ul>
-    <p>Enquanto embaralha, <strong>mantenha sua pergunta no coração</strong>, não apenas na mente. Pare quando sentir uma "chamada" interna — não há número certo de vezes.</p>
-  </div>
-
-  <div class="info-block" data-search>
-    <h3>Cartas invertidas (reversas)</h3>
-    <p>Quando uma carta sai de cabeça para baixo, pode indicar: energia bloqueada, resistência, internalização do tema, atraso, ou o aspecto sombra daquela carta. Algumas tradições ignoram reversas no início — defina seu estilo e seja consistente.</p>
-  </div>
-
-  <div class="info-block" data-search>
-    <h3>Formulando boas perguntas</h3>
-    <ul>
-      <li>❌ "Fulano me ama?" → ✅ "O que eu preciso saber sobre essa relação?"</li>
-      <li>❌ "Vou ser rica?" → ✅ "Que energia rege minha situação financeira agora?"</li>
-      <li>❌ "Sim ou não?" → ✅ "Que forças estão em jogo nessa decisão?"</li>
-    </ul>
-    <p>O tarot não prevê um futuro fixo — ele revela <strong>padrões, energias e potenciais</strong>. Perguntas abertas geram leituras mais ricas.</p>
-  </div>
-
-  <div class="info-block" data-search>
-    <h3>Diário do Tarot</h3>
-    <p>Mantenha um caderno dedicado. Após cada tiragem, anote: data, fase da lua, pergunta, cartas retiradas, sua intuição imediata e, depois de alguns dias, o que se manifestou. Com o tempo, você descobrirá suas próprias associações simbólicas — que valem tanto quanto as tradicionais.</p>
-  </div>
-</section>
-
-<!-- ═══════════════ ARCANOS MAIORES ═══════════════ -->
 <section id="maiores" data-deck="tarot">
   <h2 class="section-title"><span class="icon">🌟</span> Arcanos Maiores (22 cartas)</h2>
   <p style="color:var(--text-dim); margin-bottom:1.5rem; font-style:italic;">Os Arcanos Maiores representam os grandes arquétipos da jornada humana — os "professores" do baralho. Quando aparecem, indicam temas fundamentais, lições cármicas e forças maiores em ação.</p>
@@ -2109,8 +2030,120 @@
   </div>
 </section>
 
+<section id="consagracao">
+  <h2 class="section-title"><span class="icon">✨</span> Consagração do Novo Baralho</h2>
+
+  <div class="info-block" data-search>
+    <h3>Por que consagrar?</h3>
+    <p>Nas tradições esotéricas, um baralho de tarot é um instrumento de conexão entre o consciente e o inconsciente coletivo. Consagrar significa <strong>limpar as energias de produção, transporte e manuseio alheio</strong>, e sintonizar as cartas à sua vibração pessoal. Assim, as respostas emergem do seu campo energético, não de interferências externas.</p>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Ritual de Limpeza e Consagração — Passo a Passo</h3>
+    <p><em>Escolha uma noite de lua cheia ou lua nova para maior potência.</em></p>
+    <ol class="ritual-steps">
+      <li><span><strong>Prepare o espaço.</strong> Limpe o ambiente fisicamente e acenda incenso de sândalo, mirra ou arruda. Apague as luzes deixando apenas velas brancas ou lilás. Coloque uma toalha de tecido natural (linho, seda ou algodão) sobre a mesa — esta será a "toalha do oráculo".</span></li>
+      <li><span><strong>Centre-se.</strong> Sente-se, feche os olhos, respire fundo três vezes. Visualize uma luz branca ou dourada descendo pela coroa da cabeça até os pés, enraizando-o à terra.</span></li>
+      <li><span><strong>Primeira limpeza — Fumaça.</strong> Passe o baralho (ainda embrulhado ou fechado) sobre a fumaça do incenso em movimentos circulares no sentido anti-horário, pedindo mentalmente que todas as energias alheias sejam dissolvidas.</span></li>
+      <li><span><strong>Segunda limpeza — Som.</strong> Bata três vezes com os nós dos dedos sobre o baralho, ou use um sino/tingsha. O som quebra padrões energéticos estagnados.</span></li>
+      <li><span><strong>Apresente-se ao baralho.</strong> Segure o deck com as duas mãos ao coração e diga em voz alta ou mentalmente: <em>"Eu [seu nome] consagro este baralho como meu instrumento de sabedoria. Que ele sirva à luz, à verdade e ao bem maior de todos que consultarem este oráculo."</em></span></li>
+      <li><span><strong>Permita que o baralho o conheça.</strong> Durma com o deck sob seu travesseiro por três noites consecutivas. Isso cria um vínculo energético entre você e as cartas.</span></li>
+      <li><span><strong>Primeira tiragem de apresentação.</strong> Na quarta noite, embaralhe pedindo: <em>"Quem és tu para mim?"</em> e retire três cartas. Não interprete com regras — apenas sinta o que cada imagem comunica.</span></li>
+      <li><span><strong>Limpeza após cada uso.</strong> Após cada sessão de leitura, passe as cartas na fumaça de palo santo ou bata novamente três vezes. Guarde sempre na toalha ou em uma bolsinha de tecido natural.</span></li>
+    </ol>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Elementos para potencializar a consagração</h3>
+    <ul>
+      <li>🌕 <strong>Lua:</strong> Deixe o baralho sob a luz da lua cheia por uma noite (proteção da chuva e umidade).</li>
+      <li>🔮 <strong>Cristal:</strong> Coloque uma pedra de quartzo transparente ou ametista sobre o deck por 24h.</li>
+      <li>🌿 <strong>Ervas:</strong> Embale com folhas secas de lavanda (proteção e clareza) ou alecrim (memória e intuição).</li>
+      <li>🧂 <strong>Sal:</strong> Coloque o deck sobre um prato com sal grosso ao redor (não em contato) por uma noite.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════ RESPEITO ═══════════════ -->
+<section id="respeito">
+  <h2 class="section-title"><span class="icon">🙏</span> Como Ser Respeitosa com o Deck</h2>
+
+  <div class="tips-grid" data-search>
+    <div class="tip-card">
+      <h4>Guarda sagrada</h4>
+      <p>Mantenha o baralho sempre embrulhado em tecido e/ou em uma caixa de madeira. Nunca deixe outras pessoas manusearem sem sua permissão.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Mãos limpas e intenção limpa</h4>
+      <p>Lave as mãos antes de consultar. Não faça tiragens quando estiver com raiva intensa, embriagada ou de coração fechado.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Local específico</h4>
+      <p>Se possível, tenha um altarzinho ou canto dedicado ao tarot. Isso cria uma "memória energética" do espaço.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Não consulte obsessivamente</h4>
+      <p>A mesma pergunta não deve ser refeita na mesma semana. O oráculo não gosta de ser testado; confie na primeira resposta.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Agradeça sempre</h4>
+      <p>Ao terminar, agradeça ao baralho, às guias e à sua intuição. Encerre o espaço conscientemente.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Limpeza regular</h4>
+      <p>Em lua cheia, faça uma limpeza completa do deck com fumaça. Principalmente após leituras para outras pessoas.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Não deixe em locais frios ou escuros</h4>
+      <p>Evite gavetas esquecidas, porões ou junto à eletrônicos. Locais com boa energia, luz natural eventual e ventilação são ideais.</p>
+    </div>
+    <div class="tip-card">
+      <h4>Respeite os sinais do baralho</h4>
+      <p>Se cartas caem repetidamente ou a mesma carta aparece em tiragens distintas, é uma mensagem urgente. Pare e medite sobre ela.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ BOAS PRÁTICAS ═══════════════ -->
+<section id="boas-praticas">
+  <h2 class="section-title"><span class="icon">📿</span> Boas Práticas de Leitura</h2>
+
+  <div class="info-block" data-search>
+    <h3>Como embaralhar</h3>
+    <p>Não existe uma forma "correta" universal. Escolha a que parecer mais natural:</p>
+    <ul>
+      <li><strong>Riffle shuffle (baralhada americana):</strong> divide ao meio e intercala — comum em baralhos de cartas tradicionais.</li>
+      <li><strong>Overhand shuffle (arrastar):</strong> passa as cartas de mão em mão em pequenos grupos.</li>
+      <li><strong>Spiral (espalhar na mesa):</strong> espalha todas as cartas sobre a mesa e mistura com as mãos em movimentos circulares — muito intuitivo e poderoso.</li>
+    </ul>
+    <p>Enquanto embaralha, <strong>mantenha sua pergunta no coração</strong>, não apenas na mente. Pare quando sentir uma "chamada" interna — não há número certo de vezes.</p>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Cartas invertidas (reversas)</h3>
+    <p>Quando uma carta sai de cabeça para baixo, pode indicar: energia bloqueada, resistência, internalização do tema, atraso, ou o aspecto sombra daquela carta. Algumas tradições ignoram reversas no início — defina seu estilo e seja consistente.</p>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Formulando boas perguntas</h3>
+    <ul>
+      <li>❌ "Fulano me ama?" → ✅ "O que eu preciso saber sobre essa relação?"</li>
+      <li>❌ "Vou ser rica?" → ✅ "Que energia rege minha situação financeira agora?"</li>
+      <li>❌ "Sim ou não?" → ✅ "Que forças estão em jogo nessa decisão?"</li>
+    </ul>
+    <p>O tarot não prevê um futuro fixo — ele revela <strong>padrões, energias e potenciais</strong>. Perguntas abertas geram leituras mais ricas.</p>
+  </div>
+
+  <div class="info-block" data-search>
+    <h3>Diário do Tarot</h3>
+    <p>Mantenha um caderno dedicado. Após cada tiragem, anote: data, fase da lua, pergunta, cartas retiradas, sua intuição imediata e, depois de alguns dias, o que se manifestou. Com o tempo, você descobrirá suas próprias associações simbólicas — que valem tanto quanto as tradicionais.</p>
+  </div>
+</section>
+
+<!-- ═══════════════ ARCANOS MAIORES ═══════════════ -->
 </main>
 </div><!-- /page-body -->
+<button id="top-btn" title="Voltar ao topo" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <footer style="background:var(--bg2); border-top:1px solid var(--border); padding:1.5rem; text-align:center; color:var(--text-dim); font-style:italic; font-size:0.88rem;">
   "O tarot não revela o futuro — ele revela quem você é."
@@ -2458,6 +2491,12 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     img.onerror = () => img.remove();
     card.insertBefore(img, card.firstChild);
   });
+
+  // BOTÃO VOLTAR AO TOPO
+  const topBtn = document.getElementById('top-btn');
+  window.addEventListener('scroll', () => {
+    topBtn.classList.toggle('visible', window.scrollY > 300);
+  }, { passive: true });
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
