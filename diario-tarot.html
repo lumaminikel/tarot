@@ -3998,13 +3998,16 @@ window.switchPopupTab = function(tab, btn) {
 };
 
 window.showCardPopup = function(name, isInv, deck) {
+  try {
   deck = deck || 'tarot';
   if (!name) return;
-  // reset abas — usar IDs explícitos para não depender de ordem
+  // reset abas — pelo ID, sem depender de índice
   document.querySelectorAll('.popup-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.popup-pane').forEach(p => p.classList.remove('active'));
-  document.querySelector('.popup-tab[onclick*="significado"]')?.classList.add('active');
-  document.getElementById('popup-pane-significado')?.classList.add('active');
+  const firstTab  = document.querySelector('.popup-tabs .popup-tab');
+  const firstPane = document.getElementById('popup-pane-significado');
+  if (firstTab)  firstTab.classList.add('active');
+  if (firstPane) firstPane.classList.add('active');
 
   const resolvedName = findCardExact(name, deck);
   const data = resolvedName ? cardsDataFor(deck)[resolvedName] : null;
@@ -4054,7 +4057,7 @@ window.showCardPopup = function(name, isInv, deck) {
   // Combinações do usuário que envolvem essa carta
   const myComboTab  = document.getElementById('popup-tab-mycombos');
   const myComboList = document.getElementById('popup-mycombos-list');
-  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
   const nameNorm = norm(displayName);
   const relatedCombos = customCombos.filter(c =>
     c.cards && c.cards.some(card => norm(card) === nameNorm || norm(card).includes(nameNorm) || nameNorm.includes(norm(card)))
@@ -4080,6 +4083,9 @@ window.showCardPopup = function(name, isInv, deck) {
   overlay.scrollTop = 0;
   const inner = overlay.querySelector('.card-popup');
   if (inner) inner.scrollTop = 0;
+  } catch(err) {
+    console.error('showCardPopup erro:', err);
+  }
 };
 
 // ── CONSULTAR CARTA ──
@@ -4242,7 +4248,8 @@ const COMBINATIONS = [
 function detectCombinations(tags) {
   if (!tags || tags.length < 2) return [];
   const cleanName = n => n.replace(/inverti.*|inversa.*/gi,'').trim();
-  const names = tags.map(t => cleanName(t.name).toLowerCase());
+  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const names = tags.map(t => norm(cleanName(t.name)));
 
   // Combinações pré-definidas do sistema
   const systemFound = COMBINATIONS
