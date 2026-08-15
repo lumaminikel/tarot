@@ -4241,18 +4241,17 @@ const COMBINATIONS = [
 
 function detectCombinations(tags) {
   if (!tags || tags.length < 2) return [];
-  // limpa o nome caso venha com "invertida" (entradas antigas)
   const cleanName = n => n.replace(/inverti.*|inversa.*/gi,'').trim();
   const names = tags.map(t => cleanName(t.name).toLowerCase());
 
-  return COMBINATIONS
+  // Combinações pré-definidas do sistema
+  const systemFound = COMBINATIONS
     .filter(combo =>
       combo.cards.every(c =>
         names.some(n => n.includes(c.toLowerCase()) || c.toLowerCase().includes(n))
       )
     )
     .map(combo => {
-      // descobre quais cartas desta combinação estão invertidas
       const invertidas = combo.cards.filter(c =>
         tags.some(t =>
           cleanName(t.name).toLowerCase().includes(c.toLowerCase()) ||
@@ -4264,6 +4263,23 @@ function detectCombinations(tags) {
       );
       return { ...combo, invertidas };
     });
+
+  // Combinações personalizadas do usuário
+  const userFound = (customCombos || [])
+    .filter(combo =>
+      combo.cards && combo.cards.length >= 2 &&
+      combo.cards.every(c =>
+        names.some(n => n.includes(c.toLowerCase()) || c.toLowerCase().includes(n))
+      )
+    )
+    .map(combo => ({
+      cards: combo.cards,
+      meaning: combo.meaning,
+      invertidas: [],
+      isUserCombo: true,
+    }));
+
+  return [...systemFound, ...userFound];
 }
 
 function invNote(invertidas) {
@@ -4279,7 +4295,8 @@ function renderCombosPanel(tags) {
   const found = detectCombinations(tags);
   if (!found.length) { panel.classList.remove('visible'); return; }
   list.innerHTML = found.map(c =>
-    `<div class="combo-detected">
+    `<div class="combo-detected${c.isUserCombo ? ' combo-user' : ''}">
+      ${c.isUserCombo ? '<div style="font-size:.7rem;color:var(--purple-light);margin-bottom:.2rem">✏️ minha combinação</div>' : ''}
       <div class="combo-detected-cards">${c.cards.join(' + ')}${c.invertidas?.length ? ' <span style="color:var(--rose);font-size:.7rem">↩</span>' : ''}</div>
       <div class="combo-detected-meaning">${c.meaning}</div>
       ${invNote(c.invertidas)}
