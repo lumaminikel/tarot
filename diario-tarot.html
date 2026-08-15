@@ -1645,6 +1645,7 @@
       <button class="popup-tab" onclick="switchPopupTab('luz',this)">☀️ Luz</button>
       <button class="popup-tab" onclick="switchPopupTab('sombra',this)">🌑 Sombra</button>
       <button class="popup-tab" onclick="switchPopupTab('meme',this)">😂 Meme</button>
+      <button class="popup-tab" id="popup-tab-mycombos" onclick="switchPopupTab('mycombos',this)" style="display:none">🔗 Minhas</button>
     </div>
 
     <div class="popup-pane active" id="popup-pane-significado">
@@ -1668,6 +1669,10 @@
         <div class="card-section-label">😂 Sem Filtro</div>
         <p id="popup-meme">—</p>
       </div>
+    </div>
+
+    <div class="popup-pane" id="popup-pane-mycombos">
+      <div id="popup-mycombos-list"></div>
     </div>
 
     <div class="custom-note-in-popup" id="popup-custom-note" style="display:none"></div>
@@ -4031,6 +4036,7 @@ window.showCardPopup = function(name, isInv, deck) {
   document.getElementById('popup-sombra').textContent = data?.sombra || '—';
   document.getElementById('popup-meme').textContent   = data?.meme   || '—';
 
+  // Anotações personalizadas (nota da carta)
   const rawNote    = customNotes[displayName] || (resolvedName ? customNotes[resolvedName] : null);
   const customNote = isInv
     ? (typeof rawNote==='object' ? rawNote?.rev    : null)
@@ -4038,9 +4044,30 @@ window.showCardPopup = function(name, isInv, deck) {
   const noteArea = document.getElementById('popup-custom-note');
   if (noteArea) {
     if (customNote) {
-      noteArea.innerHTML = `<div class="custom-note-in-popup-label">Minha anotação</div><div class="custom-note-in-popup-text">${customNote}</div>`;
+      noteArea.innerHTML = `<div class="custom-note-in-popup-label">✏️ Minha anotação</div><div class="custom-note-in-popup-text">${customNote}</div>`;
       noteArea.style.display = 'block';
     } else { noteArea.style.display = 'none'; }
+  }
+
+  // Combinações do usuário que envolvem essa carta
+  const myComboTab  = document.getElementById('popup-tab-mycombos');
+  const myComboList = document.getElementById('popup-mycombos-list');
+  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const nameNorm = norm(displayName);
+  const relatedCombos = customCombos.filter(c =>
+    c.cards && c.cards.some(card => norm(card) === nameNorm || norm(card).includes(nameNorm) || nameNorm.includes(norm(card)))
+  );
+  if (myComboTab && myComboList) {
+    if (relatedCombos.length) {
+      myComboTab.style.display = '';
+      myComboList.innerHTML = relatedCombos.map(c => `
+        <div style="margin-bottom:1rem;padding:.8rem;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+          <div style="font-size:.82rem;color:var(--gold-dim);margin-bottom:.4rem">${c.cards.join(' + ')}</div>
+          <div style="color:var(--text);font-size:.9rem;line-height:1.5">${c.meaning}</div>
+        </div>`).join('');
+    } else {
+      myComboTab.style.display = 'none';
+    }
   }
 
   // travar scroll da página
