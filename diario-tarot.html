@@ -1937,6 +1937,11 @@ const CARD_EXTRAS = {
     sombra: 'Martírio sem propósito. Ficar pendurado em situação ruim achando que sofrendo vai ganhar um troféu. Procrastinação espiritualizada: "estou esperando o momento certo" quando na verdade está com medo.',
     meme: 'Você esperando ele mudar há 3 anos. A Enforcada te vê. 😇🙃'
   },
+  'A Enforcada': {
+    luz: 'Há coisas que só se aprendem quando você para de lutar. A rendição consciente não é derrota — é a coragem de deixar a transformação acontecer no tempo dela. Solte. Só por agora.',
+    sombra: 'Martírio sem propósito. Ficar pendurada em situação ruim achando que sofrendo vai ganhar um troféu. Procrastinação espiritualizada: "estou esperando o momento certo" quando na verdade está com medo.',
+    meme: 'Você esperando ele mudar há 3 anos. A Enforcada na janela acenando. 😇🙃'
+  },
   'A Morte': {
     luz: 'Isso não é o fim. É o fim de uma versão de você que já cumpriu seu papel. O que está morrendo era necessário que morresse para que você possa ser quem está se tornando. Confie no processo da borboleta.',
     sombra: 'Apego patológico ao que claramente já acabou. Relacionamento morto que você insiste em ressuscitar. Fase da vida encerrada que você ainda está tentando salvar. O cadáver que você continua abraçando.',
@@ -4247,46 +4252,46 @@ const COMBINATIONS = [
 
 function detectCombinations(tags) {
   if (!tags || tags.length < 2) return [];
-  const cleanName = n => n.replace(/inverti.*|inversa.*/gi,'').trim();
-  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
-  const names = tags.map(t => norm(cleanName(t.name)));
+  try {
+    const toStr = v => String(v && v.name ? v.name : (v || '')).replace(/inverti.*|inversa.*/gi,'').trim();
+    const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+    const names = tags.map(t => norm(toStr(t)));
 
-  // Combinações pré-definidas do sistema
-  const systemFound = COMBINATIONS
-    .filter(combo =>
-      combo.cards.every(c =>
-        names.some(n => n.includes(c.toLowerCase()) || c.toLowerCase().includes(n))
+    const systemFound = (COMBINATIONS || [])
+      .filter(combo =>
+        Array.isArray(combo.cards) &&
+        combo.cards.every(c =>
+          names.some(n => n.includes(norm(c)) || norm(c).includes(n))
+        )
       )
-    )
-    .map(combo => {
-      const invertidas = combo.cards.filter(c =>
-        tags.some(t =>
-          cleanName(t.name).toLowerCase().includes(c.toLowerCase()) ||
-          c.toLowerCase().includes(cleanName(t.name).toLowerCase())
-        ) && tags.find(t =>
-          cleanName(t.name).toLowerCase().includes(c.toLowerCase()) ||
-          c.toLowerCase().includes(cleanName(t.name).toLowerCase())
-        )?.inv
-      );
-      return { ...combo, invertidas };
-    });
+      .map(combo => ({
+        ...combo,
+        invertidas: combo.cards.filter(c =>
+          tags.find(t =>
+            norm(toStr(t)).includes(norm(c)) || norm(c).includes(norm(toStr(t)))
+          )?.inv
+        ),
+      }));
 
-  // Combinações personalizadas do usuário
-  const userFound = (customCombos || [])
-    .filter(combo =>
-      combo.cards && combo.cards.length >= 2 &&
-      combo.cards.every(c =>
-        names.some(n => n.includes(c.toLowerCase()) || c.toLowerCase().includes(n))
+    const userFound = (customCombos || [])
+      .filter(combo =>
+        Array.isArray(combo.cards) && combo.cards.length >= 2 &&
+        combo.cards.every(c =>
+          names.some(n => n.includes(norm(String(c||''))) || norm(String(c||'')).includes(n))
+        )
       )
-    )
-    .map(combo => ({
-      cards: combo.cards,
-      meaning: combo.meaning,
-      invertidas: [],
-      isUserCombo: true,
-    }));
+      .map(combo => ({
+        cards: combo.cards.map(c => String(c && c.name ? c.name : (c || ''))),
+        meaning: combo.meaning || '',
+        invertidas: [],
+        isUserCombo: true,
+      }));
 
-  return [...systemFound, ...userFound];
+    return [...systemFound, ...userFound];
+  } catch(e) {
+    console.error('detectCombinations erro:', e);
+    return [];
+  }
 }
 
 function invNote(invertidas) {
@@ -5271,7 +5276,7 @@ function render(){
             const url = cardImagesFor(e.deck||'tarot')[resolved] || cardImagesFor(e.deck||'tarot')[c.name] || '';
             const inv = c.inv ? ' inv' : '';
             const label = c.inv ? `${c.name} ↩` : c.name;
-            return `<div class="spread-card-wrap" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv},'${formDeck}')">
+            return `<div class="spread-card-wrap" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv},'${e.deck||'tarot'}')">
               ${url
                 ? `<img class="spread-card-img${inv}" src="${url}" alt="${c.name}" loading="lazy" onerror="this.style.display='none'">`
                 : `<div class="spread-card-img${inv}" style="height:108px;display:flex;align-items:center;justify-content:center;font-size:1.4rem">🃏</div>`}
