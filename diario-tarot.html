@@ -1181,6 +1181,7 @@
     <button class="side-menu-btn" id="side-search-btn" title="Consultar significado de uma carta">🔍</button>
     <button class="side-menu-btn" id="side-cal-btn" title="Calendário">📅</button>
     <button class="side-menu-btn" id="side-astro-btn" title="Astrologia">🪐</button>
+    <button class="side-menu-btn" id="side-admin-btn" title="Painel Admin" style="display:none">🛠️</button>
   </div>
 </div>
 <button class="top-btn" id="top-btn" title="Voltar ao topo">↑</button>
@@ -1249,6 +1250,104 @@
       <button class="btn-cancel" id="astro-share-chart" style="display:none">📤 Compartilhar mapa</button>
       <button class="btn-save" id="astro-save-chart" style="display:none">Salvar mapa ✦</button>
       <button class="btn-edit" id="astro-edit-chart" style="display:none">✎ Editar mapa</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAINEL ADMIN (visível só para lumaminikeloliveira@gmail.com) -->
+<div class="settings-overlay" id="admin-overlay">
+  <div class="settings-box" style="width:min(94vw,640px);max-width:640px;max-height:86vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">
+      <h3 style="margin:0">🛠️ Painel Admin</h3>
+      <button class="consult-close" id="admin-close">×</button>
+    </div>
+    <p style="font-size:.78rem;color:var(--gold-dim);margin-bottom:.9rem;font-style:italic">O que você editar aqui vale para todos os usuários do site.</p>
+    <div class="custom-tabs">
+      <button class="custom-tab active" id="tab-cards-custom" onclick="switchCustomTab('cards')">📝 Editar Carta</button>
+      <button class="custom-tab" id="tab-combos-custom" onclick="switchCustomTab('combos')">🔗 Combinações</button>
+    </div>
+
+    <!-- PANE: EDITAR CARTA -->
+    <div class="custom-pane active" id="pane-cards">
+      <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
+        <button class="theme-btn admin-deck-btn active" data-deck="tarot" onclick="setAdminDeck('tarot')">🔮 Tarot</button>
+        <button class="theme-btn admin-deck-btn" data-deck="cigano" onclick="setAdminDeck('cigano')">🎴 Cigano</button>
+      </div>
+      <div class="card-search-wrap">
+        <input type="text" id="card-search-input" placeholder="Buscar carta... ex: O Sol" autocomplete="off">
+        <div class="card-suggestions" id="card-suggestions"></div>
+      </div>
+      <div class="custom-note-editor" id="custom-note-editor">
+        <div class="custom-note-card-name">
+          <span id="editor-card-name"></span>
+          <button class="btn-remove-row" id="clear-card-selection" title="Fechar">×</button>
+        </div>
+
+        <div class="custom-note-label">Significado</div>
+        <textarea id="admin-meaning" style="width:100%;min-height:80px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical" placeholder="Significado da carta"></textarea>
+
+        <div class="custom-note-label" style="margin-top:.8rem">Palavras-chave (separadas por vírgula)</div>
+        <input type="text" id="admin-keywords" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none" placeholder="Ex: Alegria, Sucesso, Vitalidade">
+
+        <div class="custom-note-label" style="margin-top:.8rem">Resposta de oráculo (sim/não/talvez)</div>
+        <select id="admin-oracle" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none">
+          <option value="sim">Sim</option>
+          <option value="nao">Não</option>
+          <option value="talvez">Talvez</option>
+        </select>
+
+        <div class="custom-note-label" style="margin-top:1rem">☀️ Luz</div>
+        <textarea id="admin-luz" style="width:100%;min-height:70px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical"></textarea>
+
+        <div class="custom-note-label" style="margin-top:.8rem">🌑 Sombra</div>
+        <textarea id="admin-sombra" style="width:100%;min-height:70px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical"></textarea>
+
+        <div class="custom-note-label" style="margin-top:.8rem">😂 Meme</div>
+        <textarea id="admin-meme" style="width:100%;min-height:70px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical"></textarea>
+
+        <div style="display:flex;gap:.6rem;margin-top:.8rem;justify-content:flex-end;flex-wrap:wrap">
+          <button class="btn-save" id="save-note-btn">Salvar para todos ✦</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE: COMBINAÇÕES -->
+    <div class="custom-pane" id="pane-combos">
+      <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
+        <button class="theme-btn admin-combo-deck-btn active" data-deck="tarot" onclick="setAdminComboDeck('tarot')">🔮 Tarot</button>
+        <button class="theme-btn admin-combo-deck-btn" data-deck="cigano" onclick="setAdminComboDeck('cigano')">🎴 Cigano</button>
+      </div>
+      <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.7rem;font-style:italic">Digite as cartas abaixo — a lista já filtra pra mostrar só as combinações que envolvem essas cartas. Clique numa combinação da lista pra editá-la.</p>
+      <div class="combo-cards-input-wrap" id="combo-cards-inputs">
+        <div class="combo-card-row">
+          <input type="text" placeholder="Carta 1 (ex: O Sol)" class="combo-card-field" list="admin-combo-card-names">
+          <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)" title="Marcar como invertida">↩</button>
+          <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
+        </div>
+        <div class="combo-card-row">
+          <input type="text" placeholder="Carta 2 (ex: A Estrela)" class="combo-card-field" list="admin-combo-card-names">
+          <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)" title="Marcar como invertida">↩</button>
+          <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
+        </div>
+      </div>
+      <datalist id="admin-combo-card-names"></datalist>
+      <button class="btn-add-card-row" id="add-combo-row-btn" onclick="addComboRow()">+ Adicionar mais uma carta</button>
+
+      <div class="custom-combos-list" id="custom-combos-list" style="margin-top:.9rem"></div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-top:.6rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+          <div class="custom-note-label" style="margin-bottom:0" id="combo-form-title">Nova Combinação</div>
+          <a href="#" id="cancel-combo-edit" style="display:none;font-size:.8rem;color:var(--text-dim)">Cancelar edição</a>
+        </div>
+        <div class="form-row">
+          <label>Significado da combinação</label>
+          <textarea id="custom-combo-meaning" style="min-height:80px;width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical;margin-top:.35rem" placeholder="O que essas cartas significam juntas?"></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:.7rem">
+          <button class="btn-save" id="save-combo-btn">Salvar Combinação ✦</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1514,98 +1613,6 @@
       <button class="theme-btn" data-theme="geral"      onclick="toggleThemeFilter('geral')">✦ Geral</button>
       <button class="theme-btn" data-theme="outro"      onclick="toggleThemeFilter('outro')">◈ Outro</button>
     </div>
-  </div>
-
-  <!-- PAINEL ADMIN (visível só para lumaminikeloliveira@gmail.com) -->
-  <div id="admin-section" style="display:none">
-  <button class="custom-toggle" id="custom-toggle">
-    <span>🛠️ Painel Admin — Cartas e Combinações</span>
-    <span class="ct-arrow">▼</span>
-  </button>
-  <div class="custom-panel" id="custom-panel">
-    <p style="font-size:.78rem;color:var(--gold-dim);margin-bottom:.9rem;font-style:italic">O que você editar aqui vale para todos os usuários do site.</p>
-    <div class="custom-tabs">
-      <button class="custom-tab active" id="tab-cards-custom" onclick="switchCustomTab('cards')">📝 Editar Carta</button>
-      <button class="custom-tab" id="tab-combos-custom" onclick="switchCustomTab('combos')">🔗 Combinações</button>
-    </div>
-
-    <!-- PANE: EDITAR CARTA -->
-    <div class="custom-pane active" id="pane-cards">
-      <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
-        <button class="theme-btn admin-deck-btn active" data-deck="tarot" onclick="setAdminDeck('tarot')">🔮 Tarot</button>
-        <button class="theme-btn admin-deck-btn" data-deck="cigano" onclick="setAdminDeck('cigano')">🎴 Cigano</button>
-      </div>
-      <div class="card-search-wrap">
-        <input type="text" id="card-search-input" placeholder="Buscar carta... ex: O Sol" autocomplete="off">
-        <div class="card-suggestions" id="card-suggestions"></div>
-      </div>
-      <div class="custom-note-editor" id="custom-note-editor">
-        <div class="custom-note-card-name">
-          <span id="editor-card-name"></span>
-          <button class="btn-remove-row" id="clear-card-selection" title="Fechar">×</button>
-        </div>
-
-        <div class="custom-note-label">Significado</div>
-        <textarea id="admin-meaning" style="width:100%;min-height:80px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical" placeholder="Significado da carta"></textarea>
-
-        <div class="custom-note-label" style="margin-top:.8rem">Palavras-chave (separadas por vírgula)</div>
-        <input type="text" id="admin-keywords" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none" placeholder="Ex: Alegria, Sucesso, Vitalidade">
-
-        <div class="custom-note-label" style="margin-top:.8rem">Resposta de oráculo (sim/não/talvez)</div>
-        <select id="admin-oracle" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none">
-          <option value="sim">Sim</option>
-          <option value="nao">Não</option>
-          <option value="talvez">Talvez</option>
-        </select>
-
-        <div class="custom-note-label" style="margin-top:1rem">☀️ Luz</div>
-        <textarea id="admin-luz" style="width:100%;min-height:70px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical"></textarea>
-
-        <div class="custom-note-label" style="margin-top:.8rem">🌑 Sombra</div>
-        <textarea id="admin-sombra" style="width:100%;min-height:70px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical"></textarea>
-
-        <div class="custom-note-label" style="margin-top:.8rem">😂 Meme</div>
-        <textarea id="admin-meme" style="width:100%;min-height:70px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical"></textarea>
-
-        <div style="display:flex;gap:.6rem;margin-top:.8rem;justify-content:flex-end;flex-wrap:wrap">
-          <button class="btn-save" id="save-note-btn">Salvar para todos ✦</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PANE: COMBINAÇÕES -->
-    <div class="custom-pane" id="pane-combos">
-      <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
-        <button class="theme-btn admin-combo-deck-btn active" data-deck="tarot" onclick="setAdminComboDeck('tarot')">🔮 Tarot</button>
-        <button class="theme-btn admin-combo-deck-btn" data-deck="cigano" onclick="setAdminComboDeck('cigano')">🎴 Cigano</button>
-      </div>
-      <div class="custom-combos-list" id="custom-combos-list"></div>
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.1rem">
-        <div class="custom-note-label" style="margin-bottom:.6rem">Nova Combinação</div>
-        <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.8rem;font-style:italic">Toque em ↩ para marcar uma carta como invertida nesta combinação.</p>
-        <div class="combo-cards-input-wrap" id="combo-cards-inputs">
-          <div class="combo-card-row">
-            <input type="text" placeholder="Carta 1 (ex: O Sol)" class="combo-card-field">
-            <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)" title="Marcar como invertida">↩</button>
-            <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
-          </div>
-          <div class="combo-card-row">
-            <input type="text" placeholder="Carta 2 (ex: A Estrela)" class="combo-card-field">
-            <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)" title="Marcar como invertida">↩</button>
-            <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
-          </div>
-        </div>
-        <button class="btn-add-card-row" id="add-combo-row-btn" onclick="addComboRow()">+ Adicionar mais uma carta</button>
-        <div class="form-row" style="margin-top:.8rem">
-          <label>Significado da combinação</label>
-          <textarea id="custom-combo-meaning" style="min-height:80px;width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.6rem .9rem;color:var(--text);font-family:'Crimson Text',serif;font-size:.95rem;outline:none;resize:vertical;margin-top:.35rem" placeholder="O que essas cartas significam juntas?"></textarea>
-        </div>
-        <div style="display:flex;justify-content:flex-end;margin-top:.7rem">
-          <button class="btn-save" id="save-combo-btn">Salvar Combinação ✦</button>
-        </div>
-      </div>
-    </div>
-  </div>
   </div>
 
   <div id="history">
@@ -3735,14 +3742,18 @@ document.getElementById('compare-close').addEventListener('click', ()=>
 let adminSelectedDeck = 'tarot';
 let adminSelectedCardName = null;
 let adminComboDeck = 'tarot';
+let editingComboIndex = null; // null = criando nova; número = editando essa combinação
 
 function adminCardNames() { return Object.keys(cardsDataFor(adminSelectedDeck)); }
+function norm(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }
 
-document.getElementById('custom-toggle').addEventListener('click', ()=>{
-  const btn   = document.getElementById('custom-toggle');
-  const panel = document.getElementById('custom-panel');
-  btn.classList.toggle('open');
-  panel.classList.toggle('open');
+document.getElementById('side-admin-btn').addEventListener('click', ()=>{
+  document.getElementById('admin-overlay').classList.add('open');
+  refreshComboCardNamesList();
+  renderAdminCombosList();
+});
+document.getElementById('admin-close').addEventListener('click', ()=>{
+  document.getElementById('admin-overlay').classList.remove('open');
 });
 
 window.switchCustomTab = function(tab) {
@@ -3821,44 +3832,75 @@ document.getElementById('save-note-btn').addEventListener('click', async ()=>{
   }
 });
 
-// ── COMBINAÇÕES (globais) ──
+// ── COMBINAÇÕES (globais, com busca progressiva) ──
+function comboListFor(deck) { return deck === 'cigano' ? CIGANO_COMBINATIONS : COMBINATIONS; }
+
+function refreshComboCardNamesList() {
+  const dl = document.getElementById('admin-combo-card-names');
+  dl.innerHTML = Object.keys(cardsDataFor(adminComboDeck)).map(n => `<option value="${n}">`).join('');
+}
+
 window.setAdminComboDeck = function(deck) {
   adminComboDeck = deck;
   document.querySelectorAll('.admin-combo-deck-btn').forEach(b => b.classList.toggle('active', b.dataset.deck === deck));
+  resetComboForm();
+  refreshComboCardNamesList();
   renderAdminCombosList();
 };
 
-function comboListFor(deck) { return deck === 'cigano' ? CIGANO_COMBINATIONS : COMBINATIONS; }
+function currentComboInputCards() {
+  return [...document.querySelectorAll('#combo-cards-inputs .combo-card-row')]
+    .map(row => row.querySelector('.combo-card-field').value.trim())
+    .filter(Boolean);
+}
 
+// filtra a lista de combinações pelas cartas já digitadas nos campos —
+// uma combinação só aparece se contiver TODAS as cartas digitadas até agora
 function renderAdminCombosList() {
   const el = document.getElementById('custom-combos-list');
   const list = comboListFor(adminComboDeck);
-  if (!list.length) { el.innerHTML = '<p style="color:var(--text-dim);font-size:.85rem;font-style:italic;margin-bottom:.8rem">Nenhuma combinação cadastrada ainda.</p>'; return; }
-  el.innerHTML = list.map((c, idx) => {
+  const typed = currentComboInputCards().map(norm);
+
+  let entries = list.map((c, idx) => ({ c, idx }));
+  if (typed.length) {
+    entries = entries.filter(({c}) => {
+      const comboNames = c.cards.map(card => norm(typeof card === 'object' ? card.name : card));
+      return typed.every(t => comboNames.some(cn => cn.includes(t) || t.includes(cn)));
+    });
+  }
+
+  if (!entries.length) {
+    el.innerHTML = `<p style="color:var(--text-dim);font-size:.85rem;font-style:italic;margin-bottom:.8rem">${
+      typed.length ? 'Nenhuma combinação cadastrada com essas cartas ainda — preencha o significado abaixo pra criar uma nova.' : 'Nenhuma combinação cadastrada ainda.'
+    }</p>`;
+    return;
+  }
+
+  el.innerHTML = entries.map(({c, idx}) => {
     const cardsLabel = c.cards.map(card => {
       const n = typeof card === 'object' ? card.name : card;
       const inv = typeof card === 'object' ? card.inv : false;
       return inv ? `<span style="color:var(--rose)">${n} ↩</span>` : n;
     }).join(' + ');
-    return `<div class="custom-combo-item">
+    return `<div class="custom-combo-item" style="cursor:pointer${idx === editingComboIndex ? ';border:1px solid var(--gold-dim);background:rgba(201,168,76,.08)' : ''}" onclick="loadComboForEdit(${idx})">
       <div class="custom-combo-body">
         <div class="custom-combo-cards">${cardsLabel}</div>
         <div class="custom-combo-meaning">${c.meaning}</div>
       </div>
-      <button class="custom-combo-del" onclick="deleteAdminCombo(${idx})">✕</button>
+      <button class="custom-combo-del" onclick="event.stopPropagation();deleteAdminCombo(${idx})">✕</button>
     </div>`;
   }).join('');
 }
 
 window.toggleComboInv = function(btn) { btn.classList.toggle('active'); };
 
-window.addComboRow = function() {
+window.addComboRow = function(prefillName, prefillInv) {
   const wrap = document.getElementById('combo-cards-inputs');
   const n = wrap.querySelectorAll('.combo-card-row').length + 1;
   const row = document.createElement('div');
   row.className = 'combo-card-row';
-  row.innerHTML = `<input type="text" placeholder="Carta ${n}" class="combo-card-field">
-    <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)">↩</button>
+  row.innerHTML = `<input type="text" placeholder="Carta ${n}" class="combo-card-field" list="admin-combo-card-names" value="${prefillName ? String(prefillName).replace(/"/g,'&quot;') : ''}">
+    <button type="button" class="combo-inv-btn${prefillInv ? ' active' : ''}" onclick="toggleComboInv(this)">↩</button>
     <button class="btn-remove-row" onclick="removeComboRow(this)">×</button>`;
   wrap.appendChild(row);
   if (wrap.querySelectorAll('.combo-card-row').length >= 3)
@@ -3871,7 +3913,56 @@ window.removeComboRow = function(btn) {
   btn.closest('.combo-card-row').remove();
   if (wrap.querySelectorAll('.combo-card-row').length <= 2)
     wrap.querySelectorAll('.btn-remove-row').forEach(b => b.style.display='none');
+  renderAdminCombosList();
 };
+
+// qualquer alteração nos campos de carta re-filtra a lista em tempo real
+document.getElementById('combo-cards-inputs').addEventListener('input', renderAdminCombosList);
+
+function resetComboForm() {
+  editingComboIndex = null;
+  const wrap = document.getElementById('combo-cards-inputs');
+  wrap.innerHTML = `
+    <div class="combo-card-row">
+      <input type="text" placeholder="Carta 1 (ex: O Sol)" class="combo-card-field" list="admin-combo-card-names">
+      <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)">↩</button>
+      <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
+    </div>
+    <div class="combo-card-row">
+      <input type="text" placeholder="Carta 2 (ex: A Estrela)" class="combo-card-field" list="admin-combo-card-names">
+      <button type="button" class="combo-inv-btn" onclick="toggleComboInv(this)">↩</button>
+      <button class="btn-remove-row" onclick="removeComboRow(this)" style="display:none">×</button>
+    </div>`;
+  document.getElementById('custom-combo-meaning').value = '';
+  document.getElementById('combo-form-title').textContent = 'Nova Combinação';
+  document.getElementById('cancel-combo-edit').style.display = 'none';
+}
+
+window.loadComboForEdit = function(idx) {
+  const combo = comboListFor(adminComboDeck)[idx];
+  if (!combo) return;
+  editingComboIndex = idx;
+
+  const wrap = document.getElementById('combo-cards-inputs');
+  wrap.innerHTML = '';
+  combo.cards.forEach(card => {
+    const name = typeof card === 'object' ? card.name : card;
+    const inv  = typeof card === 'object' ? card.inv  : false;
+    addComboRow(name, inv);
+  });
+  wrap.querySelectorAll('.btn-remove-row').forEach(b => b.style.display = wrap.querySelectorAll('.combo-card-row').length > 2 ? '' : 'none');
+
+  document.getElementById('custom-combo-meaning').value = combo.meaning || '';
+  document.getElementById('combo-form-title').textContent = 'Editando Combinação';
+  document.getElementById('cancel-combo-edit').style.display = '';
+  renderAdminCombosList();
+};
+
+document.getElementById('cancel-combo-edit').addEventListener('click', (e)=>{
+  e.preventDefault();
+  resetComboForm();
+  renderAdminCombosList();
+});
 
 document.getElementById('save-combo-btn').addEventListener('click', async ()=>{
   const rows = [...document.querySelectorAll('#combo-cards-inputs .combo-card-row')];
@@ -3882,18 +3973,22 @@ document.getElementById('save-combo-btn').addEventListener('click', async ()=>{
   const meaning = document.getElementById('custom-combo-meaning').value.trim();
   if (cards.length < 2) { showToast('⚠ Adicione ao menos 2 cartas'); return; }
   if (!meaning) { showToast('⚠ Escreva o significado'); return; }
+
   const list = comboListFor(adminComboDeck);
-  list.push({ cards, meaning });
+  if (editingComboIndex !== null && list[editingComboIndex]) {
+    list[editingComboIndex] = { cards, meaning };
+  } else {
+    list.push({ cards, meaning });
+  }
   await persistCombos();
+  resetComboForm();
   renderAdminCombosList();
-  document.querySelectorAll('.combo-card-field').forEach(i => i.value='');
-  document.querySelectorAll('.combo-inv-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('custom-combo-meaning').value = '';
   showToast('✦ Combinação salva para todo mundo!');
 });
 
 window.deleteAdminCombo = async function(idx) {
   comboListFor(adminComboDeck).splice(idx, 1);
+  if (editingComboIndex === idx) resetComboForm();
   await persistCombos();
   renderAdminCombosList();
   showToast('Combinação removida');
@@ -4459,7 +4554,7 @@ auth.onAuthStateChanged(user => {
     }
     loadEntries();
     loadContentOverrides().then(()=>{ renderAdminCombosList(); });
-    document.getElementById('admin-section').style.display = (user.email === ADMIN_EMAIL) ? '' : 'none';
+    document.getElementById('side-admin-btn').style.display = (user.email === ADMIN_EMAIL) ? '' : 'none';
     syncProfileWithCloud(user);
   } else {
     document.getElementById('login-screen').style.display  = '';
