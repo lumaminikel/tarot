@@ -572,6 +572,18 @@
 
   /* ── TAGS DE TEMA ── */
   .theme-selector { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .4rem; }
+  .deck-tabs { display: flex; justify-content: center; gap: .6rem; padding: 0 0 0; }
+  .deck-tab {
+    font-family: 'Cinzel', serif; font-size: .82rem; letter-spacing: .04em;
+    color: var(--text); background: var(--bg3); border: 1px solid var(--border); border-bottom: none;
+    padding: .65rem 1.5rem; border-radius: 8px 8px 0 0; cursor: pointer;
+    transition: color .2s, background .2s; opacity: .65;
+  }
+  .deck-tab:hover { opacity: 1; color: var(--gold-light); }
+  .deck-tab.active {
+    color: var(--gold-light); background: var(--bg); border-color: var(--gold-dim);
+    border-bottom-color: var(--bg); box-shadow: 0 -3px 0 var(--gold) inset; opacity: 1; font-weight: 600;
+  }
   .theme-btn {
     background: none; border: 1px solid var(--border);
     border-radius: 20px; padding: .25rem .75rem;
@@ -1474,6 +1486,11 @@
 
 <div class="page">
 
+  <div class="deck-tabs" id="deck-selector">
+    <button type="button" class="theme-btn deck-tab active" data-formdeck="tarot" onclick="selectFormDeck(this)">🔮 Tarot</button>
+    <button type="button" class="theme-btn deck-tab" data-formdeck="cigano" onclick="selectFormDeck(this)">🍀 Baralho Cigano</button>
+  </div>
+
   <div class="stats-bar">
     <div class="stat"><span class="stat-num" id="stat-total">0</span><span class="stat-label">tiragens registradas</span></div>
     <div class="stat"><span class="stat-num" id="stat-streak">0</span><span class="stat-label">dias seguidos</span></div>
@@ -1487,13 +1504,6 @@
 
   <div class="new-entry-form" id="entry-form">
     <div class="form-title">✦ Nova Entrada</div>
-    <div class="form-row">
-      <label>Baralho</label>
-      <div class="theme-selector" id="deck-selector">
-        <button type="button" class="theme-btn active" data-formdeck="tarot" onclick="selectFormDeck(this)">🔮 Tarot</button>
-        <button type="button" class="theme-btn" data-formdeck="cigano" onclick="selectFormDeck(this)">🍀 Baralho Cigano</button>
-      </div>
-    </div>
     <div class="form-row">
       <label>Data</label>
       <input type="date" id="f-date">
