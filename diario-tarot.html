@@ -1562,7 +1562,7 @@
     </div>
     <div class="form-row">
       <label>Tema da Tiragem</label>
-      <div class="theme-selector">
+      <div class="theme-selector" id="tema-selector">
         <button type="button" class="theme-btn" data-theme="amor"       onclick="selectTheme(this)">❤️ Amor</button>
         <button type="button" class="theme-btn" data-theme="trabalho"   onclick="selectTheme(this)">💼 Trabalho</button>
         <button type="button" class="theme-btn" data-theme="saude"      onclick="selectTheme(this)">🌿 Saúde</button>
@@ -2510,11 +2510,7 @@ document.getElementById('timer-start').addEventListener('click', () => {
 // ── TEMA ──
 let activeThemeFilter = null;
 window.selectTheme = function(btn) {
-  formDeck = 'tarot';
-  document.querySelectorAll('#deck-selector .theme-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.formdeck==='tarot');
-  });
-  document.querySelectorAll('.theme-selector:not(#deck-selector) .theme-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#tema-selector .theme-btn').forEach(b => b.classList.remove('active'));
   const val = btn.dataset.theme;
   if (document.getElementById('f-theme').value === val) {
     document.getElementById('f-theme').value = '';
