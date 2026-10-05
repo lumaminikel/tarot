@@ -4117,6 +4117,13 @@ const CARD_IMAGES = {
 // ── POPUP: incluir nota personalizada ──
 const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
 
+// nomes antigos de carta que já existem salvos em leituras no Firestore,
+// apontando pro nome atual — assim entradas antigas continuam resolvendo certo
+// mesmo depois de uma carta ser renomeada no app.
+const LEGACY_CARD_ALIASES = {
+  'Os Amantes': 'Os Enamorados',
+};
+
 function findCardExact(name, deck = 'tarot') {
   if (!name) return null;
   // normaliza: remove acentos, lowercase, trim
@@ -4124,6 +4131,10 @@ function findCardExact(name, deck = 'tarot') {
   const clean = norm(name.replace(/inverti.*|inversa.*/gi,'').trim());
 
   const CARDS_SRC = cardsDataFor(deck);
+
+  // 0. nome antigo renomeado — resolve direto pro nome atual
+  if (LEGACY_CARD_ALIASES[name] && CARDS_SRC[LEGACY_CARD_ALIASES[name]]) return LEGACY_CARD_ALIASES[name];
+
   // 1. match exato
   if (CARDS_SRC[name]) return name;
 
@@ -4375,7 +4386,10 @@ try {
 function detectCombinations(tags) {
   if (!tags || tags.length < 2) return [];
   try {
-    const toStr = v => String(v && v.name ? v.name : (v || '')).replace(/inverti.*|inversa.*/gi,'').trim();
+    const toStr = v => {
+      const raw = String(v && v.name ? v.name : (v || '')).replace(/inverti.*|inversa.*/gi,'').trim();
+      return LEGACY_CARD_ALIASES[raw] || raw;
+    };
     const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
     const names = tags.map(t => norm(toStr(t)));
 
