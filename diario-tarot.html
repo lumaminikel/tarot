@@ -1717,7 +1717,7 @@ const TAROT_CARDS = {
   'A Imperatriz':    {oracle:'sim',   keywords:['Fertilidade','Abundância','Natureza'],   meaning:'Criatividade fértil, abundância, maternidade. Nutrir e deixar florescer.'},
   'O Imperador':     {oracle:'sim',   keywords:['Autoridade','Estrutura','Disciplina'],   meaning:'Liderança, ordem e estabilidade. Construir com firmeza sobre bases sólidas.'},
   'O Hierofante':    {oracle:'talvez',keywords:['Tradição','Espiritualidade','Ensino'],   meaning:'Tradição, mentor espiritual, comprometimento formal. Respeitar o processo.'},
-  'Os Amantes':      {oracle:'sim',   keywords:['Escolha','Amor','Valores'],              meaning:'Decisão consciente, alinhamento de valores, união dos opostos.'},
+  'Os Enamorados':      {oracle:'sim',   keywords:['Escolha','Amor','Valores'],              meaning:'Decisão consciente, alinhamento de valores, união dos opostos.'},
   'O Carro':         {oracle:'sim',   keywords:['Vitória','Controle','Movimento'],        meaning:'Triunfo pela força de vontade. Manter o foco enquanto o mundo gira.'},
   'A Força':         {oracle:'sim',   keywords:['Coragem','Compaixão','Força interior'],  meaning:'Domesticar os instintos com amor, não repressão. Coragem que vem do coração.'},
   'O Eremita':       {oracle:'talvez',keywords:['Solidão','Sabedoria','Introspecção'],    meaning:'Recolhimento necessário, busca interior. A lanterna ilumina só o próximo passo.'},
@@ -1800,7 +1800,7 @@ const REV = {
   'A Imperatriz':'Sufocamento, dependência criativa, bloqueio de fertilidade, negligência consigo mesma.',
   'O Imperador':'Abuso de poder, controle excessivo, rigidez, pai ausente ou autoritário.',
   'O Hierofante':'Aprisionamento por dogmas, hipocrisia, quebra necessária de convenções, mentor tóxico.',
-  'Os Amantes':'Escolha evitada, traição, valores desalinhados, relacionamento baseado em dependência.',
+  'Os Enamorados':'Escolha evitada, traição, valores desalinhados, relacionamento baseado em dependência.',
   'O Carro':'Perda de controle, agressividade cega, vitória pela força errada, projeto desmoronando.',
   'A Força':'Fraqueza disfarçada, medo que paralisa, agressividade reprimida, crueldade.',
   'O Eremita':'Isolamento patológico, fuga da vida social necessária, recusa de compartilhar sabedoria.',
@@ -1914,10 +1914,10 @@ const CARD_EXTRAS = {
     sombra: '"É assim porque sempre foi assim" é a frase mais perigosa que existe. Instituições que controlam pelo medo, tradições que oprimem, líderes espirituais que usam a fé como ferramenta de poder.',
     meme: 'Seu tio no almoço de domingo explicando por que as coisas devem continuar como estão. 🍽️📿'
   },
-  'Os Amantes': {
+  'Os Enamorados': {
     luz: 'A escolha mais importante da sua vida não é sobre o outro — é sobre quem você quer ser. Amor de verdade começa com alinhamento de valores. Quando dois inteiros se encontram, o todo é maior que a soma.',
     sombra: 'Indecisão crônica, o cara que fica no meio dos dois e não escolhe ninguém. Relacionamento construído sobre atração física sem base real. Ou então: aquela escolha que você sabe que precisa fazer mas fica adiando.',
-    meme: 'Você no menu do restaurante: "não sei o que quero". Os Amantes em crise. 💔😅'
+    meme: 'Você no menu do restaurante: "não sei o que quero". Os Enamorados em crise. 💔😅'
   },
   'O Carro': {
     luz: 'Determinação pura. Quando você decide de verdade — não decide com a cabeça, decide com toda a alma — o universo encontra um jeito. Não precisa ser fácil para ser possível. Segura o volante.',
@@ -3012,7 +3012,7 @@ function saveArcanoCache(cache) {
 // Segue a mesma convenção numérica já usada no app: A Louca fecha o ciclo como carta 22.
 const ARCANO_NUMERO_NOME = {
   1: 'O Mago', 2: 'A Sacerdotisa', 3: 'A Imperatriz', 4: 'O Imperador',
-  5: 'O Hierofante', 6: 'Os Amantes', 7: 'O Carro', 8: 'A Força',
+  5: 'O Hierofante', 6: 'Os Enamorados', 7: 'O Carro', 8: 'A Força',
   9: 'O Eremita', 10: 'Roda da Fortuna', 11: 'A Justiça', 12: 'A Enforcada',
   13: 'A Morte', 14: 'A Temperança', 15: 'O Diabo', 16: 'A Torre',
   17: 'A Estrela', 18: 'A Lua', 19: 'O Sol', 20: 'O Julgamento',
@@ -4035,7 +4035,7 @@ const CARD_IMAGES = {
   'A Imperatriz':    'rider-waite/RWS_Tarot_03_Empress.jpg',
   'O Imperador':     'rider-waite/RWS_Tarot_04_Emperor.jpg',
   'O Hierofante':    'rider-waite/RWS_Tarot_05_Hierophant.jpg',
-  'Os Amantes':      'rider-waite/RWS_Tarot_06_Lovers.jpg',
+  'Os Enamorados':      'rider-waite/RWS_Tarot_06_Lovers.jpg',
   'O Carro':         'rider-waite/RWS_Tarot_07_Chariot.jpg',
   'A Força':         'rider-waite/RWS_Tarot_08_Strength.jpg',
   'O Eremita':       'rider-waite/RWS_Tarot_09_Hermit.jpg',
@@ -4212,7 +4212,7 @@ window.showCardPopup = function(name, isInv, deck) {
 const CIGANO_CONSULT_GROUP = { label: 'Baralho Cigano', cards: ['O Cavaleiro', 'As Pedras', 'O Navio', 'A Casa', 'A Árvore', 'Os Ventos', 'A Serpente', 'A Morte', 'O Ramalhete', 'A Foice', 'O Chicote', 'Os Pássaros', 'A Criança', 'A Raposa', 'O Urso', 'As Estrelas', 'A Cegonha', 'O Cão', 'A Torre', 'O Jardim', 'A Montanha', 'Os Caminhos', 'Os Ratos', 'O Coração', 'As Alianças', 'Os Livros', 'A Carta', 'O Cigano', 'A Cigana', 'Os Lírios', 'O Sol', 'A Lua', 'A Chave', 'Os Peixes', 'A Âncora', 'A Cruz'] };
 
 const CONSULT_GROUPS = [
-  { label: 'Arcanos Maiores', cards: ['A Louca','O Mago','A Sacerdotisa','A Imperatriz','O Imperador','O Hierofante','Os Amantes','O Carro','A Força','O Eremita','Roda da Fortuna','A Justiça','O Enforcado','A Enforcada','A Morte','A Temperança','O Diabo','A Torre','A Estrela','A Lua','O Sol','O Julgamento','O Mundo'] },
+  { label: 'Arcanos Maiores', cards: ['A Louca','O Mago','A Sacerdotisa','A Imperatriz','O Imperador','O Hierofante','Os Enamorados','O Carro','A Força','O Eremita','Roda da Fortuna','A Justiça','O Enforcado','A Enforcada','A Morte','A Temperança','O Diabo','A Torre','A Estrela','A Lua','O Sol','O Julgamento','O Mundo'] },
   { label: 'Copas',   cards: ['Ás de Copas','Dois de Copas','Três de Copas','Quatro de Copas','Cinco de Copas','Seis de Copas','Sete de Copas','Oito de Copas','Nove de Copas','Dez de Copas','Valete de Copas','Cavaleiro de Copas','Rainha de Copas','Rei de Copas'] },
   { label: 'Espadas', cards: ['Ás de Espadas','Dois de Espadas','Três de Espadas','Quatro de Espadas','Cinco de Espadas','Seis de Espadas','Sete de Espadas','Oito de Espadas','Nove de Espadas','Dez de Espadas','Valete de Espadas','Cavaleiro de Espadas','Rainha de Espadas','Rei de Espadas'] },
   { label: 'Ouros',   cards: ['Ás de Ouros','Dois de Ouros','Três de Ouros','Quatro de Ouros','Cinco de Ouros','Seis de Ouros','Sete de Ouros','Oito de Ouros','Nove de Ouros','Dez de Ouros','Valete de Ouros','Cavaleiro de Ouros','Rainha de Ouros','Rei de Ouros'] },
@@ -4306,15 +4306,15 @@ const COMBINATIONS = [
   {cards:['A Sacerdotisa','A Lua'],       meaning:'O inconsciente falando alto. Intuição que não pode ser ignorada, segredos a serem revelados.'},
   {cards:['A Justiça','Roda da Fortuna'],  meaning:'Karma em plena ação — o que foi semeado está retornando agora com exatidão.'},
   {cards:['Roda da Fortuna','O Mundo'],   meaning:'Ciclo completando magnificamente. Realização máxima após muito movimento e transformação.'},
-  {cards:['O Hierofante','Os Amantes'],   meaning:'Tensão entre tradição e coração. Escolha entre o que a sociedade espera e o que você quer.'},
+  {cards:['O Hierofante','Os Enamorados'],   meaning:'Tensão entre tradição e coração. Escolha entre o que a sociedade espera e o que você quer.'},
   {cards:['O Hierofante','Dez de Copas'], meaning:'Casamento ou comprometimento formal. Bênção institucional sobre uma união duradoura.'},
   {cards:['A Louca','O Mago'],            meaning:'Potencial puro encontrando as ferramentas. Início de jornada com todos os recursos necessários.'},
   {cards:['A Louca','O Mundo'],           meaning:'O ciclo completo se fecha e recomeça. Após a realização, o espírito escolhe recomeçar com leveza.'},
   {cards:['A Imperatriz','Dez de Ouros'], meaning:'Abundância geracional — prosperidade que nutre família, lar florescendo com riqueza e amor.'},
-  {cards:['O Diabo','Os Amantes'],        meaning:'Escolha baseada em obsessão, não amor real. Relação que parece paixão mas tem correntes ocultas.'},
+  {cards:['O Diabo','Os Enamorados'],        meaning:'Escolha baseada em obsessão, não amor real. Relação que parece paixão mas tem correntes ocultas.'},
   {cards:['A Estrela','O Julgamento'],    meaning:'Renovação espiritual profunda. Um chamado genuíno chega num momento de graça — ouça.'},
   {cards:['A Força','O Carro'],           meaning:'Poder interior que se manifesta em vitória. Dominar os instintos com amor traz triunfo externo.'},
-  {cards:['Os Amantes','Dois de Copas'],  meaning:'Decisão de comprometimento num relacionamento com profundo potencial de parceria.'},
+  {cards:['Os Enamorados','Dois de Copas'],  meaning:'Decisão de comprometimento num relacionamento com profundo potencial de parceria.'},
   {cards:['Dois de Copas','Ás de Copas'], meaning:'Início de relacionamento com grande potencial emocional. Amor que começa com coração aberto.'},
   {cards:['Três de Copas','Dez de Copas'],meaning:'Alegria que se expande para plenitude familiar. Amor celebrado em comunidade.'},
   {cards:['Rainha de Copas','Rei de Copas'],meaning:'Casal emocionalmente maduro. União onde ambos sentem profundamente sem perder o equilíbrio.'},
@@ -4345,7 +4345,7 @@ const COMBINATIONS = [
   {cards:['O Mundo','O Julgamento'],      meaning:'Completude seguida de chamado. Após realizar um ciclo, a alma é convocada para o próximo nível.'},
   {cards:['O Enforcado','O Eremita'],     meaning:'Pausa profunda e solitária para grandes revelações. Rendição e recolhimento que transformam a visão.'},
   {cards:['A Lua','A Temperança'],        meaning:'Navegando com paciência pelas ilusões. A alquimia do inconsciente acontece — confie sem ver o resultado.'},
-  {cards:['Seis de Copas','Os Amantes'], meaning:'Amor do passado ressurgindo ou decisão guiada por saudade. Examine se é amor real ou romantização.'},
+  {cards:['Seis de Copas','Os Enamorados'], meaning:'Amor do passado ressurgindo ou decisão guiada por saudade. Examine se é amor real ou romantização.'},
   {cards:['O Julgamento','Ás de Paus'],   meaning:'Chamado ao propósito que vira ação criativa. Uma nova missão começa com fogo e clareza de direção.'},
   // ── Trios (três cartas) ──
   {cards:['A Louca','O Mago','O Mundo'], meaning:'Um ciclo inteiro em três cartas: potencial puro ganhando ferramentas para se manifestar e chegando à realização completa.'},
@@ -4353,14 +4353,14 @@ const COMBINATIONS = [
   {cards:['A Torre','A Morte','A Estrela'], meaning:'Colapso, fim radical e depois a cura. Primeiro tudo desmorona, depois o que não servia morre de vez, e por fim vem a esperança.'},
   {cards:['O Diabo','A Torre','O Julgamento'], meaning:'Um padrão viciante colapsa de forma abrupta, abrindo espaço para um chamado de renascimento.'},
   {cards:['A Sacerdotisa','O Eremita','A Lua'], meaning:'Introspecção em três camadas: intuição, retiro voluntário e revelações do inconsciente. Não é hora de decisões externas.'},
-  {cards:['Os Amantes','Dois de Copas','Ás de Copas'], meaning:'Escolha amorosa consciente que se transforma em parceria genuína desde o início.'},
+  {cards:['Os Enamorados','Dois de Copas','Ás de Copas'], meaning:'Escolha amorosa consciente que se transforma em parceria genuína desde o início.'},
   {cards:['Três de Espadas','Cinco de Copas','Dez de Espadas'], meaning:'Dor, luto e o fundo do poço, todos juntos — mas o Dez de Espadas também diz que o pior já passou.'},
   {cards:['Roda da Fortuna','A Justiça','O Mundo'], meaning:'Karma se ajustando com precisão e chegando à completude. O que foi plantado está sendo colhido de forma justa.'},
   {cards:['Ás de Paus','Três de Paus','Seis de Paus'], meaning:'A trajetória de um projeto do início à vitória: faísca inicial, primeiros resultados, reconhecimento público.'},
   {cards:['Nove de Copas','Dez de Copas','Dez de Ouros'], meaning:'Satisfação pessoal, plenitude familiar e abundância material duradoura, tudo ao mesmo tempo.'},
   {cards:['O Enforcado','O Eremita','A Temperança'], meaning:'Pausa, recolhimento e integração gradual: não é hora de agir, é hora de render-se ao processo.'},
   {cards:['Sete de Espadas','Cinco de Paus','O Diabo'], meaning:'Conflito com elementos de desonestidade e padrões tóxicos se reforçando — examine quem age de má-fé.'},
-  {cards:['Cavaleiro de Copas','Dois de Copas','Os Amantes'], meaning:'Um cortejo genuíno evoluindo para parceria e, então, para uma escolha consciente de compromisso.'},
+  {cards:['Cavaleiro de Copas','Dois de Copas','Os Enamorados'], meaning:'Um cortejo genuíno evoluindo para parceria e, então, para uma escolha consciente de compromisso.'},
   {cards:['Oito de Copas','A Estrela','O Mundo'], meaning:'Partir em busca de algo mais verdadeiro, encontrar esperança pelo caminho, e chegar à realização plena.'},
   {cards:['Quatro de Espadas','O Eremita','Sete de Ouros'], meaning:'Descanso, introspecção e paciência: recue, avalie e espere. Não é o momento de forçar resultados.'},
 ];
