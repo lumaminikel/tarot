@@ -81,6 +81,7 @@
   /* DECK TABS */
   .deck-tabs {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 0.6rem;
     padding: 0.9rem 1rem 0;
@@ -660,6 +661,7 @@
 <div class="deck-tabs" id="deck-tabs">
   <button type="button" class="deck-tab" data-deck="tarot">🔮 Tarot</button>
   <button type="button" class="deck-tab" data-deck="cigano">🍀 Baralho Cigano</button>
+  <button type="button" class="deck-tab" data-deck="sibilla">🕯️ Sibilla</button>
 </div>
 
 <div class="search-wrap">
@@ -691,6 +693,13 @@
   <a data-section="cartas-cigano"><span class="nav-icon">🍀</span> As 36 Cartas</a>
   <a data-section="combinacoes-cigano"><span class="nav-icon">🔗</span> Combinações</a>
   <a data-section="tiragens-cigano"><span class="nav-icon">🃏</span> Tiragens</a>
+  </div>
+
+  <div data-deck-group="sibilla">
+  <span class="nav-label">Sibilla</span>
+  <a data-section="cartas-sibilla"><span class="nav-icon">🕯️</span> As 52 Cartas</a>
+  <a data-section="combinacoes-sibilla"><span class="nav-icon">🔗</span> Combinações</a>
+  <a data-section="tiragens-sibilla"><span class="nav-icon">🃏</span> Tiragens</a>
   </div>
 
   <span class="nav-label">Rituais</span>
@@ -2030,6 +2039,329 @@
   </div>
 </section>
 
+<!-- SIBILLA — AS 52 CARTAS -->
+<section id="cartas-sibilla" data-deck="sibilla">
+  <h2 class="section-title"><span class="icon">🕯️</span> Sibilla Oracle Cards (52 cartas)</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem; font-style:italic;">As cartas Sibilla são um oráculo italiano de cartomancia que segue a estrutura de um baralho comum de 52 cartas. Falam de situações do dia a dia — dinheiro, casa, amor, notícias, pessoas — de forma direta, quase como uma conversa. A numeração e os nomes seguem a lista do baralho Lo Scarabeo; confira com as suas cartas.</p>
+
+  <div class="cards-grid" id="sibilla-grid">
+    <div class="card" data-search data-name="O Amor sibilla oracle lo scarabeo" data-sibilla-name="O Amor">
+      <div class="card-header"><span class="card-num">1</span><span class="card-name">O Amor</span></div>
+      <div class="card-keywords"><span class="tag">Amor</span><span class="tag">Paixão</span><span class="tag">Romance</span></div>
+      <div class="card-body"><strong>Significado:</strong> Sentimento verdadeiro e forte, um amor que nasce ou se fortalece. Em qualquer tema, mostra que o coração está no centro da questão.</div>
+    </div>
+    <div class="card" data-search data-name="O Amigo Sincero sibilla oracle lo scarabeo" data-sibilla-name="O Amigo Sincero">
+      <div class="card-header"><span class="card-num">2</span><span class="card-name">O Amigo Sincero</span></div>
+      <div class="card-keywords"><span class="tag">Amizade</span><span class="tag">Lealdade</span><span class="tag">Apoio</span></div>
+      <div class="card-body"><strong>Significado:</strong> Alguém de confiança que está ao seu lado e fala a verdade com carinho. Aponta apoio genuíno e conselho honesto.</div>
+    </div>
+    <div class="card" data-search data-name="A Ausência sibilla oracle lo scarabeo" data-sibilla-name="A Ausência">
+      <div class="card-header"><span class="card-num">3</span><span class="card-name">A Ausência</span></div>
+      <div class="card-keywords"><span class="tag">Distância</span><span class="tag">Falta</span><span class="tag">Separação</span></div>
+      <div class="card-body"><strong>Significado:</strong> Distância física ou emocional; alguém ou algo que faz falta ou ainda não chegou. Pode indicar afastamento temporário ou uma lacuna a ser preenchida.</div>
+    </div>
+    <div class="card" data-search data-name="A Espera sibilla oracle lo scarabeo" data-sibilla-name="A Espera">
+      <div class="card-header"><span class="card-num">4</span><span class="card-name">A Espera</span></div>
+      <div class="card-keywords"><span class="tag">Paciência</span><span class="tag">Expectativa</span><span class="tag">Tempo</span></div>
+      <div class="card-body"><strong>Significado:</strong> Hora de aguardar: a resposta ainda não veio e forçar não adianta. Pede paciência e confiança no tempo certo das coisas.</div>
+    </div>
+    <div class="card" data-search data-name="Muito Dinheiro sibilla oracle lo scarabeo" data-sibilla-name="Muito Dinheiro">
+      <div class="card-header"><span class="card-num">5</span><span class="card-name">Muito Dinheiro</span></div>
+      <div class="card-keywords"><span class="tag">Abundância</span><span class="tag">Ganho</span><span class="tag">Prosperidade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Grande entrada financeira ou fase de fartura. Indica ganho significativo; as cartas vizinhas mostram de onde ele vem.</div>
+    </div>
+    <div class="card" data-search data-name="O Bilhete Doce sibilla oracle lo scarabeo" data-sibilla-name="O Bilhete Doce">
+      <div class="card-header"><span class="card-num">6</span><span class="card-name">O Bilhete Doce</span></div>
+      <div class="card-keywords"><span class="tag">Declaração</span><span class="tag">Carta de amor</span><span class="tag">Doçura</span></div>
+      <div class="card-body"><strong>Significado:</strong> Mensagem carinhosa, convite ou declaração; gentileza que chega por palavras. Traz suavidade e romance.</div>
+    </div>
+    <div class="card" data-search data-name="A Contrariedade sibilla oracle lo scarabeo" data-sibilla-name="A Contrariedade">
+      <div class="card-header"><span class="card-num">7</span><span class="card-name">A Contrariedade</span></div>
+      <div class="card-keywords"><span class="tag">Aborrecimento</span><span class="tag">Desagrado</span><span class="tag">Obstáculo</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo que contraria seus planos e causa irritação ou desgosto. Um aborrecimento que costuma ser passageiro, mas pede jogo de cintura.</div>
+    </div>
+    <div class="card" data-search data-name="A Infantilidade sibilla oracle lo scarabeo" data-sibilla-name="A Infantilidade">
+      <div class="card-header"><span class="card-num">8</span><span class="card-name">A Infantilidade</span></div>
+      <div class="card-keywords"><span class="tag">Imaturidade</span><span class="tag">Ingenuidade</span><span class="tag">Brincadeira</span></div>
+      <div class="card-body"><strong>Significado:</strong> Atitude imatura ou ingênua, sua ou de alguém próximo; também pode apontar leveza e espontaneidade. Pergunta onde falta maturidade, ou onde sobra rigidez.</div>
+    </div>
+    <div class="card" data-search data-name="A Tagarelice sibilla oracle lo scarabeo" data-sibilla-name="A Tagarelice">
+      <div class="card-header"><span class="card-num">9</span><span class="card-name">A Tagarelice</span></div>
+      <div class="card-keywords"><span class="tag">Fofoca</span><span class="tag">Conversa</span><span class="tag">Boatos</span></div>
+      <div class="card-body"><strong>Significado:</strong> Muita conversa, comentário e fofoca ao redor. Atenção ao que é dito e a quem escuta: a informação pode circular além do que deveria.</div>
+    </div>
+    <div class="card" data-search data-name="A Raiva sibilla oracle lo scarabeo" data-sibilla-name="A Raiva">
+      <div class="card-header"><span class="card-num">10</span><span class="card-name">A Raiva</span></div>
+      <div class="card-keywords"><span class="tag">Ira</span><span class="tag">Explosão</span><span class="tag">Conflito</span></div>
+      <div class="card-body"><strong>Significado:</strong> Irritação forte, discussão ou emoção fora de controle. Aconselha respirar antes de agir para não agravar a situação.</div>
+    </div>
+    <div class="card" data-search data-name="A Esperança sibilla oracle lo scarabeo" data-sibilla-name="A Esperança">
+      <div class="card-header"><span class="card-num">11</span><span class="card-name">A Esperança</span></div>
+      <div class="card-keywords"><span class="tag">Otimismo</span><span class="tag">Fé</span><span class="tag">Desejo</span></div>
+      <div class="card-body"><strong>Significado:</strong> Perspectiva positiva e desejo que ainda pode se realizar. Há luz à frente, mas a esperança precisa vir acompanhada de ação.</div>
+    </div>
+    <div class="card" data-search data-name="O Inimigo sibilla oracle lo scarabeo" data-sibilla-name="O Inimigo">
+      <div class="card-header"><span class="card-num">12</span><span class="card-name">O Inimigo</span></div>
+      <div class="card-keywords"><span class="tag">Oposição</span><span class="tag">Rivalidade</span><span class="tag">Cuidado</span></div>
+      <div class="card-body"><strong>Significado:</strong> Alguém ou algo trabalhando contra você, ou uma situação de oposição. Pede atenção redobrada e discrição com seus planos.</div>
+    </div>
+    <div class="card" data-search data-name="O Impedimento sibilla oracle lo scarabeo" data-sibilla-name="O Impedimento">
+      <div class="card-header"><span class="card-num">13</span><span class="card-name">O Impedimento</span></div>
+      <div class="card-keywords"><span class="tag">Bloqueio</span><span class="tag">Entrave</span><span class="tag">Obstáculo</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo se coloca no caminho e trava o andamento. Mostra que é preciso remover o entrave antes de seguir.</div>
+    </div>
+    <div class="card" data-search data-name="O Bajulador sibilla oracle lo scarabeo" data-sibilla-name="O Bajulador">
+      <div class="card-header"><span class="card-num">14</span><span class="card-name">O Bajulador</span></div>
+      <div class="card-keywords"><span class="tag">Falsidade</span><span class="tag">Elogio interesseiro</span><span class="tag">Manipulação</span></div>
+      <div class="card-body"><strong>Significado:</strong> Alguém que elogia demais por interesse. Cuidado com palavras doces que escondem segundas intenções.</div>
+    </div>
+    <div class="card" data-search data-name="A Fidelidade sibilla oracle lo scarabeo" data-sibilla-name="A Fidelidade">
+      <div class="card-header"><span class="card-num">15</span><span class="card-name">A Fidelidade</span></div>
+      <div class="card-keywords"><span class="tag">Lealdade</span><span class="tag">Afeição</span><span class="tag">Constância</span></div>
+      <div class="card-body"><strong>Significado:</strong> Lealdade e afeto estáveis; confiança que se confirma. Fala de relações firmes e de pessoas que permanecem.</div>
+    </div>
+    <div class="card" data-search data-name="O Advogado sibilla oracle lo scarabeo" data-sibilla-name="O Advogado">
+      <div class="card-header"><span class="card-num">16</span><span class="card-name">O Advogado</span></div>
+      <div class="card-keywords"><span class="tag">Justiça</span><span class="tag">Orientação</span><span class="tag">Processo</span></div>
+      <div class="card-body"><strong>Significado:</strong> Assuntos legais, contratos ou necessidade de orientação especializada. Também pode ser alguém que defende a sua causa.</div>
+    </div>
+    <div class="card" data-search data-name="A Inconstância sibilla oracle lo scarabeo" data-sibilla-name="A Inconstância">
+      <div class="card-header"><span class="card-num">17</span><span class="card-name">A Inconstância</span></div>
+      <div class="card-keywords"><span class="tag">Instabilidade</span><span class="tag">Mudança de ideia</span><span class="tag">Volubilidade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Falta de firmeza: sentimentos ou decisões que mudam o tempo todo. Evite apostar em quem, ou no que, não se sustenta.</div>
+    </div>
+    <div class="card" data-search data-name="Os Jogadores sibilla oracle lo scarabeo" data-sibilla-name="Os Jogadores">
+      <div class="card-header"><span class="card-num">18</span><span class="card-name">Os Jogadores</span></div>
+      <div class="card-keywords"><span class="tag">Risco</span><span class="tag">Aposta</span><span class="tag">Sorte</span></div>
+      <div class="card-body"><strong>Significado:</strong> Risco, jogo e dependência da sorte. Pede cautela com apostas, financeiras ou emocionais, e clareza sobre o que se pode perder.</div>
+    </div>
+    <div class="card" data-search data-name="O Consulente sibilla oracle lo scarabeo" data-sibilla-name="O Consulente">
+      <div class="card-header"><span class="card-num">19</span><span class="card-name">O Consulente</span></div>
+      <div class="card-keywords"><span class="tag">Figura masculina</span><span class="tag">Quem consulta</span><span class="tag">Personagem</span></div>
+      <div class="card-body"><strong>Significado:</strong> Representa o homem que consulta, ou um homem central na situação. As cartas ao redor mostram como ele vive o assunto.</div>
+    </div>
+    <div class="card" data-search data-name="A Consulente sibilla oracle lo scarabeo" data-sibilla-name="A Consulente">
+      <div class="card-header"><span class="card-num">20</span><span class="card-name">A Consulente</span></div>
+      <div class="card-keywords"><span class="tag">Figura feminina</span><span class="tag">Quem consulta</span><span class="tag">Personagem</span></div>
+      <div class="card-body"><strong>Significado:</strong> Representa a mulher que consulta, ou uma mulher central na situação. As cartas ao redor mostram como ela vive o assunto.</div>
+    </div>
+    <div class="card" data-search data-name="O Susto sibilla oracle lo scarabeo" data-sibilla-name="O Susto">
+      <div class="card-header"><span class="card-num">21</span><span class="card-name">O Susto</span></div>
+      <div class="card-keywords"><span class="tag">Medo</span><span class="tag">Sobressalto</span><span class="tag">Imprevisto</span></div>
+      <div class="card-body"><strong>Significado:</strong> Sobressalto, notícia inesperada ou medo repentino. Costuma ser maior no impacto do que na consequência real.</div>
+    </div>
+    <div class="card" data-search data-name="A Mulher Zangada sibilla oracle lo scarabeo" data-sibilla-name="A Mulher Zangada">
+      <div class="card-header"><span class="card-num">22</span><span class="card-name">A Mulher Zangada</span></div>
+      <div class="card-keywords"><span class="tag">Irritação</span><span class="tag">Mau humor</span><span class="tag">Discussão</span></div>
+      <div class="card-body"><strong>Significado:</strong> Uma mulher irritada, ou um clima de mau humor ao redor. Pode ser você; pede diálogo calmo antes que o atrito cresça.</div>
+    </div>
+    <div class="card" data-search data-name="O Soldado sibilla oracle lo scarabeo" data-sibilla-name="O Soldado">
+      <div class="card-header"><span class="card-num">23</span><span class="card-name">O Soldado</span></div>
+      <div class="card-keywords"><span class="tag">Disciplina</span><span class="tag">Proteção</span><span class="tag">Coragem</span></div>
+      <div class="card-body"><strong>Significado:</strong> Disciplina, ordem e coragem; alguém que protege ou que age de modo rígido. Também pode indicar um militar ou figura de autoridade.</div>
+    </div>
+    <div class="card" data-search data-name="A Casa da Cidade sibilla oracle lo scarabeo" data-sibilla-name="A Casa da Cidade">
+      <div class="card-header"><span class="card-num">24</span><span class="card-name">A Casa da Cidade</span></div>
+      <div class="card-keywords"><span class="tag">Lar</span><span class="tag">Estabilidade</span><span class="tag">Vida urbana</span></div>
+      <div class="card-body"><strong>Significado:</strong> Casa, moradia e vida estruturada na cidade. Fala de segurança, família e assuntos domésticos.</div>
+    </div>
+    <div class="card" data-search data-name="A Casa de Campo sibilla oracle lo scarabeo" data-sibilla-name="A Casa de Campo">
+      <div class="card-header"><span class="card-num">25</span><span class="card-name">A Casa de Campo</span></div>
+      <div class="card-keywords"><span class="tag">Descanso</span><span class="tag">Tranquilidade</span><span class="tag">Natureza</span></div>
+      <div class="card-body"><strong>Significado:</strong> Sossego, descanso e vida mais simples. Indica a pausa necessária e ambientes tranquilos.</div>
+    </div>
+    <div class="card" data-search data-name="O Casamento sibilla oracle lo scarabeo" data-sibilla-name="O Casamento">
+      <div class="card-header"><span class="card-num">26</span><span class="card-name">O Casamento</span></div>
+      <div class="card-keywords"><span class="tag">União</span><span class="tag">Compromisso</span><span class="tag">Aliança</span></div>
+      <div class="card-body"><strong>Significado:</strong> Compromisso formal, união ou acordo sério. Vale para casamento, mas também para sociedades e parcerias.</div>
+    </div>
+    <div class="card" data-search data-name="A Fraqueza sibilla oracle lo scarabeo" data-sibilla-name="A Fraqueza">
+      <div class="card-header"><span class="card-num">27</span><span class="card-name">A Fraqueza</span></div>
+      <div class="card-keywords"><span class="tag">Vulnerabilidade</span><span class="tag">Cansaço</span><span class="tag">Desânimo</span></div>
+      <div class="card-body"><strong>Significado:</strong> Momento de fragilidade, física ou emocional. Pede cuidado, descanso e apoio, sem se cobrar além da conta.</div>
+    </div>
+    <div class="card" data-search data-name="O Pensamento sibilla oracle lo scarabeo" data-sibilla-name="O Pensamento">
+      <div class="card-header"><span class="card-num">28</span><span class="card-name">O Pensamento</span></div>
+      <div class="card-keywords"><span class="tag">Reflexão</span><span class="tag">Mente</span><span class="tag">Lembrança</span></div>
+      <div class="card-body"><strong>Significado:</strong> Alguém está pensando no assunto (ou em você), ou é hora de refletir antes de agir. Ruminar demais também pode paralisar.</div>
+    </div>
+    <div class="card" data-search data-name="Os Presentes sibilla oracle lo scarabeo" data-sibilla-name="Os Presentes">
+      <div class="card-header"><span class="card-num">29</span><span class="card-name">Os Presentes</span></div>
+      <div class="card-keywords"><span class="tag">Presente</span><span class="tag">Gentileza</span><span class="tag">Recompensa</span></div>
+      <div class="card-body"><strong>Significado:</strong> Presente, agrado ou ajuda que chega. Gestos de generosidade e recompensa por esforços anteriores.</div>
+    </div>
+    <div class="card" data-search data-name="A Perda de Dinheiro sibilla oracle lo scarabeo" data-sibilla-name="A Perda de Dinheiro">
+      <div class="card-header"><span class="card-num">30</span><span class="card-name">A Perda de Dinheiro</span></div>
+      <div class="card-keywords"><span class="tag">Prejuízo</span><span class="tag">Gasto</span><span class="tag">Descuido</span></div>
+      <div class="card-body"><strong>Significado:</strong> Gasto inesperado, prejuízo ou desperdício. Pede atenção às finanças e às decisões impulsivas.</div>
+    </div>
+    <div class="card" data-search data-name="O Protetor sibilla oracle lo scarabeo" data-sibilla-name="O Protetor">
+      <div class="card-header"><span class="card-num">31</span><span class="card-name">O Protetor</span></div>
+      <div class="card-keywords"><span class="tag">Proteção</span><span class="tag">Amparo</span><span class="tag">Influência</span></div>
+      <div class="card-body"><strong>Significado:</strong> Alguém com mais poder ou influência que ampara você; também a sensação de estar protegida. Boa carta para pedir ajuda.</div>
+    </div>
+    <div class="card" data-search data-name="A Armadilha sibilla oracle lo scarabeo" data-sibilla-name="A Armadilha">
+      <div class="card-header"><span class="card-num">32</span><span class="card-name">A Armadilha</span></div>
+      <div class="card-keywords"><span class="tag">Cilada</span><span class="tag">Engano</span><span class="tag">Perigo oculto</span></div>
+      <div class="card-body"><strong>Significado:</strong> Cilada ou situação com algo escondido. Examine promessas boas demais e leia tudo antes de assinar ou aceitar.</div>
+    </div>
+    <div class="card" data-search data-name="A Viagem ao Campo sibilla oracle lo scarabeo" data-sibilla-name="A Viagem ao Campo">
+      <div class="card-header"><span class="card-num">33</span><span class="card-name">A Viagem ao Campo</span></div>
+      <div class="card-keywords"><span class="tag">Passeio</span><span class="tag">Leveza</span><span class="tag">Descanso</span></div>
+      <div class="card-body"><strong>Significado:</strong> Passeio, escapada ou momento de lazer fora da rotina. Traz alívio, renovação e a chance de espairecer.</div>
+    </div>
+    <div class="card" data-search data-name="O Passatempo sibilla oracle lo scarabeo" data-sibilla-name="O Passatempo">
+      <div class="card-header"><span class="card-num">34</span><span class="card-name">O Passatempo</span></div>
+      <div class="card-keywords"><span class="tag">Prazer</span><span class="tag">Diversão</span><span class="tag">Lazer</span></div>
+      <div class="card-body"><strong>Significado:</strong> Momentos agradáveis, diversão e prazer. Convite a cuidar da própria alegria.</div>
+    </div>
+    <div class="card" data-search data-name="A Briga sibilla oracle lo scarabeo" data-sibilla-name="A Briga">
+      <div class="card-header"><span class="card-num">35</span><span class="card-name">A Briga</span></div>
+      <div class="card-keywords"><span class="tag">Discussão</span><span class="tag">Desavença</span><span class="tag">Atrito</span></div>
+      <div class="card-body"><strong>Significado:</strong> Desentendimento, rixa ou atrito aberto. Observe o que está por trás da discussão antes de reagir.</div>
+    </div>
+    <div class="card" data-search data-name="O Atraso sibilla oracle lo scarabeo" data-sibilla-name="O Atraso">
+      <div class="card-header"><span class="card-num">36</span><span class="card-name">O Atraso</span></div>
+      <div class="card-keywords"><span class="tag">Demora</span><span class="tag">Adiamento</span><span class="tag">Lentidão</span></div>
+      <div class="card-body"><strong>Significado:</strong> As coisas demoram mais do que o esperado: adiamentos e burocracia. Nem sempre é ruim, às vezes o atraso protege.</div>
+    </div>
+    <div class="card" data-search data-name="O Aposentado sibilla oracle lo scarabeo" data-sibilla-name="O Aposentado">
+      <div class="card-header"><span class="card-num">37</span><span class="card-name">O Aposentado</span></div>
+      <div class="card-keywords"><span class="tag">Experiência</span><span class="tag">Descanso</span><span class="tag">Idade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Pessoa mais velha, experiência acumulada ou fase de desacelerar. Pode indicar sabedoria, ou estagnação.</div>
+    </div>
+    <div class="card" data-search data-name="A Reconciliação sibilla oracle lo scarabeo" data-sibilla-name="A Reconciliação">
+      <div class="card-header"><span class="card-num">38</span><span class="card-name">A Reconciliação</span></div>
+      <div class="card-keywords"><span class="tag">Paz</span><span class="tag">Reencontro</span><span class="tag">Perdão</span></div>
+      <div class="card-body"><strong>Significado:</strong> Fazer as pazes, retomar contato, superar uma mágoa. Indica reaproximação possível se houver abertura dos dois lados.</div>
+    </div>
+    <div class="card" data-search data-name="A Revelação Importante sibilla oracle lo scarabeo" data-sibilla-name="A Revelação Importante">
+      <div class="card-header"><span class="card-num">39</span><span class="card-name">A Revelação Importante</span></div>
+      <div class="card-keywords"><span class="tag">Verdade</span><span class="tag">Descoberta</span><span class="tag">Segredo revelado</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo importante vem à tona. A carta ao lado diz se a descoberta alivia ou pesa.</div>
+    </div>
+    <div class="card" data-search data-name="O Sucesso sibilla oracle lo scarabeo" data-sibilla-name="O Sucesso">
+      <div class="card-header"><span class="card-num">40</span><span class="card-name">O Sucesso</span></div>
+      <div class="card-keywords"><span class="tag">Êxito</span><span class="tag">Reconhecimento</span><span class="tag">Conquista</span></div>
+      <div class="card-body"><strong>Significado:</strong> Resultado favorável, conquista e reconhecimento. Esforço que dá frutos.</div>
+    </div>
+    <div class="card" data-search data-name="A Surpresa sibilla oracle lo scarabeo" data-sibilla-name="A Surpresa">
+      <div class="card-header"><span class="card-num">41</span><span class="card-name">A Surpresa</span></div>
+      <div class="card-keywords"><span class="tag">Imprevisto</span><span class="tag">Novidade</span><span class="tag">Inesperado</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo inesperado, bom ou ruim conforme as vizinhas. Prepare-se para sair do roteiro.</div>
+    </div>
+    <div class="card" data-search data-name="A Ternura sibilla oracle lo scarabeo" data-sibilla-name="A Ternura">
+      <div class="card-header"><span class="card-num">42</span><span class="card-name">A Ternura</span></div>
+      <div class="card-keywords"><span class="tag">Carinho</span><span class="tag">Delicadeza</span><span class="tag">Afeto</span></div>
+      <div class="card-body"><strong>Significado:</strong> Afeto suave, carinho e cuidado entre pessoas. Um toque de delicadeza que acalma e cura.</div>
+    </div>
+    <div class="card" data-search data-name="A Mulher Loira sibilla oracle lo scarabeo" data-sibilla-name="A Mulher Loira">
+      <div class="card-header"><span class="card-num">43</span><span class="card-name">A Mulher Loira</span></div>
+      <div class="card-keywords"><span class="tag">Figura feminina</span><span class="tag">Cabelos claros</span><span class="tag">Terceira pessoa</span></div>
+      <div class="card-body"><strong>Significado:</strong> Mulher de cabelos claros, ou uma figura feminina importante na história. O tom da leitura vem das cartas vizinhas.</div>
+    </div>
+    <div class="card" data-search data-name="A Viúva sibilla oracle lo scarabeo" data-sibilla-name="A Viúva">
+      <div class="card-header"><span class="card-num">44</span><span class="card-name">A Viúva</span></div>
+      <div class="card-keywords"><span class="tag">Solidão</span><span class="tag">Luto</span><span class="tag">Independência</span></div>
+      <div class="card-body"><strong>Significado:</strong> Solidão, perda ou fase de recomeçar sozinha. Também aponta independência e uma mulher que seguiu em frente.</div>
+    </div>
+    <div class="card" data-search data-name="Algum Dinheiro sibilla oracle lo scarabeo" data-sibilla-name="Algum Dinheiro">
+      <div class="card-header"><span class="card-num">45</span><span class="card-name">Algum Dinheiro</span></div>
+      <div class="card-keywords"><span class="tag">Ganho modesto</span><span class="tag">Sustento</span><span class="tag">Entrada</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um dinheiro que chega, sem ser fortuna. Garante o necessário e alivia o orçamento.</div>
+    </div>
+    <div class="card" data-search data-name="A Carta sibilla oracle lo scarabeo" data-sibilla-name="A Carta">
+      <div class="card-header"><span class="card-num">46</span><span class="card-name">A Carta</span></div>
+      <div class="card-keywords"><span class="tag">Mensagem</span><span class="tag">Notícia</span><span class="tag">Documento</span></div>
+      <div class="card-body"><strong>Significado:</strong> Mensagem, notícia ou documento a caminho. Quem envia e o tom dependem das cartas vizinhas.</div>
+    </div>
+    <div class="card" data-search data-name="O Jovem Moreno sibilla oracle lo scarabeo" data-sibilla-name="O Jovem Moreno">
+      <div class="card-header"><span class="card-num">47</span><span class="card-name">O Jovem Moreno</span></div>
+      <div class="card-keywords"><span class="tag">Figura masculina</span><span class="tag">Jovem</span><span class="tag">Cabelos escuros</span></div>
+      <div class="card-body"><strong>Significado:</strong> Rapaz de cabelos escuros, ou um jovem importante na situação. Costuma aparecer em temas de amor e novidade.</div>
+    </div>
+    <div class="card" data-search data-name="A Mulher Morena sibilla oracle lo scarabeo" data-sibilla-name="A Mulher Morena">
+      <div class="card-header"><span class="card-num">48</span><span class="card-name">A Mulher Morena</span></div>
+      <div class="card-keywords"><span class="tag">Figura feminina</span><span class="tag">Cabelos escuros</span><span class="tag">Terceira pessoa</span></div>
+      <div class="card-body"><strong>Significado:</strong> Mulher de cabelos escuros, ou uma figura feminina marcante. Observe as cartas ao lado para entender o papel dela.</div>
+    </div>
+    <div class="card" data-search data-name="O Ladrão sibilla oracle lo scarabeo" data-sibilla-name="O Ladrão">
+      <div class="card-header"><span class="card-num">49</span><span class="card-name">O Ladrão</span></div>
+      <div class="card-keywords"><span class="tag">Roubo</span><span class="tag">Perda</span><span class="tag">Traição</span></div>
+      <div class="card-body"><strong>Significado:</strong> Perda causada por terceiros: roubo, golpe ou alguém que tira algo seu. Pede proteção de bens, tempo e confiança.</div>
+    </div>
+    <div class="card" data-search data-name="A Viagem sibilla oracle lo scarabeo" data-sibilla-name="A Viagem">
+      <div class="card-header"><span class="card-num">50</span><span class="card-name">A Viagem</span></div>
+      <div class="card-keywords"><span class="tag">Deslocamento</span><span class="tag">Mudança</span><span class="tag">Caminho</span></div>
+      <div class="card-body"><strong>Significado:</strong> Deslocamento, viagem ou mudança de fase. Movimento rumo a novas paisagens.</div>
+    </div>
+    <div class="card" data-search data-name="A Visita sibilla oracle lo scarabeo" data-sibilla-name="A Visita">
+      <div class="card-header"><span class="card-num">51</span><span class="card-name">A Visita</span></div>
+      <div class="card-keywords"><span class="tag">Chegada</span><span class="tag">Encontro</span><span class="tag">Novidade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Alguém chega, ou você vai ao encontro de alguém. A visita pode trazer alegria ou obrigação, conforme as vizinhas.</div>
+    </div>
+    <div class="card" data-search data-name="A Vitória sibilla oracle lo scarabeo" data-sibilla-name="A Vitória">
+      <div class="card-header"><span class="card-num">52</span><span class="card-name">A Vitória</span></div>
+      <div class="card-keywords"><span class="tag">Triunfo</span><span class="tag">Superação</span><span class="tag">Resultado</span></div>
+      <div class="card-body"><strong>Significado:</strong> Superação e triunfo sobre uma dificuldade. A carta de fechamento: esforço recompensado.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIBILLA — COMBINAÇÕES -->
+<section id="combinacoes-sibilla" data-deck="sibilla">
+  <h2 class="section-title"><span class="icon">🔗</span> Como Ler em Pares no Sibilla</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.2rem; font-style:italic;">Assim como no baralho cigano, as cartas Sibilla ganham precisão quando lidas juntas. Funcione como uma frase curta: uma carta é o assunto e a vizinha diz como ele se apresenta.</p>
+
+  <div class="info-block" data-search>
+    <h3>A lógica da leitura em pares</h3>
+    <p>Pegue duas cartas vizinhas e pergunte: "qual é o assunto e o que o descreve?". <strong>A Carta + A Viagem</strong> pode falar de uma notícia que chega de longe; <strong>A Viagem + A Carta</strong> pode falar de alguém que viaja e manda notícias. Cartas de pessoas (O Consulente, A Consulente, A Mulher Loira, A Mulher Morena, O Jovem Moreno) funcionam como personagens: as cartas ao redor mostram o que cada um vive ou faz na situação.</p>
+  </div>
+
+  <div class="arcana-label">Exemplos de leitura em pares (regras práticas, não uma tabela oficial)</div>
+  <div class="combo-list" data-search>
+    <div class="combo-item"><div class="combo-cards">O Amor + O Casamento</div><div class="combo-meaning">Sentimento que caminha para compromisso formal: relação séria, união ou noivado.</div></div>
+    <div class="combo-item"><div class="combo-cards">A Carta + A Viagem</div><div class="combo-meaning">Notícia ou documento vindo de longe, ou comunicação ligada a deslocamento.</div></div>
+    <div class="combo-item"><div class="combo-cards">O Ladrão + Muito Dinheiro</div><div class="combo-meaning">Atenção à segurança de ganhos e bens; algo valioso corre risco por descuido ou confiança mal colocada.</div></div>
+    <div class="combo-item"><div class="combo-cards">O Inimigo + A Reconciliação</div><div class="combo-meaning">Um conflito que pode ser desarmado: paz possível com alguém que estava em oposição.</div></div>
+    <div class="combo-item"><div class="combo-cards">A Tagarelice + A Revelação Importante</div><div class="combo-meaning">Fofoca que acaba trazendo uma verdade à tona; observe quem fala e com que intenção.</div></div>
+    <div class="combo-item"><div class="combo-cards">A Esperança + O Sucesso</div><div class="combo-meaning">Desejo com boa chance de se realizar; esforço sendo reconhecido.</div></div>
+    <div class="combo-item"><div class="combo-cards">A Espera + O Atraso</div><div class="combo-meaning">Demora que testa a paciência; vale rever prazos antes de insistir.</div></div>
+    <div class="combo-item"><div class="combo-cards">A Casa da Cidade + Os Presentes</div><div class="combo-meaning">Boa notícia ligada ao lar: ajuda, agrado ou melhoria dentro de casa ou da família.</div></div>
+  </div>
+</section>
+
+<!-- SIBILLA — TIRAGENS -->
+<section id="tiragens-sibilla" data-deck="sibilla">
+  <h2 class="section-title"><span class="icon">🃏</span> Formas de Tirar no Sibilla</h2>
+
+  <div class="spread-grid" data-search>
+
+    <div class="spread-card">
+      <h3>1 Carta — Resposta Direta</h3>
+      <div class="spread-visual"><div class="sv-pos">1</div></div>
+      <p style="font-size:0.88rem; color:var(--text-dim);">Uma pergunta objetiva, uma carta. Funciona bem como conselho do dia ou resposta rápida; como as cartas Sibilla são diretas, leia o título e a imagem juntos.</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>3 Cartas — Linha do Tempo</h3>
+      <div class="spread-visual">
+        <div class="sv-pos">1</div><div class="sv-pos">2</div><div class="sv-pos">3</div>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-dim);">Leia as três como uma frase: a primeira traz o contexto, a do meio o assunto central e a terceira a direção que a situação toma. Depois leia em pares vizinhos (1+2, 2+3).</p>
+    </div>
+
+    <div class="spread-card">
+      <h3>5 Cartas — Cruz</h3>
+      <div class="spread-visual">
+        <div class="sv-pos">1</div><div class="sv-pos">2</div><div class="sv-pos">3</div><div class="sv-pos">4</div><div class="sv-pos">5</div>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-dim);">Uma sugestão de leitura: a carta 3 é o assunto central; as cartas 1 e 5 mostram o que veio antes e o que vem depois; as cartas 2 e 4 mostram o que ajuda e o que atrapalha. Adapte as posições ao seu estilo.</p>
+    </div>
+
+  </div>
+</section>
+
 <section id="consagracao">
   <h2 class="section-title"><span class="icon">✨</span> Consagração do Novo Baralho</h2>
 
@@ -2560,7 +2892,80 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     card.insertBefore(badge, card.firstChild);
   });
 
-  // ABAS DE BARALHO (Tarot / Baralho Cigano)
+  // IMAGENS DAS CARTAS DO SIBILLA (arquivos na pasta sibilla/; sem arquivo, o card fica só com texto)
+  const SIBILLA_IMAGES_GUIA = {
+    'O Amor': 'sibilla/01_O_Amor.jpg',
+    'O Amigo Sincero': 'sibilla/02_O_Amigo_Sincero.jpg',
+    'A Ausência': 'sibilla/03_A_Ausencia.jpg',
+    'A Espera': 'sibilla/04_A_Espera.jpg',
+    'Muito Dinheiro': 'sibilla/05_Muito_Dinheiro.jpg',
+    'O Bilhete Doce': 'sibilla/06_O_Bilhete_Doce.jpg',
+    'A Contrariedade': 'sibilla/07_A_Contrariedade.jpg',
+    'A Infantilidade': 'sibilla/08_A_Infantilidade.jpg',
+    'A Tagarelice': 'sibilla/09_A_Tagarelice.jpg',
+    'A Raiva': 'sibilla/10_A_Raiva.jpg',
+    'A Esperança': 'sibilla/11_A_Esperanca.jpg',
+    'O Inimigo': 'sibilla/12_O_Inimigo.jpg',
+    'O Impedimento': 'sibilla/13_O_Impedimento.jpg',
+    'O Bajulador': 'sibilla/14_O_Bajulador.jpg',
+    'A Fidelidade': 'sibilla/15_A_Fidelidade.jpg',
+    'O Advogado': 'sibilla/16_O_Advogado.jpg',
+    'A Inconstância': 'sibilla/17_A_Inconstancia.jpg',
+    'Os Jogadores': 'sibilla/18_Os_Jogadores.jpg',
+    'O Consulente': 'sibilla/19_O_Consulente.jpg',
+    'A Consulente': 'sibilla/20_A_Consulente.jpg',
+    'O Susto': 'sibilla/21_O_Susto.jpg',
+    'A Mulher Zangada': 'sibilla/22_A_Mulher_Zangada.jpg',
+    'O Soldado': 'sibilla/23_O_Soldado.jpg',
+    'A Casa da Cidade': 'sibilla/24_A_Casa_da_Cidade.jpg',
+    'A Casa de Campo': 'sibilla/25_A_Casa_de_Campo.jpg',
+    'O Casamento': 'sibilla/26_O_Casamento.jpg',
+    'A Fraqueza': 'sibilla/27_A_Fraqueza.jpg',
+    'O Pensamento': 'sibilla/28_O_Pensamento.jpg',
+    'Os Presentes': 'sibilla/29_Os_Presentes.jpg',
+    'A Perda de Dinheiro': 'sibilla/30_A_Perda_de_Dinheiro.jpg',
+    'O Protetor': 'sibilla/31_O_Protetor.jpg',
+    'A Armadilha': 'sibilla/32_A_Armadilha.jpg',
+    'A Viagem ao Campo': 'sibilla/33_A_Viagem_ao_Campo.jpg',
+    'O Passatempo': 'sibilla/34_O_Passatempo.jpg',
+    'A Briga': 'sibilla/35_A_Briga.jpg',
+    'O Atraso': 'sibilla/36_O_Atraso.jpg',
+    'O Aposentado': 'sibilla/37_O_Aposentado.jpg',
+    'A Reconciliação': 'sibilla/38_A_Reconciliacao.jpg',
+    'A Revelação Importante': 'sibilla/39_A_Revelacao_Importante.jpg',
+    'O Sucesso': 'sibilla/40_O_Sucesso.jpg',
+    'A Surpresa': 'sibilla/41_A_Surpresa.jpg',
+    'A Ternura': 'sibilla/42_A_Ternura.jpg',
+    'A Mulher Loira': 'sibilla/43_A_Mulher_Loira.jpg',
+    'A Viúva': 'sibilla/44_A_Viuva.jpg',
+    'Algum Dinheiro': 'sibilla/45_Algum_Dinheiro.jpg',
+    'A Carta': 'sibilla/46_A_Carta.jpg',
+    'O Jovem Moreno': 'sibilla/47_O_Jovem_Moreno.jpg',
+    'A Mulher Morena': 'sibilla/48_A_Mulher_Morena.jpg',
+    'O Ladrão': 'sibilla/49_O_Ladrao.jpg',
+    'A Viagem': 'sibilla/50_A_Viagem.jpg',
+    'A Visita': 'sibilla/51_A_Visita.jpg',
+    'A Vitória': 'sibilla/52_A_Vitoria.jpg',
+  };
+
+  // CARDS DO GUIA SIBILLA: usar foto da carta quando o arquivo existir
+  document.querySelectorAll('#sibilla-grid .card[data-search]').forEach(card => {
+    const name = card.getAttribute('data-sibilla-name');
+    const url  = SIBILLA_IMAGES_GUIA[name];
+    if (!url) return;
+    const badge = document.createElement('div');
+    badge.className = 'card-icon-badge';
+    badge.style.cssText = 'padding:0;overflow:hidden;background:none;border:none;height:150px;';
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = name;
+    img.style.cssText = 'width:100%;height:150px;object-fit:cover;border-radius:6px;';
+    img.onerror = () => badge.remove();
+    badge.appendChild(img);
+    card.insertBefore(badge, card.firstChild);
+  });
+
+  // ABAS DE BARALHO (Tarot / Baralho Cigano / Sibilla)
   (function () {
     const tabs = document.querySelectorAll('.deck-tab');
     const deckSections = document.querySelectorAll('section[data-deck]');
@@ -2589,7 +2994,7 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     });
 
     const saved = localStorage.getItem('tarotSiteDeck');
-    setDeck(saved === 'cigano' ? 'cigano' : 'tarot');
+    setDeck(saved === 'cigano' || saved === 'sibilla' ? saved : 'tarot');
   })();
 </script>
 </body>

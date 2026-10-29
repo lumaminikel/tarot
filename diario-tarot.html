@@ -572,7 +572,7 @@
 
   /* ── TAGS DE TEMA ── */
   .theme-selector { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .4rem; }
-  .deck-tabs { display: flex; justify-content: center; gap: .6rem; padding: 0; margin-bottom: 1.6rem; }
+  .deck-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; padding: 0; margin-bottom: 1.6rem; }
   .deck-tab {
     font-family: 'Cinzel', serif; font-size: .82rem; letter-spacing: .04em;
     color: var(--text); background: var(--bg3); border: 1px solid var(--border); border-bottom: none;
@@ -1284,6 +1284,7 @@
       <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
         <button class="theme-btn admin-deck-btn active" data-deck="tarot" onclick="setAdminDeck('tarot')">🔮 Tarot</button>
         <button class="theme-btn admin-deck-btn" data-deck="cigano" onclick="setAdminDeck('cigano')">🎴 Cigano</button>
+        <button class="theme-btn admin-deck-btn" data-deck="sibilla" onclick="setAdminDeck('sibilla')">🕯️ Sibilla</button>
       </div>
       <div class="card-search-wrap">
         <input type="text" id="card-search-input" placeholder="Buscar carta... ex: O Sol" autocomplete="off">
@@ -1328,6 +1329,7 @@
       <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
         <button class="theme-btn admin-combo-deck-btn active" data-deck="tarot" onclick="setAdminComboDeck('tarot')">🔮 Tarot</button>
         <button class="theme-btn admin-combo-deck-btn" data-deck="cigano" onclick="setAdminComboDeck('cigano')">🎴 Cigano</button>
+        <button class="theme-btn admin-combo-deck-btn" data-deck="sibilla" onclick="setAdminComboDeck('sibilla')">🕯️ Sibilla</button>
       </div>
       <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.7rem;font-style:italic">Digite as cartas abaixo — a lista já filtra pra mostrar só as combinações que envolvem essas cartas. Clique numa combinação da lista pra editá-la.</p>
       <div class="combo-cards-input-wrap" id="combo-cards-inputs">
@@ -1489,6 +1491,7 @@
   <div class="deck-tabs" id="deck-selector">
     <button type="button" class="theme-btn deck-tab active" data-formdeck="tarot" onclick="selectFormDeck(this)">🔮 Tarot</button>
     <button type="button" class="theme-btn deck-tab" data-formdeck="cigano" onclick="selectFormDeck(this)">🍀 Baralho Cigano</button>
+    <button type="button" class="theme-btn deck-tab" data-formdeck="sibilla" onclick="selectFormDeck(this)">🕯️ Sibilla</button>
   </div>
 
   <div class="stats-bar">
@@ -2363,9 +2366,122 @@ const CIGANO_IMAGES = {
   'A Cruz': 'cigano/36_A_Cruz.jpg',
 };
 
+// ── BARALHO SIBILLA (Sibilla Oracle Cards, 52 cartas) ──
+// As imagens são esperadas na pasta sibilla/ (ajuste os nomes abaixo conforme os seus arquivos);
+// enquanto o arquivo não existir, o app mostra o ícone 🃏 no lugar.
+const SIBILLA_CARDS = {
+  'O Amor': {num:'1', oracle:'sim', keywords:["Amor", "Paixão", "Romance"], meaning:'Sentimento verdadeiro e forte, um amor que nasce ou se fortalece. Em qualquer tema, mostra que o coração está no centro da questão.'},
+  'O Amigo Sincero': {num:'2', oracle:'sim', keywords:["Amizade", "Lealdade", "Apoio"], meaning:'Alguém de confiança que está ao seu lado e fala a verdade com carinho. Aponta apoio genuíno e conselho honesto.'},
+  'A Ausência': {num:'3', oracle:'nao', keywords:["Distância", "Falta", "Separação"], meaning:'Distância física ou emocional; alguém ou algo que faz falta ou ainda não chegou. Pode indicar afastamento temporário ou uma lacuna a ser preenchida.'},
+  'A Espera': {num:'4', oracle:'talvez', keywords:["Paciência", "Expectativa", "Tempo"], meaning:'Hora de aguardar: a resposta ainda não veio e forçar não adianta. Pede paciência e confiança no tempo certo das coisas.'},
+  'Muito Dinheiro': {num:'5', oracle:'sim', keywords:["Abundância", "Ganho", "Prosperidade"], meaning:'Grande entrada financeira ou fase de fartura. Indica ganho significativo; as cartas vizinhas mostram de onde ele vem.'},
+  'O Bilhete Doce': {num:'6', oracle:'sim', keywords:["Declaração", "Carta de amor", "Doçura"], meaning:'Mensagem carinhosa, convite ou declaração; gentileza que chega por palavras. Traz suavidade e romance.'},
+  'A Contrariedade': {num:'7', oracle:'nao', keywords:["Aborrecimento", "Desagrado", "Obstáculo"], meaning:'Algo que contraria seus planos e causa irritação ou desgosto. Um aborrecimento que costuma ser passageiro, mas pede jogo de cintura.'},
+  'A Infantilidade': {num:'8', oracle:'talvez', keywords:["Imaturidade", "Ingenuidade", "Brincadeira"], meaning:'Atitude imatura ou ingênua, sua ou de alguém próximo; também pode apontar leveza e espontaneidade. Pergunta onde falta maturidade, ou onde sobra rigidez.'},
+  'A Tagarelice': {num:'9', oracle:'talvez', keywords:["Fofoca", "Conversa", "Boatos"], meaning:'Muita conversa, comentário e fofoca ao redor. Atenção ao que é dito e a quem escuta: a informação pode circular além do que deveria.'},
+  'A Raiva': {num:'10', oracle:'nao', keywords:["Ira", "Explosão", "Conflito"], meaning:'Irritação forte, discussão ou emoção fora de controle. Aconselha respirar antes de agir para não agravar a situação.'},
+  'A Esperança': {num:'11', oracle:'sim', keywords:["Otimismo", "Fé", "Desejo"], meaning:'Perspectiva positiva e desejo que ainda pode se realizar. Há luz à frente, mas a esperança precisa vir acompanhada de ação.'},
+  'O Inimigo': {num:'12', oracle:'nao', keywords:["Oposição", "Rivalidade", "Cuidado"], meaning:'Alguém ou algo trabalhando contra você, ou uma situação de oposição. Pede atenção redobrada e discrição com seus planos.'},
+  'O Impedimento': {num:'13', oracle:'nao', keywords:["Bloqueio", "Entrave", "Obstáculo"], meaning:'Algo se coloca no caminho e trava o andamento. Mostra que é preciso remover o entrave antes de seguir.'},
+  'O Bajulador': {num:'14', oracle:'nao', keywords:["Falsidade", "Elogio interesseiro", "Manipulação"], meaning:'Alguém que elogia demais por interesse. Cuidado com palavras doces que escondem segundas intenções.'},
+  'A Fidelidade': {num:'15', oracle:'sim', keywords:["Lealdade", "Afeição", "Constância"], meaning:'Lealdade e afeto estáveis; confiança que se confirma. Fala de relações firmes e de pessoas que permanecem.'},
+  'O Advogado': {num:'16', oracle:'talvez', keywords:["Justiça", "Orientação", "Processo"], meaning:'Assuntos legais, contratos ou necessidade de orientação especializada. Também pode ser alguém que defende a sua causa.'},
+  'A Inconstância': {num:'17', oracle:'nao', keywords:["Instabilidade", "Mudança de ideia", "Volubilidade"], meaning:'Falta de firmeza: sentimentos ou decisões que mudam o tempo todo. Evite apostar em quem, ou no que, não se sustenta.'},
+  'Os Jogadores': {num:'18', oracle:'talvez', keywords:["Risco", "Aposta", "Sorte"], meaning:'Risco, jogo e dependência da sorte. Pede cautela com apostas, financeiras ou emocionais, e clareza sobre o que se pode perder.'},
+  'O Consulente': {num:'19', oracle:'talvez', keywords:["Figura masculina", "Quem consulta", "Personagem"], meaning:'Representa o homem que consulta, ou um homem central na situação. As cartas ao redor mostram como ele vive o assunto.'},
+  'A Consulente': {num:'20', oracle:'talvez', keywords:["Figura feminina", "Quem consulta", "Personagem"], meaning:'Representa a mulher que consulta, ou uma mulher central na situação. As cartas ao redor mostram como ela vive o assunto.'},
+  'O Susto': {num:'21', oracle:'nao', keywords:["Medo", "Sobressalto", "Imprevisto"], meaning:'Sobressalto, notícia inesperada ou medo repentino. Costuma ser maior no impacto do que na consequência real.'},
+  'A Mulher Zangada': {num:'22', oracle:'nao', keywords:["Irritação", "Mau humor", "Discussão"], meaning:'Uma mulher irritada, ou um clima de mau humor ao redor. Pode ser você; pede diálogo calmo antes que o atrito cresça.'},
+  'O Soldado': {num:'23', oracle:'talvez', keywords:["Disciplina", "Proteção", "Coragem"], meaning:'Disciplina, ordem e coragem; alguém que protege ou que age de modo rígido. Também pode indicar um militar ou figura de autoridade.'},
+  'A Casa da Cidade': {num:'24', oracle:'sim', keywords:["Lar", "Estabilidade", "Vida urbana"], meaning:'Casa, moradia e vida estruturada na cidade. Fala de segurança, família e assuntos domésticos.'},
+  'A Casa de Campo': {num:'25', oracle:'sim', keywords:["Descanso", "Tranquilidade", "Natureza"], meaning:'Sossego, descanso e vida mais simples. Indica a pausa necessária e ambientes tranquilos.'},
+  'O Casamento': {num:'26', oracle:'sim', keywords:["União", "Compromisso", "Aliança"], meaning:'Compromisso formal, união ou acordo sério. Vale para casamento, mas também para sociedades e parcerias.'},
+  'A Fraqueza': {num:'27', oracle:'nao', keywords:["Vulnerabilidade", "Cansaço", "Desânimo"], meaning:'Momento de fragilidade, física ou emocional. Pede cuidado, descanso e apoio, sem se cobrar além da conta.'},
+  'O Pensamento': {num:'28', oracle:'talvez', keywords:["Reflexão", "Mente", "Lembrança"], meaning:'Alguém está pensando no assunto (ou em você), ou é hora de refletir antes de agir. Ruminar demais também pode paralisar.'},
+  'Os Presentes': {num:'29', oracle:'sim', keywords:["Presente", "Gentileza", "Recompensa"], meaning:'Presente, agrado ou ajuda que chega. Gestos de generosidade e recompensa por esforços anteriores.'},
+  'A Perda de Dinheiro': {num:'30', oracle:'nao', keywords:["Prejuízo", "Gasto", "Descuido"], meaning:'Gasto inesperado, prejuízo ou desperdício. Pede atenção às finanças e às decisões impulsivas.'},
+  'O Protetor': {num:'31', oracle:'sim', keywords:["Proteção", "Amparo", "Influência"], meaning:'Alguém com mais poder ou influência que ampara você; também a sensação de estar protegida. Boa carta para pedir ajuda.'},
+  'A Armadilha': {num:'32', oracle:'nao', keywords:["Cilada", "Engano", "Perigo oculto"], meaning:'Cilada ou situação com algo escondido. Examine promessas boas demais e leia tudo antes de assinar ou aceitar.'},
+  'A Viagem ao Campo': {num:'33', oracle:'sim', keywords:["Passeio", "Leveza", "Descanso"], meaning:'Passeio, escapada ou momento de lazer fora da rotina. Traz alívio, renovação e a chance de espairecer.'},
+  'O Passatempo': {num:'34', oracle:'sim', keywords:["Prazer", "Diversão", "Lazer"], meaning:'Momentos agradáveis, diversão e prazer. Convite a cuidar da própria alegria.'},
+  'A Briga': {num:'35', oracle:'nao', keywords:["Discussão", "Desavença", "Atrito"], meaning:'Desentendimento, rixa ou atrito aberto. Observe o que está por trás da discussão antes de reagir.'},
+  'O Atraso': {num:'36', oracle:'nao', keywords:["Demora", "Adiamento", "Lentidão"], meaning:'As coisas demoram mais do que o esperado: adiamentos e burocracia. Nem sempre é ruim, às vezes o atraso protege.'},
+  'O Aposentado': {num:'37', oracle:'talvez', keywords:["Experiência", "Descanso", "Idade"], meaning:'Pessoa mais velha, experiência acumulada ou fase de desacelerar. Pode indicar sabedoria, ou estagnação.'},
+  'A Reconciliação': {num:'38', oracle:'sim', keywords:["Paz", "Reencontro", "Perdão"], meaning:'Fazer as pazes, retomar contato, superar uma mágoa. Indica reaproximação possível se houver abertura dos dois lados.'},
+  'A Revelação Importante': {num:'39', oracle:'talvez', keywords:["Verdade", "Descoberta", "Segredo revelado"], meaning:'Algo importante vem à tona. A carta ao lado diz se a descoberta alivia ou pesa.'},
+  'O Sucesso': {num:'40', oracle:'sim', keywords:["Êxito", "Reconhecimento", "Conquista"], meaning:'Resultado favorável, conquista e reconhecimento. Esforço que dá frutos.'},
+  'A Surpresa': {num:'41', oracle:'talvez', keywords:["Imprevisto", "Novidade", "Inesperado"], meaning:'Algo inesperado, bom ou ruim conforme as vizinhas. Prepare-se para sair do roteiro.'},
+  'A Ternura': {num:'42', oracle:'sim', keywords:["Carinho", "Delicadeza", "Afeto"], meaning:'Afeto suave, carinho e cuidado entre pessoas. Um toque de delicadeza que acalma e cura.'},
+  'A Mulher Loira': {num:'43', oracle:'talvez', keywords:["Figura feminina", "Cabelos claros", "Terceira pessoa"], meaning:'Mulher de cabelos claros, ou uma figura feminina importante na história. O tom da leitura vem das cartas vizinhas.'},
+  'A Viúva': {num:'44', oracle:'talvez', keywords:["Solidão", "Luto", "Independência"], meaning:'Solidão, perda ou fase de recomeçar sozinha. Também aponta independência e uma mulher que seguiu em frente.'},
+  'Algum Dinheiro': {num:'45', oracle:'sim', keywords:["Ganho modesto", "Sustento", "Entrada"], meaning:'Um dinheiro que chega, sem ser fortuna. Garante o necessário e alivia o orçamento.'},
+  'A Carta': {num:'46', oracle:'talvez', keywords:["Mensagem", "Notícia", "Documento"], meaning:'Mensagem, notícia ou documento a caminho. Quem envia e o tom dependem das cartas vizinhas.'},
+  'O Jovem Moreno': {num:'47', oracle:'talvez', keywords:["Figura masculina", "Jovem", "Cabelos escuros"], meaning:'Rapaz de cabelos escuros, ou um jovem importante na situação. Costuma aparecer em temas de amor e novidade.'},
+  'A Mulher Morena': {num:'48', oracle:'talvez', keywords:["Figura feminina", "Cabelos escuros", "Terceira pessoa"], meaning:'Mulher de cabelos escuros, ou uma figura feminina marcante. Observe as cartas ao lado para entender o papel dela.'},
+  'O Ladrão': {num:'49', oracle:'nao', keywords:["Roubo", "Perda", "Traição"], meaning:'Perda causada por terceiros: roubo, golpe ou alguém que tira algo seu. Pede proteção de bens, tempo e confiança.'},
+  'A Viagem': {num:'50', oracle:'sim', keywords:["Deslocamento", "Mudança", "Caminho"], meaning:'Deslocamento, viagem ou mudança de fase. Movimento rumo a novas paisagens.'},
+  'A Visita': {num:'51', oracle:'talvez', keywords:["Chegada", "Encontro", "Novidade"], meaning:'Alguém chega, ou você vai ao encontro de alguém. A visita pode trazer alegria ou obrigação, conforme as vizinhas.'},
+  'A Vitória': {num:'52', oracle:'sim', keywords:["Triunfo", "Superação", "Resultado"], meaning:'Superação e triunfo sobre uma dificuldade. A carta de fechamento: esforço recompensado.'},
+};
+
+const SIBILLA_IMAGES = {
+  'O Amor': 'sibilla/01_O_Amor.jpg',
+  'O Amigo Sincero': 'sibilla/02_O_Amigo_Sincero.jpg',
+  'A Ausência': 'sibilla/03_A_Ausencia.jpg',
+  'A Espera': 'sibilla/04_A_Espera.jpg',
+  'Muito Dinheiro': 'sibilla/05_Muito_Dinheiro.jpg',
+  'O Bilhete Doce': 'sibilla/06_O_Bilhete_Doce.jpg',
+  'A Contrariedade': 'sibilla/07_A_Contrariedade.jpg',
+  'A Infantilidade': 'sibilla/08_A_Infantilidade.jpg',
+  'A Tagarelice': 'sibilla/09_A_Tagarelice.jpg',
+  'A Raiva': 'sibilla/10_A_Raiva.jpg',
+  'A Esperança': 'sibilla/11_A_Esperanca.jpg',
+  'O Inimigo': 'sibilla/12_O_Inimigo.jpg',
+  'O Impedimento': 'sibilla/13_O_Impedimento.jpg',
+  'O Bajulador': 'sibilla/14_O_Bajulador.jpg',
+  'A Fidelidade': 'sibilla/15_A_Fidelidade.jpg',
+  'O Advogado': 'sibilla/16_O_Advogado.jpg',
+  'A Inconstância': 'sibilla/17_A_Inconstancia.jpg',
+  'Os Jogadores': 'sibilla/18_Os_Jogadores.jpg',
+  'O Consulente': 'sibilla/19_O_Consulente.jpg',
+  'A Consulente': 'sibilla/20_A_Consulente.jpg',
+  'O Susto': 'sibilla/21_O_Susto.jpg',
+  'A Mulher Zangada': 'sibilla/22_A_Mulher_Zangada.jpg',
+  'O Soldado': 'sibilla/23_O_Soldado.jpg',
+  'A Casa da Cidade': 'sibilla/24_A_Casa_da_Cidade.jpg',
+  'A Casa de Campo': 'sibilla/25_A_Casa_de_Campo.jpg',
+  'O Casamento': 'sibilla/26_O_Casamento.jpg',
+  'A Fraqueza': 'sibilla/27_A_Fraqueza.jpg',
+  'O Pensamento': 'sibilla/28_O_Pensamento.jpg',
+  'Os Presentes': 'sibilla/29_Os_Presentes.jpg',
+  'A Perda de Dinheiro': 'sibilla/30_A_Perda_de_Dinheiro.jpg',
+  'O Protetor': 'sibilla/31_O_Protetor.jpg',
+  'A Armadilha': 'sibilla/32_A_Armadilha.jpg',
+  'A Viagem ao Campo': 'sibilla/33_A_Viagem_ao_Campo.jpg',
+  'O Passatempo': 'sibilla/34_O_Passatempo.jpg',
+  'A Briga': 'sibilla/35_A_Briga.jpg',
+  'O Atraso': 'sibilla/36_O_Atraso.jpg',
+  'O Aposentado': 'sibilla/37_O_Aposentado.jpg',
+  'A Reconciliação': 'sibilla/38_A_Reconciliacao.jpg',
+  'A Revelação Importante': 'sibilla/39_A_Revelacao_Importante.jpg',
+  'O Sucesso': 'sibilla/40_O_Sucesso.jpg',
+  'A Surpresa': 'sibilla/41_A_Surpresa.jpg',
+  'A Ternura': 'sibilla/42_A_Ternura.jpg',
+  'A Mulher Loira': 'sibilla/43_A_Mulher_Loira.jpg',
+  'A Viúva': 'sibilla/44_A_Viuva.jpg',
+  'Algum Dinheiro': 'sibilla/45_Algum_Dinheiro.jpg',
+  'A Carta': 'sibilla/46_A_Carta.jpg',
+  'O Jovem Moreno': 'sibilla/47_O_Jovem_Moreno.jpg',
+  'A Mulher Morena': 'sibilla/48_A_Mulher_Morena.jpg',
+  'O Ladrão': 'sibilla/49_O_Ladrao.jpg',
+  'A Viagem': 'sibilla/50_A_Viagem.jpg',
+  'A Visita': 'sibilla/51_A_Visita.jpg',
+  'A Vitória': 'sibilla/52_A_Vitoria.jpg',
+};
+
 let formDeck = 'tarot';
-function cardsDataFor(deck) { return deck === 'cigano' ? CIGANO_CARDS : TAROT_CARDS; }
-function cardImagesFor(deck) { return deck === 'cigano' ? CIGANO_IMAGES : CARD_IMAGES; }
+function cardsDataFor(deck) { return deck === 'cigano' ? CIGANO_CARDS : deck === 'sibilla' ? SIBILLA_CARDS : TAROT_CARDS; }
+function cardImagesFor(deck) { return deck === 'cigano' ? CIGANO_IMAGES : deck === 'sibilla' ? SIBILLA_IMAGES : CARD_IMAGES; }
 
 // injeta luz, sombra e meme em cada carta
 Object.entries(CARD_EXTRAS).forEach(([name, extra]) => {
@@ -2379,6 +2495,7 @@ Object.entries(CARD_EXTRAS).forEach(([name, extra]) => {
 const ADMIN_EMAIL = 'lumaminikeloliveira@gmail.com';
 const CONTENT_CACHE_KEY = 'tarotContentOverridesCache';
 let CIGANO_COMBINATIONS = []; // combinações do baralho cigano (só admin por enquanto)
+let SIBILLA_COMBINATIONS = []; // combinações do baralho Sibilla (só admin por enquanto)
 
 function applyCardOverride(deck, name, fields) {
   const store = cardsDataFor(deck);
@@ -2390,6 +2507,7 @@ function applyContentOverridesObj(data) {
   if (!data) return;
   if (data.tarotCards) Object.entries(data.tarotCards).forEach(([name, fields]) => applyCardOverride('tarot', name, fields));
   if (data.ciganoCards) Object.entries(data.ciganoCards).forEach(([name, fields]) => applyCardOverride('cigano', name, fields));
+  if (data.sibillaCards) Object.entries(data.sibillaCards).forEach(([name, fields]) => applyCardOverride('sibilla', name, fields));
   if (Array.isArray(data.combinations) && data.combinations.length) {
     COMBINATIONS.length = 0;
     data.combinations.forEach(c => COMBINATIONS.push(c));
@@ -2397,6 +2515,10 @@ function applyContentOverridesObj(data) {
   if (Array.isArray(data.ciganoCombinations)) {
     CIGANO_COMBINATIONS.length = 0;
     data.ciganoCombinations.forEach(c => CIGANO_COMBINATIONS.push(c));
+  }
+  if (Array.isArray(data.sibillaCombinations)) {
+    SIBILLA_COMBINATIONS.length = 0;
+    data.sibillaCombinations.forEach(c => SIBILLA_COMBINATIONS.push(c));
   }
 }
 
@@ -2419,6 +2541,7 @@ async function saveContentOverrides(partial) {
     const merged = { ...current, ...partial };
     if (partial.tarotCards) merged.tarotCards = { ...(current.tarotCards||{}), ...partial.tarotCards };
     if (partial.ciganoCards) merged.ciganoCards = { ...(current.ciganoCards||{}), ...partial.ciganoCards };
+    if (partial.sibillaCards) merged.sibillaCards = { ...(current.sibillaCards||{}), ...partial.sibillaCards };
     localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(merged));
   } catch(e) { /* ignora erro de cache */ }
 }
@@ -2545,7 +2668,7 @@ window.selectFormDeck = function(btn) {
   bottomCard = null;
   if (typeof renderBottomCardPreview === 'function') renderBottomCardPreview();
   renderTags();
-  tagInput.placeholder = formDeck === 'cigano' ? 'Digite para buscar carta cigana...' : 'Digite para buscar carta...';
+  tagInput.placeholder = formDeck === 'cigano' ? 'Digite para buscar carta cigana...' : formDeck === 'sibilla' ? 'Digite para buscar carta Sibilla...' : 'Digite para buscar carta...';
 };
 
 window.selectSubject = function(btn) {
@@ -2805,7 +2928,8 @@ async function generateAIReading() {
   const deckIsCigano = formDeck === 'cigano';
   const voz_cigano = 'Você é o próprio baralho cigano (André Montovanni) respondendo. Fale diretamente com quem tirou as cartas, como uma amiga próxima e sincera: direta, prática e concreta. Leia as cartas SEMPRE em combinação umas com as outras, nunca isoladamente, e não use vocabulário de tarot.';
   const voz_tarot = 'Você é o próprio tarot respondendo. Fale direto com quem tirou as cartas, como uma amiga sincera, sem enrolação nem drama. Diga o que as cartas mostram de forma simples e honesta — nem exagerando no positivo, nem pesando a mão no negativo — sem forçar narrativa nem tom estratégico/de jogo de poder. Menos interpretação em cima da interpretação, mais o recado direto.';
-  const systemVoice = deckIsCigano ? voz_cigano : voz_tarot;
+  const voz_sibilla = 'Você é o próprio baralho Sibilla (Sibilla Oracle Cards) respondendo. Fale diretamente com quem tirou as cartas, como uma amiga próxima e sincera: direta, prática e do dia a dia, no estilo das cartas Sibilla, que falam de situações concretas (dinheiro, casa, relações, notícias, pessoas). Leia as cartas SEMPRE em combinação umas com as outras, nunca isoladamente, e não use vocabulário de tarot.';
+  const systemVoice = deckIsCigano ? voz_cigano : (formDeck === 'sibilla' ? voz_sibilla : voz_tarot);
   
   const prompt = `${systemVoice}
 
@@ -3843,7 +3967,7 @@ document.getElementById('save-note-btn').addEventListener('click', async ()=>{
     meme:     document.getElementById('admin-meme').value.trim(),
   };
   applyCardOverride(adminSelectedDeck, adminSelectedCardName, fields);
-  const field = adminSelectedDeck === 'cigano' ? 'ciganoCards' : 'tarotCards';
+  const field = adminSelectedDeck === 'cigano' ? 'ciganoCards' : adminSelectedDeck === 'sibilla' ? 'sibillaCards' : 'tarotCards';
   try {
     await saveContentOverrides({ [field]: { [adminSelectedCardName]: fields } });
     showToast('✦ Carta atualizada para todo mundo!');
@@ -3854,7 +3978,7 @@ document.getElementById('save-note-btn').addEventListener('click', async ()=>{
 });
 
 // ── COMBINAÇÕES (globais, com busca progressiva) ──
-function comboListFor(deck) { return deck === 'cigano' ? CIGANO_COMBINATIONS : COMBINATIONS; }
+function comboListFor(deck) { return deck === 'cigano' ? CIGANO_COMBINATIONS : deck === 'sibilla' ? SIBILLA_COMBINATIONS : COMBINATIONS; }
 
 function refreshComboCardNamesList() {
   const dl = document.getElementById('admin-combo-card-names');
@@ -4016,7 +4140,7 @@ window.deleteAdminCombo = async function(idx) {
 };
 
 async function persistCombos() {
-  const field = adminComboDeck === 'cigano' ? 'ciganoCombinations' : 'combinations';
+  const field = adminComboDeck === 'cigano' ? 'ciganoCombinations' : adminComboDeck === 'sibilla' ? 'sibillaCombinations' : 'combinations';
   try {
     await saveContentOverrides({ [field]: comboListFor(adminComboDeck) });
   } catch(e) {
@@ -4221,6 +4345,7 @@ window.showCardPopup = function(name, isInv, deck) {
 
 // ── CONSULTAR CARTA ──
 const CIGANO_CONSULT_GROUP = { label: 'Baralho Cigano', cards: ['O Cavaleiro', 'As Pedras', 'O Navio', 'A Casa', 'A Árvore', 'Os Ventos', 'A Serpente', 'A Morte', 'O Ramalhete', 'A Foice', 'O Chicote', 'Os Pássaros', 'A Criança', 'A Raposa', 'O Urso', 'As Estrelas', 'A Cegonha', 'O Cão', 'A Torre', 'O Jardim', 'A Montanha', 'Os Caminhos', 'Os Ratos', 'O Coração', 'As Alianças', 'Os Livros', 'A Carta', 'O Cigano', 'A Cigana', 'Os Lírios', 'O Sol', 'A Lua', 'A Chave', 'Os Peixes', 'A Âncora', 'A Cruz'] };
+const SIBILLA_CONSULT_GROUP = { label: 'Sibilla', cards: ['O Amor', 'O Amigo Sincero', 'A Ausência', 'A Espera', 'Muito Dinheiro', 'O Bilhete Doce', 'A Contrariedade', 'A Infantilidade', 'A Tagarelice', 'A Raiva', 'A Esperança', 'O Inimigo', 'O Impedimento', 'O Bajulador', 'A Fidelidade', 'O Advogado', 'A Inconstância', 'Os Jogadores', 'O Consulente', 'A Consulente', 'O Susto', 'A Mulher Zangada', 'O Soldado', 'A Casa da Cidade', 'A Casa de Campo', 'O Casamento', 'A Fraqueza', 'O Pensamento', 'Os Presentes', 'A Perda de Dinheiro', 'O Protetor', 'A Armadilha', 'A Viagem ao Campo', 'O Passatempo', 'A Briga', 'O Atraso', 'O Aposentado', 'A Reconciliação', 'A Revelação Importante', 'O Sucesso', 'A Surpresa', 'A Ternura', 'A Mulher Loira', 'A Viúva', 'Algum Dinheiro', 'A Carta', 'O Jovem Moreno', 'A Mulher Morena', 'O Ladrão', 'A Viagem', 'A Visita', 'A Vitória'] };
 
 const CONSULT_GROUPS = [
   { label: 'Arcanos Maiores', cards: ['A Louca','O Mago','A Sacerdotisa','A Imperatriz','O Imperador','O Hierofante','Os Enamorados','O Carro','A Força','O Eremita','Roda da Fortuna','A Justiça','O Enforcado','A Enforcada','A Morte','A Temperança','O Diabo','A Torre','A Estrela','A Lua','O Sol','O Julgamento','O Mundo'] },
@@ -4232,7 +4357,7 @@ const CONSULT_GROUPS = [
 
 function buildConsultList() {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const activeGroups = formDeck === 'cigano' ? [CIGANO_CONSULT_GROUP] : CONSULT_GROUPS;
+  const activeGroups = formDeck === 'cigano' ? [CIGANO_CONSULT_GROUP] : formDeck === 'sibilla' ? [SIBILLA_CONSULT_GROUP] : CONSULT_GROUPS;
   const IMGS = cardImagesFor(formDeck);
   const CARDS = cardsDataFor(formDeck);
   document.getElementById('consult-groups').innerHTML = activeGroups.map(g => `
@@ -4939,7 +5064,7 @@ window.editEntry=function(id){
   document.querySelectorAll('#deck-selector .theme-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.formdeck===formDeck);
   });
-  tagInput.placeholder = formDeck==='cigano' ? 'Digite para buscar carta cigana...' : 'Digite para buscar carta...';
+  tagInput.placeholder = formDeck==='cigano' ? 'Digite para buscar carta cigana...' : formDeck==='sibilla' ? 'Digite para buscar carta Sibilla...' : 'Digite para buscar carta...';
   document.getElementById('f-date').value=e.date;
   document.getElementById('f-analysis').value=e.analysis;
   document.getElementById('f-notes').value=e.notes||'';
@@ -5378,7 +5503,7 @@ function render(){
     const lunar=lunarPhase(e.date);
     const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
     const SUBJECT_BADGE_LABELS={amigo:'👥 Amigo(a)',familiar:'👪 Familiar',outra:'❓ Outra pessoa'};
-    const deckBadge = e.deck==='cigano' ? `<span class="theme-badge" style="background:rgba(37,158,88,.16);border:1px solid #3a8f5a;color:#8fd6a8">🍀 Cigano</span>` : '';
+    const deckBadge = e.deck==='cigano' ? `<span class="theme-badge" style="background:rgba(37,158,88,.16);border:1px solid #3a8f5a;color:#8fd6a8">🍀 Cigano</span>` : e.deck==='sibilla' ? `<span class="theme-badge" style="background:rgba(176,132,60,.16);border:1px solid #b0843c;color:#e6c27a">🕯️ Sibilla</span>` : '';
     const subjectBadge=(e.subject && e.subject!=='mim')?`<span class="theme-badge" style="background:rgba(122,78,184,.18);border:1px solid var(--purple);color:var(--purple-light)">${SUBJECT_BADGE_LABELS[e.subject]||'Outra pessoa'}${e.subjectName?': '+e.subjectName.replace(/</g,'&lt;'):''}</span>`:'';
     html+=`
     <div class="entry" id="entry-${e.id}">
