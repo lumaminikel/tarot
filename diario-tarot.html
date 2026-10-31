@@ -1284,6 +1284,7 @@
       <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
         <button class="theme-btn admin-deck-btn active" data-deck="tarot" onclick="setAdminDeck('tarot')">🔮 Tarot</button>
         <button class="theme-btn admin-deck-btn" data-deck="cigano" onclick="setAdminDeck('cigano')">🎴 Cigano</button>
+        <button class="theme-btn admin-deck-btn" data-deck="latim" onclick="setAdminDeck('latim')">📜 Cigano Latim</button>
         <button class="theme-btn admin-deck-btn" data-deck="sibilla" onclick="setAdminDeck('sibilla')">🕯️ Sibilla</button>
       </div>
       <div class="card-search-wrap">
@@ -1329,6 +1330,7 @@
       <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
         <button class="theme-btn admin-combo-deck-btn active" data-deck="tarot" onclick="setAdminComboDeck('tarot')">🔮 Tarot</button>
         <button class="theme-btn admin-combo-deck-btn" data-deck="cigano" onclick="setAdminComboDeck('cigano')">🎴 Cigano</button>
+        <button class="theme-btn admin-combo-deck-btn" data-deck="latim" onclick="setAdminComboDeck('latim')">📜 Cigano Latim</button>
         <button class="theme-btn admin-combo-deck-btn" data-deck="sibilla" onclick="setAdminComboDeck('sibilla')">🕯️ Sibilla</button>
       </div>
       <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.7rem;font-style:italic">Digite as cartas abaixo — a lista já filtra pra mostrar só as combinações que envolvem essas cartas. Clique numa combinação da lista pra editá-la.</p>
@@ -1491,6 +1493,7 @@
   <div class="deck-tabs" id="deck-selector">
     <button type="button" class="theme-btn deck-tab active" data-formdeck="tarot" onclick="selectFormDeck(this)">🔮 Tarot</button>
     <button type="button" class="theme-btn deck-tab" data-formdeck="cigano" onclick="selectFormDeck(this)">🍀 Baralho Cigano</button>
+    <button type="button" class="theme-btn deck-tab" data-formdeck="latim" onclick="selectFormDeck(this)">📜 Cigano Latim</button>
     <button type="button" class="theme-btn deck-tab" data-formdeck="sibilla" onclick="selectFormDeck(this)">🕯️ Sibilla</button>
   </div>
 
@@ -2479,9 +2482,94 @@ const SIBILLA_IMAGES = {
   'A Vitória': 'sibilla/52_A_Vitoria.jpg',
 };
 
+// ── BARALHO CIGANO LATIM (Petit Lenormand em latim, 39 cartas; imagens em cigano_latim/) ──
+const LATIM_CARDS = {
+  'O Tolo': {num:'0', oracle:'talvez', keywords:["Imprevistos", "Energia coringa", "Sorte e acaso", "Roda da fortuna"], meaning:'Carta extra do seu baralho: a roda e a figura do tolo lembram que a sorte gira e nem tudo está sob controle. Marca um imprevisto ou uma energia coringa na tiragem, algo que foge do roteiro e pode virar o jogo para qualquer lado. O sentido final vem das cartas vizinhas: perto de cartas boas, a reviravolta ajuda; perto de cartas pesadas, pede flexibilidade.'},
+  'O Cavaleiro': {num:'1', oracle:'sim', keywords:["Notícias rápidas", "Movimento", "Chegadas"], meaning:'Uma novidade está a caminho — visita, mensagem ou mudança rápida de cenário. Sempre indica algo se aproximando rápido. Perto de cartas boas, a notícia é boa; perto de cartas pesadas, a chegada traz tensão junto.'},
+  'O Trevo': {num:'2', oracle:'sim', keywords:["Sorte passageira", "Pequenas alegrias", "Oportunidade"], meaning:'Uma sorte pequena e rápida: uma oportunidade que aparece e pede para ser aproveitada logo. Traz leveza e pequenas alegrias, mas não dura para sempre. Perto de cartas boas, a chance se confirma; perto de cartas pesadas, é só uma folga curta no meio da dificuldade.'},
+  'O Navio': {num:'3', oracle:'sim', keywords:["Viagens", "Transições", "Horizontes distantes"], meaning:'Deslocamento, negócio à distância ou algo vindo de longe — física ou emocionalmente. Fala de movimento para fora do território conhecido: uma viagem, um negócio, ou alguém que está se distanciando.'},
+  'A Casa': {num:'4', oracle:'sim', keywords:["Lar", "Família", "Segurança", "Estabilidade"], meaning:'Tudo que é base, raiz, o núcleo familiar ou a sensação de chegar em casa. Representa fundações — pode ser a própria casa, a família ou uma sensação de pertencimento que está sendo construída ou testada.'},
+  'A Árvore': {num:'5', oracle:'talvez', keywords:["Saúde", "Crescimento", "Ancestralidade", "Vitalidade"], meaning:'Crescimento devagar e constante — corpo, saúde ou algo que precisa de tempo para amadurecer. Tudo que envolve a Árvore tem raiz profunda e não se resolve rápido: saúde física, um vínculo antigo, um processo que já vem de longe.'},
+  'As Nuvens': {num:'6', oracle:'nao', keywords:["Dúvidas", "Confusão mental", "Instabilidade passageira"], meaning:'Situação turva e incerta: nuvens que encobrem a visão por um tempo. Indica dúvida, indecisão ou uma fase que ainda não se definiu. O lado positivo é que nuvens passam; a confusão tende a se dissipar quando as cartas vizinhas trazem clareza.'},
+  'A Serpente': {num:'7', oracle:'nao', keywords:["Astúcia", "Rivalidade", "Atração", "Cautela com falsidade"], meaning:'Um caminho torto, uma complicação inesperada ou alguém que não age de frente. A Serpente raramente é boa notícia perto de outra pessoa: sinaliza desvio de rota, terceira pessoa envolvida ou solução que exige rodeios.'},
+  'O Caixão': {num:'8', oracle:'nao', keywords:["Fim de ciclo", "Transformação necessária", "Encerramento"], meaning:'Um fim necessário: não é morte literal, mas o encerramento definitivo de uma fase. Junto de cartas positivas, algo precisa terminar para o novo nascer. Junto de cartas pesadas, aponta perda real e período de luto.'},
+  'As Flores': {num:'9', oracle:'sim', keywords:["Presentes", "Beleza", "Harmonia", "Reconhecimento"], meaning:'Um gesto bonito, um presente, um convite — algo que traz leveza e é bem-vindo. Uma das cartas mais gentis do baralho: geralmente reforça o campo positivo ao redor, suavizando até combinações difíceis.'},
+  'A Foice': {num:'10', oracle:'nao', keywords:["Cortes bruscos", "Decisões rápidas", "Colheita"], meaning:'Um corte rápido e definitivo — decisão, ruptura ou fim que chega sem aviso prévio. A Foice age depressa; o que ela corta não volta. Pode ser libertador (cortar o que não serve) ou doloroso, dependendo do contexto.'},
+  'O Chicote': {num:'11', oracle:'nao', keywords:["Conflitos", "Discussões", "Hábitos repetitivos"], meaning:'Discussão, atrito ou um padrão que se repete — algo indo e voltando sem se resolver. O Chicote fala de repetição: uma briga antiga que volta, uma rotina desgastante ou esforço repetitivo que exaure.'},
+  'Os Pássaros': {num:'12', oracle:'talvez', keywords:["Comunicação", "Conversas", "Trocas", "Agitação"], meaning:'Papo, troca de mensagens, um casal ou dupla — e também a agitação mental de quem pensa demais. Sempre envolve comunicação entre duas partes; perto de cartas tensas, vira fofoca ou ansiedade.'},
+  'A Criança': {num:'13', oracle:'sim', keywords:["Novos começos", "Inocência", "Leveza", "Curiosidade"], meaning:'Algo no início — um projeto recém-nascido, uma ideia simples, ou literalmente uma criança. Marca o começo de algo que ainda vai crescer. Também pode apontar falta de experiência ou abordagem ingênua.'},
+  'A Raposa': {num:'14', oracle:'talvez', keywords:["Estratégia", "Astúcia no trabalho", "Autoproteção"], meaning:'Esperteza aplicada — no trabalho, em uma negociação, ou em alguém que não é totalmente transparente. Pode ser você agindo com inteligência, ou um alerta para desconfiar de quem está por perto.'},
+  'O Urso': {num:'15', oracle:'talvez', keywords:["Força", "Proteção", "Finanças", "Autoridade"], meaning:'Força bruta usada para proteger — um chefe, uma figura de autoridade, ou recursos financeiros. Representa quem detém o poder na situação e também questões de dinheiro e possessividade emocional.'},
+  'As Estrelas': {num:'16', oracle:'sim', keywords:["Esperança", "Clareza espiritual", "Sorte", "Destino"], meaning:'Um objetivo iluminado no horizonte — inspiração, direção clara, sucesso que ainda está a caminho. As Estrelas mostram o rumo certo, mas geralmente a longo prazo — não é a resposta imediata, é a bússola.'},
+  'A Cegonha': {num:'17', oracle:'sim', keywords:["Mudanças", "Novidades", "Renovação de ciclo"], meaning:'Uma mudança se aproxima — de casa, de trabalho, de fase de vida, geralmente para melhor. Sempre fala de movimento e renovação. Pode indicar uma transição que ainda dá um friozinho na barriga.'},
+  'O Cão': {num:'18', oracle:'sim', keywords:["Fidelidade", "Amizade sincera", "Apoio leal"], meaning:'Um amigo de verdade, apoio leal, ou a própria qualidade da amizade sendo testada. Aponta para relações de confiança mútua — quem está ao seu lado de verdade. Perto de cartas tensas, lealdade mal correspondida.'},
+  'A Torre': {num:'19', oracle:'talvez', keywords:["Autonomia", "Visão ampla", "Instituições", "Isolamento"], meaning:'Empresas, governo, hierarquia — o mundo institucional, formal e estruturado. Fala de estabilidade de longo prazo construída com esforço, mas também de solidão em posições de autoridade.'},
+  'O Jardim': {num:'20', oracle:'sim', keywords:["Vida social", "Rede de contatos", "Eventos", "O público"], meaning:'A vida social, redes de contato, eventos, festas — tudo que acontece em público. Representa o campo social como um todo: networking, reputação pública, ou o convite para sair da bolha e se misturar.'},
+  'A Montanha': {num:'21', oracle:'nao', keywords:["Desafios", "Obstáculos firmes", "Superação com paciência"], meaning:'Um obstáculo real pela frente — algo grande, difícil de contornar, mas não impossível. A Montanha nomeia o bloqueio com honestidade: pode ser uma pessoa, burocracia ou limitação que exige rota alternativa.'},
+  'Os Caminhos': {num:'22', oracle:'talvez', keywords:["Escolhas", "Tomada de decisão", "Direções"], meaning:'Um momento de bifurcação — mais de uma opção sobre a mesa, e a decisão é sua. Convida a pesar as alternativas com calma; raramente há só um caminho certo, mas sempre um mais alinhado com o que você quer.'},
+  'Os Ratos': {num:'23', oracle:'nao', keywords:["Desgaste", "Perdas graduais", "Estresse", "Ansiedade"], meaning:'Algo sendo corroído aos poucos — energia, dinheiro, saúde ou paz, escapando devagar. Os Ratos raramente indicam catástrofe súbita; indicam um vazamento lento que precisa ser identificado e estancado.'},
+  'O Coração': {num:'24', oracle:'sim', keywords:["Amor", "Paixão", "Afeto", "Entrega emocional"], meaning:'Sentimento verdadeiro — amor romântico, afeto profundo ou o próprio coração da questão. Uma das cartas mais bem-vindas: onde ela cai, há emoção real envolvida, seja em relação a alguém ou a um projeto amado.'},
+  'O Anel': {num:'25', oracle:'sim', keywords:["Alianças", "Contratos", "Compromissos", "União"], meaning:'Um vínculo formal — casamento, contrato, parceria séria, ou um ciclo que se fecha. Fala de continuidade e compromisso; perto de cartas boas, une; perto de cartas tensas, ciclo repetitivo do qual é hora de sair.'},
+  'O Livro': {num:'26', oracle:'talvez', keywords:["Segredos", "Estudos", "Conhecimento oculto"], meaning:'Algo ainda não revelado: um segredo, um estudo em curso ou conhecimento por vir. O Livro fechado guarda o que ainda não é hora de saber; aberto perto de outras cartas, a informação está prestes a vir à tona.'},
+  'A Carta': {num:'27', oracle:'talvez', keywords:["Mensagens formais", "Documentos", "Notícias por escrito"], meaning:'Uma comunicação formal ou escrita — e-mail, mensagem, documento oficial. Sempre aponta para algo que chega por escrito; o tom da notícia depende inteiramente das cartas vizinhas.'},
+  'O Homem': {num:'28', oracle:'talvez', keywords:["O consulente (homem)", "Figura masculina principal", "Personagem"], meaning:'Representa um homem importante na situação, ou o próprio consulente, se for homem. Serve como personagem da leitura: as cartas ao redor dele mostram como ele pensa e age na situação perguntada.'},
+  'O Outro Homem': {num:'28b', oracle:'talvez', keywords:["Segundo significador masculino", "Outro homem", "Mais de um envolvido"], meaning:'Segunda carta de significador masculino. Use quando há dois homens na situação (por exemplo, leituras de casais do mesmo sexo ou relações com mais de um envolvido) ou para separar o consulente de outro homem importante. As cartas ao redor mostram o papel e as intenções dele.'},
+  'A Mulher': {num:'29', oracle:'talvez', keywords:["A consulente (mulher)", "Figura feminina principal", "Personagem"], meaning:'Representa uma mulher importante na situação, ou a própria consulente, se for mulher. Funciona como personagem; observe as cartas ao lado dela para entender seu estado emocional na leitura.'},
+  'A Outra Mulher': {num:'29b', oracle:'talvez', keywords:["Segundo significador feminino", "Outra mulher", "Mais de um envolvido"], meaning:'Segunda carta de significador feminino. Use quando há duas mulheres na situação (por exemplo, leituras de casais do mesmo sexo ou relações com mais de um envolvido) ou para separar a consulente de outra mulher importante. As cartas ao redor mostram o papel e as intenções dela.'},
+  'Os Lírios': {num:'30', oracle:'sim', keywords:["Paz", "Maturidade", "Sabedoria", "Virtude"], meaning:'Estabilidade que vem com o tempo — paz, experiência de vida, uma relação madura e duradoura. Os Lírios trazem serenidade construída, ligada a família, idade ou uma relação de longa data.'},
+  'O Sol': {num:'31', oracle:'sim', keywords:["Sucesso", "Energia", "Clareza", "Triunfo"], meaning:'Uma das cartas mais positivas do baralho — energia, sucesso visível e clareza total. Onde o Sol cai, ilumina: fortalece tudo ao redor, trazendo vitalidade, reconhecimento e a sensação de caminho certo.'},
+  'A Lua': {num:'32', oracle:'talvez', keywords:["Intuição", "Reconhecimento", "Emoções", "Fama"], meaning:'Sentimentos, reputação e reconhecimento público — o lado emocional e intuitivo da situação. Fala de como você é visto e do que sente por dentro; pode indicar honrarias, mas também oscilação emocional.'},
+  'A Chave': {num:'33', oracle:'sim', keywords:["Soluções", "Certezas", "A resposta certa", "Destino"], meaning:'A resposta certa, a solução que destrava tudo — uma das cartas mais afirmativas do baralho. Quando a Chave aparece perto de outra carta, confirma e reforça o significado dela com quase certeza absoluta.'},
+  'Os Peixes': {num:'34', oracle:'sim', keywords:["Prosperidade", "Negócios", "Dinheiro", "Abundância"], meaning:'Fluxo de recursos — dinheiro entrando (ou saindo), negócios, ou abundância em movimento. Os Peixes nadam em cardume: raramente vêm sozinhos, indicam múltiplas fontes ou movimentações financeiras simultâneas.'},
+  'A Âncora': {num:'35', oracle:'talvez', keywords:["Estabilidade", "Segurança", "Pé no chão", "Firmeza"], meaning:'Algo firme e duradouro — um emprego estável, uma base segura, um compromisso de longo prazo. A Âncora prende no bom sentido (segurança) e no sentido mais pesado (dificuldade de se mover).'},
+  'A Cruz': {num:'36', oracle:'nao', keywords:["Fardo", "Provações", "Fé", "Destino"], meaning:'Algo que precisa ser carregado — um fardo, uma prova, ou uma questão de destino maior. É a carta mais pesada do baralho, mas também fala de fé e superação: o que dói agora costuma carregar um propósito maior.'},
+};
+
+const LATIM_IMAGES = {
+  'O Tolo': 'cigano_latim/00_O_Tolo.jpg',
+  'O Cavaleiro': 'cigano_latim/01_O_Cavaleiro.jpg',
+  'O Trevo': 'cigano_latim/02_O_Trevo.jpg',
+  'O Navio': 'cigano_latim/03_O_Navio.jpg',
+  'A Casa': 'cigano_latim/04_A_Casa.jpg',
+  'A Árvore': 'cigano_latim/05_A_Arvore.jpg',
+  'As Nuvens': 'cigano_latim/06_As_Nuvens.jpg',
+  'A Serpente': 'cigano_latim/07_A_Serpente.jpg',
+  'O Caixão': 'cigano_latim/08_O_Caixao.jpg',
+  'As Flores': 'cigano_latim/09_As_Flores.jpg',
+  'A Foice': 'cigano_latim/10_A_Foice.jpg',
+  'O Chicote': 'cigano_latim/11_O_Chicote.jpg',
+  'Os Pássaros': 'cigano_latim/12_Os_Passaros.jpg',
+  'A Criança': 'cigano_latim/13_A_Crianca.jpg',
+  'A Raposa': 'cigano_latim/14_A_Raposa.jpg',
+  'O Urso': 'cigano_latim/15_O_Urso.jpg',
+  'As Estrelas': 'cigano_latim/16_As_Estrelas.jpg',
+  'A Cegonha': 'cigano_latim/17_A_Cegonha.jpg',
+  'O Cão': 'cigano_latim/18_O_Cao.jpg',
+  'A Torre': 'cigano_latim/19_A_Torre.jpg',
+  'O Jardim': 'cigano_latim/20_O_Jardim.jpg',
+  'A Montanha': 'cigano_latim/21_A_Montanha.jpg',
+  'Os Caminhos': 'cigano_latim/22_Os_Caminhos.jpg',
+  'Os Ratos': 'cigano_latim/23_Os_Ratos.jpg',
+  'O Coração': 'cigano_latim/24_O_Coracao.jpg',
+  'O Anel': 'cigano_latim/25_O_Anel.jpg',
+  'O Livro': 'cigano_latim/26_O_Livro.jpg',
+  'A Carta': 'cigano_latim/27_A_Carta.jpg',
+  'O Homem': 'cigano_latim/28_O_Homem.jpg',
+  'O Outro Homem': 'cigano_latim/29_O_Outro_Homem.jpg',
+  'A Mulher': 'cigano_latim/30_A_Mulher.jpg',
+  'A Outra Mulher': 'cigano_latim/31_A_Outra_Mulher.jpg',
+  'Os Lírios': 'cigano_latim/32_Os_Lirios.jpg',
+  'O Sol': 'cigano_latim/33_O_Sol.jpg',
+  'A Lua': 'cigano_latim/34_A_Lua.jpg',
+  'A Chave': 'cigano_latim/35_A_Chave.jpg',
+  'Os Peixes': 'cigano_latim/36_Os_Peixes.jpg',
+  'A Âncora': 'cigano_latim/37_A_Ancora.jpg',
+  'A Cruz': 'cigano_latim/38_A_Cruz.jpg',
+};
+
 let formDeck = 'tarot';
-function cardsDataFor(deck) { return deck === 'cigano' ? CIGANO_CARDS : deck === 'sibilla' ? SIBILLA_CARDS : TAROT_CARDS; }
-function cardImagesFor(deck) { return deck === 'cigano' ? CIGANO_IMAGES : deck === 'sibilla' ? SIBILLA_IMAGES : CARD_IMAGES; }
+function cardsDataFor(deck) { return deck === 'cigano' ? CIGANO_CARDS : deck === 'latim' ? LATIM_CARDS : deck === 'sibilla' ? SIBILLA_CARDS : TAROT_CARDS; }
+function cardImagesFor(deck) { return deck === 'cigano' ? CIGANO_IMAGES : deck === 'latim' ? LATIM_IMAGES : deck === 'sibilla' ? SIBILLA_IMAGES : CARD_IMAGES; }
 
 // injeta luz, sombra e meme em cada carta
 Object.entries(CARD_EXTRAS).forEach(([name, extra]) => {
@@ -2496,6 +2584,7 @@ const ADMIN_EMAIL = 'lumaminikeloliveira@gmail.com';
 const CONTENT_CACHE_KEY = 'tarotContentOverridesCache';
 let CIGANO_COMBINATIONS = []; // combinações do baralho cigano (só admin por enquanto)
 let SIBILLA_COMBINATIONS = []; // combinações do baralho Sibilla (só admin por enquanto)
+let LATIM_COMBINATIONS = []; // combinações do baralho Cigano Latim (só admin por enquanto)
 
 function applyCardOverride(deck, name, fields) {
   const store = cardsDataFor(deck);
@@ -2508,6 +2597,7 @@ function applyContentOverridesObj(data) {
   if (data.tarotCards) Object.entries(data.tarotCards).forEach(([name, fields]) => applyCardOverride('tarot', name, fields));
   if (data.ciganoCards) Object.entries(data.ciganoCards).forEach(([name, fields]) => applyCardOverride('cigano', name, fields));
   if (data.sibillaCards) Object.entries(data.sibillaCards).forEach(([name, fields]) => applyCardOverride('sibilla', name, fields));
+  if (data.latimCards) Object.entries(data.latimCards).forEach(([name, fields]) => applyCardOverride('latim', name, fields));
   if (Array.isArray(data.combinations) && data.combinations.length) {
     COMBINATIONS.length = 0;
     data.combinations.forEach(c => COMBINATIONS.push(c));
@@ -2519,6 +2609,10 @@ function applyContentOverridesObj(data) {
   if (Array.isArray(data.sibillaCombinations)) {
     SIBILLA_COMBINATIONS.length = 0;
     data.sibillaCombinations.forEach(c => SIBILLA_COMBINATIONS.push(c));
+  }
+  if (Array.isArray(data.latimCombinations)) {
+    LATIM_COMBINATIONS.length = 0;
+    data.latimCombinations.forEach(c => LATIM_COMBINATIONS.push(c));
   }
 }
 
@@ -2542,6 +2636,7 @@ async function saveContentOverrides(partial) {
     if (partial.tarotCards) merged.tarotCards = { ...(current.tarotCards||{}), ...partial.tarotCards };
     if (partial.ciganoCards) merged.ciganoCards = { ...(current.ciganoCards||{}), ...partial.ciganoCards };
     if (partial.sibillaCards) merged.sibillaCards = { ...(current.sibillaCards||{}), ...partial.sibillaCards };
+    if (partial.latimCards) merged.latimCards = { ...(current.latimCards||{}), ...partial.latimCards };
     localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(merged));
   } catch(e) { /* ignora erro de cache */ }
 }
@@ -2668,7 +2763,7 @@ window.selectFormDeck = function(btn) {
   bottomCard = null;
   if (typeof renderBottomCardPreview === 'function') renderBottomCardPreview();
   renderTags();
-  tagInput.placeholder = formDeck === 'cigano' ? 'Digite para buscar carta cigana...' : formDeck === 'sibilla' ? 'Digite para buscar carta Sibilla...' : 'Digite para buscar carta...';
+  tagInput.placeholder = formDeck === 'cigano' ? 'Digite para buscar carta cigana...' : formDeck === 'latim' ? 'Digite para buscar carta cigana (latim)...' : formDeck === 'sibilla' ? 'Digite para buscar carta Sibilla...' : 'Digite para buscar carta...';
 };
 
 window.selectSubject = function(btn) {
@@ -2929,7 +3024,8 @@ async function generateAIReading() {
   const voz_cigano = 'Você é o próprio baralho cigano (André Montovanni) respondendo. Fale diretamente com quem tirou as cartas, como uma amiga próxima e sincera: direta, prática e concreta. Leia as cartas SEMPRE em combinação umas com as outras, nunca isoladamente, e não use vocabulário de tarot.';
   const voz_tarot = 'Você é o próprio tarot respondendo. Fale direto com quem tirou as cartas, como uma amiga sincera, sem enrolação nem drama. Diga o que as cartas mostram de forma simples e honesta — nem exagerando no positivo, nem pesando a mão no negativo — sem forçar narrativa nem tom estratégico/de jogo de poder. Menos interpretação em cima da interpretação, mais o recado direto.';
   const voz_sibilla = 'Você é o próprio baralho Sibilla (Sibilla Oracle Cards) respondendo. Fale diretamente com quem tirou as cartas, como uma amiga próxima e sincera: direta, prática e do dia a dia, no estilo das cartas Sibilla, que falam de situações concretas (dinheiro, casa, relações, notícias, pessoas). Leia as cartas SEMPRE em combinação umas com as outras, nunca isoladamente, e não use vocabulário de tarot.';
-  const systemVoice = deckIsCigano ? voz_cigano : (formDeck === 'sibilla' ? voz_sibilla : voz_tarot);
+  const voz_latim = 'Você é o próprio baralho cigano (Lenormand em latim) respondendo. Fale diretamente com quem tirou as cartas, como uma amiga próxima e sincera: direta, prática e concreta. Leia as cartas SEMPRE em combinação umas com as outras, nunca isoladamente, e não use vocabulário de tarot.';
+  const systemVoice = deckIsCigano ? voz_cigano : (formDeck === 'latim' ? voz_latim : (formDeck === 'sibilla' ? voz_sibilla : voz_tarot));
   
   const prompt = `${systemVoice}
 
@@ -3967,7 +4063,7 @@ document.getElementById('save-note-btn').addEventListener('click', async ()=>{
     meme:     document.getElementById('admin-meme').value.trim(),
   };
   applyCardOverride(adminSelectedDeck, adminSelectedCardName, fields);
-  const field = adminSelectedDeck === 'cigano' ? 'ciganoCards' : adminSelectedDeck === 'sibilla' ? 'sibillaCards' : 'tarotCards';
+  const field = adminSelectedDeck === 'cigano' ? 'ciganoCards' : adminSelectedDeck === 'latim' ? 'latimCards' : adminSelectedDeck === 'sibilla' ? 'sibillaCards' : 'tarotCards';
   try {
     await saveContentOverrides({ [field]: { [adminSelectedCardName]: fields } });
     showToast('✦ Carta atualizada para todo mundo!');
@@ -3978,7 +4074,7 @@ document.getElementById('save-note-btn').addEventListener('click', async ()=>{
 });
 
 // ── COMBINAÇÕES (globais, com busca progressiva) ──
-function comboListFor(deck) { return deck === 'cigano' ? CIGANO_COMBINATIONS : deck === 'sibilla' ? SIBILLA_COMBINATIONS : COMBINATIONS; }
+function comboListFor(deck) { return deck === 'cigano' ? CIGANO_COMBINATIONS : deck === 'latim' ? LATIM_COMBINATIONS : deck === 'sibilla' ? SIBILLA_COMBINATIONS : COMBINATIONS; }
 
 function refreshComboCardNamesList() {
   const dl = document.getElementById('admin-combo-card-names');
@@ -4140,7 +4236,7 @@ window.deleteAdminCombo = async function(idx) {
 };
 
 async function persistCombos() {
-  const field = adminComboDeck === 'cigano' ? 'ciganoCombinations' : adminComboDeck === 'sibilla' ? 'sibillaCombinations' : 'combinations';
+  const field = adminComboDeck === 'cigano' ? 'ciganoCombinations' : adminComboDeck === 'latim' ? 'latimCombinations' : adminComboDeck === 'sibilla' ? 'sibillaCombinations' : 'combinations';
   try {
     await saveContentOverrides({ [field]: comboListFor(adminComboDeck) });
   } catch(e) {
@@ -4346,6 +4442,7 @@ window.showCardPopup = function(name, isInv, deck) {
 // ── CONSULTAR CARTA ──
 const CIGANO_CONSULT_GROUP = { label: 'Baralho Cigano', cards: ['O Cavaleiro', 'As Pedras', 'O Navio', 'A Casa', 'A Árvore', 'Os Ventos', 'A Serpente', 'A Morte', 'O Ramalhete', 'A Foice', 'O Chicote', 'Os Pássaros', 'A Criança', 'A Raposa', 'O Urso', 'As Estrelas', 'A Cegonha', 'O Cão', 'A Torre', 'O Jardim', 'A Montanha', 'Os Caminhos', 'Os Ratos', 'O Coração', 'As Alianças', 'Os Livros', 'A Carta', 'O Cigano', 'A Cigana', 'Os Lírios', 'O Sol', 'A Lua', 'A Chave', 'Os Peixes', 'A Âncora', 'A Cruz'] };
 const SIBILLA_CONSULT_GROUP = { label: 'Sibilla', cards: ['O Amor', 'O Amigo Sincero', 'A Ausência', 'A Espera', 'Muito Dinheiro', 'O Bilhete Doce', 'A Contrariedade', 'A Infantilidade', 'A Tagarelice', 'A Raiva', 'A Esperança', 'O Inimigo', 'O Impedimento', 'O Bajulador', 'A Fidelidade', 'O Advogado', 'A Inconstância', 'Os Jogadores', 'O Consulente', 'A Consulente', 'O Susto', 'A Mulher Zangada', 'O Soldado', 'A Casa da Cidade', 'A Casa de Campo', 'O Casamento', 'A Fraqueza', 'O Pensamento', 'Os Presentes', 'A Perda de Dinheiro', 'O Protetor', 'A Armadilha', 'A Viagem ao Campo', 'O Passatempo', 'A Briga', 'O Atraso', 'O Aposentado', 'A Reconciliação', 'A Revelação Importante', 'O Sucesso', 'A Surpresa', 'A Ternura', 'A Mulher Loira', 'A Viúva', 'Algum Dinheiro', 'A Carta', 'O Jovem Moreno', 'A Mulher Morena', 'O Ladrão', 'A Viagem', 'A Visita', 'A Vitória'] };
+const LATIM_CONSULT_GROUP = { label: 'Cigano Latim', cards: ['O Tolo', 'O Cavaleiro', 'O Trevo', 'O Navio', 'A Casa', 'A Árvore', 'As Nuvens', 'A Serpente', 'O Caixão', 'As Flores', 'A Foice', 'O Chicote', 'Os Pássaros', 'A Criança', 'A Raposa', 'O Urso', 'As Estrelas', 'A Cegonha', 'O Cão', 'A Torre', 'O Jardim', 'A Montanha', 'Os Caminhos', 'Os Ratos', 'O Coração', 'O Anel', 'O Livro', 'A Carta', 'O Homem', 'O Outro Homem', 'A Mulher', 'A Outra Mulher', 'Os Lírios', 'O Sol', 'A Lua', 'A Chave', 'Os Peixes', 'A Âncora', 'A Cruz'] };
 
 const CONSULT_GROUPS = [
   { label: 'Arcanos Maiores', cards: ['A Louca','O Mago','A Sacerdotisa','A Imperatriz','O Imperador','O Hierofante','Os Enamorados','O Carro','A Força','O Eremita','Roda da Fortuna','A Justiça','O Enforcado','A Enforcada','A Morte','A Temperança','O Diabo','A Torre','A Estrela','A Lua','O Sol','O Julgamento','O Mundo'] },
@@ -4357,7 +4454,7 @@ const CONSULT_GROUPS = [
 
 function buildConsultList() {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const activeGroups = formDeck === 'cigano' ? [CIGANO_CONSULT_GROUP] : formDeck === 'sibilla' ? [SIBILLA_CONSULT_GROUP] : CONSULT_GROUPS;
+  const activeGroups = formDeck === 'cigano' ? [CIGANO_CONSULT_GROUP] : formDeck === 'latim' ? [LATIM_CONSULT_GROUP] : formDeck === 'sibilla' ? [SIBILLA_CONSULT_GROUP] : CONSULT_GROUPS;
   const IMGS = cardImagesFor(formDeck);
   const CARDS = cardsDataFor(formDeck);
   document.getElementById('consult-groups').innerHTML = activeGroups.map(g => `
@@ -5064,7 +5161,7 @@ window.editEntry=function(id){
   document.querySelectorAll('#deck-selector .theme-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.formdeck===formDeck);
   });
-  tagInput.placeholder = formDeck==='cigano' ? 'Digite para buscar carta cigana...' : formDeck==='sibilla' ? 'Digite para buscar carta Sibilla...' : 'Digite para buscar carta...';
+  tagInput.placeholder = formDeck==='cigano' ? 'Digite para buscar carta cigana...' : formDeck==='latim' ? 'Digite para buscar carta cigana (latim)...' : formDeck==='sibilla' ? 'Digite para buscar carta Sibilla...' : 'Digite para buscar carta...';
   document.getElementById('f-date').value=e.date;
   document.getElementById('f-analysis').value=e.analysis;
   document.getElementById('f-notes').value=e.notes||'';
@@ -5503,7 +5600,7 @@ function render(){
     const lunar=lunarPhase(e.date);
     const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
     const SUBJECT_BADGE_LABELS={amigo:'👥 Amigo(a)',familiar:'👪 Familiar',outra:'❓ Outra pessoa'};
-    const deckBadge = e.deck==='cigano' ? `<span class="theme-badge" style="background:rgba(37,158,88,.16);border:1px solid #3a8f5a;color:#8fd6a8">🍀 Cigano</span>` : e.deck==='sibilla' ? `<span class="theme-badge" style="background:rgba(176,132,60,.16);border:1px solid #b0843c;color:#e6c27a">🕯️ Sibilla</span>` : '';
+    const deckBadge = e.deck==='cigano' ? `<span class="theme-badge" style="background:rgba(37,158,88,.16);border:1px solid #3a8f5a;color:#8fd6a8">🍀 Cigano</span>` : e.deck==='latim' ? `<span class="theme-badge" style="background:rgba(150,96,60,.16);border:1px solid #a8683c;color:#e0a679">📜 Cigano Latim</span>` : e.deck==='sibilla' ? `<span class="theme-badge" style="background:rgba(176,132,60,.16);border:1px solid #b0843c;color:#e6c27a">🕯️ Sibilla</span>` : '';
     const subjectBadge=(e.subject && e.subject!=='mim')?`<span class="theme-badge" style="background:rgba(122,78,184,.18);border:1px solid var(--purple);color:var(--purple-light)">${SUBJECT_BADGE_LABELS[e.subject]||'Outra pessoa'}${e.subjectName?': '+e.subjectName.replace(/</g,'&lt;'):''}</span>`:'';
     html+=`
     <div class="entry" id="entry-${e.id}">

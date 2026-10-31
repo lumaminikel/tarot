@@ -661,6 +661,7 @@
 <div class="deck-tabs" id="deck-tabs">
   <button type="button" class="deck-tab" data-deck="tarot">🔮 Tarot</button>
   <button type="button" class="deck-tab" data-deck="cigano">🍀 Baralho Cigano</button>
+  <button type="button" class="deck-tab" data-deck="latim">📜 Cigano Latim</button>
   <button type="button" class="deck-tab" data-deck="sibilla">🕯️ Sibilla</button>
 </div>
 
@@ -691,6 +692,13 @@
   <div data-deck-group="cigano">
   <span class="nav-label">Baralho Cigano</span>
   <a data-section="cartas-cigano"><span class="nav-icon">🍀</span> As 36 Cartas</a>
+  <a data-section="combinacoes-cigano"><span class="nav-icon">🔗</span> Combinações</a>
+  <a data-section="tiragens-cigano"><span class="nav-icon">🃏</span> Tiragens</a>
+  </div>
+
+  <div data-deck-group="latim">
+  <span class="nav-label">Cigano Latim</span>
+  <a data-section="cartas-latim"><span class="nav-icon">📜</span> As 39 Cartas</a>
   <a data-section="combinacoes-cigano"><span class="nav-icon">🔗</span> Combinações</a>
   <a data-section="tiragens-cigano"><span class="nav-icon">🃏</span> Tiragens</a>
   </div>
@@ -1984,7 +1992,7 @@
 </section>
 
 <!-- BARALHO CIGANO — COMBINAÇÕES -->
-<section id="combinacoes-cigano" data-deck="cigano">
+<section id="combinacoes-cigano" data-deck="cigano latim">
   <h2 class="section-title"><span class="icon">🔗</span> Como Ler em Pares no Baralho Cigano</h2>
   <p style="color:var(--text-dim); margin-bottom:1.2rem; font-style:italic;">No Lenormand, quase nada se interpreta isoladamente. A regra de ouro: leia a carta "assunto" junto da carta ao lado, como se fosse uma frase curta — substantivo + adjetivo.</p>
 
@@ -2007,7 +2015,7 @@
 </section>
 
 <!-- BARALHO CIGANO — TIRAGENS -->
-<section id="tiragens-cigano" data-deck="cigano">
+<section id="tiragens-cigano" data-deck="cigano latim">
   <h2 class="section-title"><span class="icon">🃏</span> Formas de Tirar no Baralho Cigano</h2>
 
   <div class="spread-grid" data-search>
@@ -2036,6 +2044,210 @@
       <p style="font-size:0.88rem; color:var(--text-dim);">A leitura mais avançada do sistema: todas as 36 cartas em grade (geralmente 4 linhas de 9 ou 8x4+4), lidas como um mapa completo da vida da pessoa no momento. Recomendada só depois de dominar bem os pares — é bastante para absorver de uma vez.</p>
     </div>
 
+  </div>
+</section>
+
+<!-- CIGANO LATIM — AS 39 CARTAS -->
+<section id="cartas-latim" data-deck="latim">
+  <h2 class="section-title"><span class="icon">📜</span> Cigano Latim / Petit Lenormand (39 cartas)</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem; font-style:italic;">Edição do Petit Lenormand com nomes em latim e estética medieval. Traz as 36 cartas tradicionais e mais 3 extras: O Tolo (Stulti, carta coringa) e O Outro Homem / A Outra Mulher (segundos significadores). A leitura funciona como no baralho cigano: as cartas se leem em combinação, e as seções de Combinações e Tiragens são as mesmas.</p>
+
+  <div class="cards-grid" id="latim-grid">
+    <div class="card" data-search data-name="O Tolo Stulti cigano latim lenormand" data-latim-name="O Tolo">
+      <div class="card-header"><span class="card-num">0</span><span class="card-name">O Tolo</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Stulti</span></div>
+      <div class="card-keywords"><span class="tag">Imprevistos</span><span class="tag">Energia coringa</span><span class="tag">Sorte e acaso</span><span class="tag">Roda da fortuna</span></div>
+      <div class="card-body"><strong>Significado:</strong> Carta extra do seu baralho: a roda e a figura do tolo lembram que a sorte gira e nem tudo está sob controle. Marca um imprevisto ou uma energia coringa na tiragem, algo que foge do roteiro e pode virar o jogo para qualquer lado. O sentido final vem das cartas vizinhas: perto de cartas boas, a reviravolta ajuda; perto de cartas pesadas, pede flexibilidade.</div>
+    </div>
+    <div class="card" data-search data-name="O Cavaleiro Eques cigano latim lenormand" data-latim-name="O Cavaleiro">
+      <div class="card-header"><span class="card-num">1</span><span class="card-name">O Cavaleiro</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Eques</span></div>
+      <div class="card-keywords"><span class="tag">Notícias rápidas</span><span class="tag">Movimento</span><span class="tag">Chegadas</span></div>
+      <div class="card-body"><strong>Significado:</strong> Uma novidade está a caminho — visita, mensagem ou mudança rápida de cenário. Sempre indica algo se aproximando rápido. Perto de cartas boas, a notícia é boa; perto de cartas pesadas, a chegada traz tensão junto.</div>
+    </div>
+    <div class="card" data-search data-name="O Trevo Trifolium cigano latim lenormand" data-latim-name="O Trevo">
+      <div class="card-header"><span class="card-num">2</span><span class="card-name">O Trevo</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Trifolium</span></div>
+      <div class="card-keywords"><span class="tag">Sorte passageira</span><span class="tag">Pequenas alegrias</span><span class="tag">Oportunidade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Uma sorte pequena e rápida: uma oportunidade que aparece e pede para ser aproveitada logo. Traz leveza e pequenas alegrias, mas não dura para sempre. Perto de cartas boas, a chance se confirma; perto de cartas pesadas, é só uma folga curta no meio da dificuldade.</div>
+    </div>
+    <div class="card" data-search data-name="O Navio Navis cigano latim lenormand" data-latim-name="O Navio">
+      <div class="card-header"><span class="card-num">3</span><span class="card-name">O Navio</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Navis</span></div>
+      <div class="card-keywords"><span class="tag">Viagens</span><span class="tag">Transições</span><span class="tag">Horizontes distantes</span></div>
+      <div class="card-body"><strong>Significado:</strong> Deslocamento, negócio à distância ou algo vindo de longe — física ou emocionalmente. Fala de movimento para fora do território conhecido: uma viagem, um negócio, ou alguém que está se distanciando.</div>
+    </div>
+    <div class="card" data-search data-name="A Casa Domus cigano latim lenormand" data-latim-name="A Casa">
+      <div class="card-header"><span class="card-num">4</span><span class="card-name">A Casa</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Domus</span></div>
+      <div class="card-keywords"><span class="tag">Lar</span><span class="tag">Família</span><span class="tag">Segurança</span><span class="tag">Estabilidade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Tudo que é base, raiz, o núcleo familiar ou a sensação de chegar em casa. Representa fundações — pode ser a própria casa, a família ou uma sensação de pertencimento que está sendo construída ou testada.</div>
+    </div>
+    <div class="card" data-search data-name="A Árvore Arbor cigano latim lenormand" data-latim-name="A Árvore">
+      <div class="card-header"><span class="card-num">5</span><span class="card-name">A Árvore</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Arbor</span></div>
+      <div class="card-keywords"><span class="tag">Saúde</span><span class="tag">Crescimento</span><span class="tag">Ancestralidade</span><span class="tag">Vitalidade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Crescimento devagar e constante — corpo, saúde ou algo que precisa de tempo para amadurecer. Tudo que envolve a Árvore tem raiz profunda e não se resolve rápido: saúde física, um vínculo antigo, um processo que já vem de longe.</div>
+    </div>
+    <div class="card" data-search data-name="As Nuvens Nimbi cigano latim lenormand" data-latim-name="As Nuvens">
+      <div class="card-header"><span class="card-num">6</span><span class="card-name">As Nuvens</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Nimbi</span></div>
+      <div class="card-keywords"><span class="tag">Dúvidas</span><span class="tag">Confusão mental</span><span class="tag">Instabilidade passageira</span></div>
+      <div class="card-body"><strong>Significado:</strong> Situação turva e incerta: nuvens que encobrem a visão por um tempo. Indica dúvida, indecisão ou uma fase que ainda não se definiu. O lado positivo é que nuvens passam; a confusão tende a se dissipar quando as cartas vizinhas trazem clareza.</div>
+    </div>
+    <div class="card" data-search data-name="A Serpente Serpens cigano latim lenormand" data-latim-name="A Serpente">
+      <div class="card-header"><span class="card-num">7</span><span class="card-name">A Serpente</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Serpens</span></div>
+      <div class="card-keywords"><span class="tag">Astúcia</span><span class="tag">Rivalidade</span><span class="tag">Atração</span><span class="tag">Cautela com falsidade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um caminho torto, uma complicação inesperada ou alguém que não age de frente. A Serpente raramente é boa notícia perto de outra pessoa: sinaliza desvio de rota, terceira pessoa envolvida ou solução que exige rodeios.</div>
+    </div>
+    <div class="card" data-search data-name="O Caixão Loculus cigano latim lenormand" data-latim-name="O Caixão">
+      <div class="card-header"><span class="card-num">8</span><span class="card-name">O Caixão</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Loculus</span></div>
+      <div class="card-keywords"><span class="tag">Fim de ciclo</span><span class="tag">Transformação necessária</span><span class="tag">Encerramento</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um fim necessário: não é morte literal, mas o encerramento definitivo de uma fase. Junto de cartas positivas, algo precisa terminar para o novo nascer. Junto de cartas pesadas, aponta perda real e período de luto.</div>
+    </div>
+    <div class="card" data-search data-name="As Flores Flores cigano latim lenormand" data-latim-name="As Flores">
+      <div class="card-header"><span class="card-num">9</span><span class="card-name">As Flores</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Flores</span></div>
+      <div class="card-keywords"><span class="tag">Presentes</span><span class="tag">Beleza</span><span class="tag">Harmonia</span><span class="tag">Reconhecimento</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um gesto bonito, um presente, um convite — algo que traz leveza e é bem-vindo. Uma das cartas mais gentis do baralho: geralmente reforça o campo positivo ao redor, suavizando até combinações difíceis.</div>
+    </div>
+    <div class="card" data-search data-name="A Foice Falx cigano latim lenormand" data-latim-name="A Foice">
+      <div class="card-header"><span class="card-num">10</span><span class="card-name">A Foice</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Falx</span></div>
+      <div class="card-keywords"><span class="tag">Cortes bruscos</span><span class="tag">Decisões rápidas</span><span class="tag">Colheita</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um corte rápido e definitivo — decisão, ruptura ou fim que chega sem aviso prévio. A Foice age depressa; o que ela corta não volta. Pode ser libertador (cortar o que não serve) ou doloroso, dependendo do contexto.</div>
+    </div>
+    <div class="card" data-search data-name="O Chicote Flagellum cigano latim lenormand" data-latim-name="O Chicote">
+      <div class="card-header"><span class="card-num">11</span><span class="card-name">O Chicote</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Flagellum</span></div>
+      <div class="card-keywords"><span class="tag">Conflitos</span><span class="tag">Discussões</span><span class="tag">Hábitos repetitivos</span></div>
+      <div class="card-body"><strong>Significado:</strong> Discussão, atrito ou um padrão que se repete — algo indo e voltando sem se resolver. O Chicote fala de repetição: uma briga antiga que volta, uma rotina desgastante ou esforço repetitivo que exaure.</div>
+    </div>
+    <div class="card" data-search data-name="Os Pássaros Aves cigano latim lenormand" data-latim-name="Os Pássaros">
+      <div class="card-header"><span class="card-num">12</span><span class="card-name">Os Pássaros</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Aves</span></div>
+      <div class="card-keywords"><span class="tag">Comunicação</span><span class="tag">Conversas</span><span class="tag">Trocas</span><span class="tag">Agitação</span></div>
+      <div class="card-body"><strong>Significado:</strong> Papo, troca de mensagens, um casal ou dupla — e também a agitação mental de quem pensa demais. Sempre envolve comunicação entre duas partes; perto de cartas tensas, vira fofoca ou ansiedade.</div>
+    </div>
+    <div class="card" data-search data-name="A Criança Infans cigano latim lenormand" data-latim-name="A Criança">
+      <div class="card-header"><span class="card-num">13</span><span class="card-name">A Criança</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Infans</span></div>
+      <div class="card-keywords"><span class="tag">Novos começos</span><span class="tag">Inocência</span><span class="tag">Leveza</span><span class="tag">Curiosidade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo no início — um projeto recém-nascido, uma ideia simples, ou literalmente uma criança. Marca o começo de algo que ainda vai crescer. Também pode apontar falta de experiência ou abordagem ingênua.</div>
+    </div>
+    <div class="card" data-search data-name="A Raposa Vulpis cigano latim lenormand" data-latim-name="A Raposa">
+      <div class="card-header"><span class="card-num">14</span><span class="card-name">A Raposa</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Vulpis</span></div>
+      <div class="card-keywords"><span class="tag">Estratégia</span><span class="tag">Astúcia no trabalho</span><span class="tag">Autoproteção</span></div>
+      <div class="card-body"><strong>Significado:</strong> Esperteza aplicada — no trabalho, em uma negociação, ou em alguém que não é totalmente transparente. Pode ser você agindo com inteligência, ou um alerta para desconfiar de quem está por perto.</div>
+    </div>
+    <div class="card" data-search data-name="O Urso Ursa cigano latim lenormand" data-latim-name="O Urso">
+      <div class="card-header"><span class="card-num">15</span><span class="card-name">O Urso</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Ursa</span></div>
+      <div class="card-keywords"><span class="tag">Força</span><span class="tag">Proteção</span><span class="tag">Finanças</span><span class="tag">Autoridade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Força bruta usada para proteger — um chefe, uma figura de autoridade, ou recursos financeiros. Representa quem detém o poder na situação e também questões de dinheiro e possessividade emocional.</div>
+    </div>
+    <div class="card" data-search data-name="As Estrelas Stellae cigano latim lenormand" data-latim-name="As Estrelas">
+      <div class="card-header"><span class="card-num">16</span><span class="card-name">As Estrelas</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Stellae</span></div>
+      <div class="card-keywords"><span class="tag">Esperança</span><span class="tag">Clareza espiritual</span><span class="tag">Sorte</span><span class="tag">Destino</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um objetivo iluminado no horizonte — inspiração, direção clara, sucesso que ainda está a caminho. As Estrelas mostram o rumo certo, mas geralmente a longo prazo — não é a resposta imediata, é a bússola.</div>
+    </div>
+    <div class="card" data-search data-name="A Cegonha Milvus cigano latim lenormand" data-latim-name="A Cegonha">
+      <div class="card-header"><span class="card-num">17</span><span class="card-name">A Cegonha</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Milvus</span></div>
+      <div class="card-keywords"><span class="tag">Mudanças</span><span class="tag">Novidades</span><span class="tag">Renovação de ciclo</span></div>
+      <div class="card-body"><strong>Significado:</strong> Uma mudança se aproxima — de casa, de trabalho, de fase de vida, geralmente para melhor. Sempre fala de movimento e renovação. Pode indicar uma transição que ainda dá um friozinho na barriga.</div>
+    </div>
+    <div class="card" data-search data-name="O Cão Canis cigano latim lenormand" data-latim-name="O Cão">
+      <div class="card-header"><span class="card-num">18</span><span class="card-name">O Cão</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Canis</span></div>
+      <div class="card-keywords"><span class="tag">Fidelidade</span><span class="tag">Amizade sincera</span><span class="tag">Apoio leal</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um amigo de verdade, apoio leal, ou a própria qualidade da amizade sendo testada. Aponta para relações de confiança mútua — quem está ao seu lado de verdade. Perto de cartas tensas, lealdade mal correspondida.</div>
+    </div>
+    <div class="card" data-search data-name="A Torre Turris cigano latim lenormand" data-latim-name="A Torre">
+      <div class="card-header"><span class="card-num">19</span><span class="card-name">A Torre</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Turris</span></div>
+      <div class="card-keywords"><span class="tag">Autonomia</span><span class="tag">Visão ampla</span><span class="tag">Instituições</span><span class="tag">Isolamento</span></div>
+      <div class="card-body"><strong>Significado:</strong> Empresas, governo, hierarquia — o mundo institucional, formal e estruturado. Fala de estabilidade de longo prazo construída com esforço, mas também de solidão em posições de autoridade.</div>
+    </div>
+    <div class="card" data-search data-name="O Jardim Hortus cigano latim lenormand" data-latim-name="O Jardim">
+      <div class="card-header"><span class="card-num">20</span><span class="card-name">O Jardim</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Hortus</span></div>
+      <div class="card-keywords"><span class="tag">Vida social</span><span class="tag">Rede de contatos</span><span class="tag">Eventos</span><span class="tag">O público</span></div>
+      <div class="card-body"><strong>Significado:</strong> A vida social, redes de contato, eventos, festas — tudo que acontece em público. Representa o campo social como um todo: networking, reputação pública, ou o convite para sair da bolha e se misturar.</div>
+    </div>
+    <div class="card" data-search data-name="A Montanha Mons cigano latim lenormand" data-latim-name="A Montanha">
+      <div class="card-header"><span class="card-num">21</span><span class="card-name">A Montanha</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Mons</span></div>
+      <div class="card-keywords"><span class="tag">Desafios</span><span class="tag">Obstáculos firmes</span><span class="tag">Superação com paciência</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um obstáculo real pela frente — algo grande, difícil de contornar, mas não impossível. A Montanha nomeia o bloqueio com honestidade: pode ser uma pessoa, burocracia ou limitação que exige rota alternativa.</div>
+    </div>
+    <div class="card" data-search data-name="Os Caminhos Viae cigano latim lenormand" data-latim-name="Os Caminhos">
+      <div class="card-header"><span class="card-num">22</span><span class="card-name">Os Caminhos</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Viae</span></div>
+      <div class="card-keywords"><span class="tag">Escolhas</span><span class="tag">Tomada de decisão</span><span class="tag">Direções</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um momento de bifurcação — mais de uma opção sobre a mesa, e a decisão é sua. Convida a pesar as alternativas com calma; raramente há só um caminho certo, mas sempre um mais alinhado com o que você quer.</div>
+    </div>
+    <div class="card" data-search data-name="Os Ratos Mures cigano latim lenormand" data-latim-name="Os Ratos">
+      <div class="card-header"><span class="card-num">23</span><span class="card-name">Os Ratos</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Mures</span></div>
+      <div class="card-keywords"><span class="tag">Desgaste</span><span class="tag">Perdas graduais</span><span class="tag">Estresse</span><span class="tag">Ansiedade</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo sendo corroído aos poucos — energia, dinheiro, saúde ou paz, escapando devagar. Os Ratos raramente indicam catástrofe súbita; indicam um vazamento lento que precisa ser identificado e estancado.</div>
+    </div>
+    <div class="card" data-search data-name="O Coração Cor cigano latim lenormand" data-latim-name="O Coração">
+      <div class="card-header"><span class="card-num">24</span><span class="card-name">O Coração</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Cor</span></div>
+      <div class="card-keywords"><span class="tag">Amor</span><span class="tag">Paixão</span><span class="tag">Afeto</span><span class="tag">Entrega emocional</span></div>
+      <div class="card-body"><strong>Significado:</strong> Sentimento verdadeiro — amor romântico, afeto profundo ou o próprio coração da questão. Uma das cartas mais bem-vindas: onde ela cai, há emoção real envolvida, seja em relação a alguém ou a um projeto amado.</div>
+    </div>
+    <div class="card" data-search data-name="O Anel Anulus cigano latim lenormand" data-latim-name="O Anel">
+      <div class="card-header"><span class="card-num">25</span><span class="card-name">O Anel</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Anulus</span></div>
+      <div class="card-keywords"><span class="tag">Alianças</span><span class="tag">Contratos</span><span class="tag">Compromissos</span><span class="tag">União</span></div>
+      <div class="card-body"><strong>Significado:</strong> Um vínculo formal — casamento, contrato, parceria séria, ou um ciclo que se fecha. Fala de continuidade e compromisso; perto de cartas boas, une; perto de cartas tensas, ciclo repetitivo do qual é hora de sair.</div>
+    </div>
+    <div class="card" data-search data-name="O Livro Liber cigano latim lenormand" data-latim-name="O Livro">
+      <div class="card-header"><span class="card-num">26</span><span class="card-name">O Livro</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Liber</span></div>
+      <div class="card-keywords"><span class="tag">Segredos</span><span class="tag">Estudos</span><span class="tag">Conhecimento oculto</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo ainda não revelado: um segredo, um estudo em curso ou conhecimento por vir. O Livro fechado guarda o que ainda não é hora de saber; aberto perto de outras cartas, a informação está prestes a vir à tona.</div>
+    </div>
+    <div class="card" data-search data-name="A Carta Epistula cigano latim lenormand" data-latim-name="A Carta">
+      <div class="card-header"><span class="card-num">27</span><span class="card-name">A Carta</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Epistula</span></div>
+      <div class="card-keywords"><span class="tag">Mensagens formais</span><span class="tag">Documentos</span><span class="tag">Notícias por escrito</span></div>
+      <div class="card-body"><strong>Significado:</strong> Uma comunicação formal ou escrita — e-mail, mensagem, documento oficial. Sempre aponta para algo que chega por escrito; o tom da notícia depende inteiramente das cartas vizinhas.</div>
+    </div>
+    <div class="card" data-search data-name="O Homem Vir cigano latim lenormand" data-latim-name="O Homem">
+      <div class="card-header"><span class="card-num">28</span><span class="card-name">O Homem</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Vir</span></div>
+      <div class="card-keywords"><span class="tag">O consulente (homem)</span><span class="tag">Figura masculina principal</span><span class="tag">Personagem</span></div>
+      <div class="card-body"><strong>Significado:</strong> Representa um homem importante na situação, ou o próprio consulente, se for homem. Serve como personagem da leitura: as cartas ao redor dele mostram como ele pensa e age na situação perguntada.</div>
+    </div>
+    <div class="card" data-search data-name="O Outro Homem Vir Alter cigano latim lenormand" data-latim-name="O Outro Homem">
+      <div class="card-header"><span class="card-num">28b</span><span class="card-name">O Outro Homem</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Vir Alter</span></div>
+      <div class="card-keywords"><span class="tag">Segundo significador masculino</span><span class="tag">Outro homem</span><span class="tag">Mais de um envolvido</span></div>
+      <div class="card-body"><strong>Significado:</strong> Segunda carta de significador masculino. Use quando há dois homens na situação (por exemplo, leituras de casais do mesmo sexo ou relações com mais de um envolvido) ou para separar o consulente de outro homem importante. As cartas ao redor mostram o papel e as intenções dele.</div>
+    </div>
+    <div class="card" data-search data-name="A Mulher Mulier cigano latim lenormand" data-latim-name="A Mulher">
+      <div class="card-header"><span class="card-num">29</span><span class="card-name">A Mulher</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Mulier</span></div>
+      <div class="card-keywords"><span class="tag">A consulente (mulher)</span><span class="tag">Figura feminina principal</span><span class="tag">Personagem</span></div>
+      <div class="card-body"><strong>Significado:</strong> Representa uma mulher importante na situação, ou a própria consulente, se for mulher. Funciona como personagem; observe as cartas ao lado dela para entender seu estado emocional na leitura.</div>
+    </div>
+    <div class="card" data-search data-name="A Outra Mulher Mulier Altera cigano latim lenormand" data-latim-name="A Outra Mulher">
+      <div class="card-header"><span class="card-num">29b</span><span class="card-name">A Outra Mulher</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Mulier Altera</span></div>
+      <div class="card-keywords"><span class="tag">Segundo significador feminino</span><span class="tag">Outra mulher</span><span class="tag">Mais de um envolvido</span></div>
+      <div class="card-body"><strong>Significado:</strong> Segunda carta de significador feminino. Use quando há duas mulheres na situação (por exemplo, leituras de casais do mesmo sexo ou relações com mais de um envolvido) ou para separar a consulente de outra mulher importante. As cartas ao redor mostram o papel e as intenções dela.</div>
+    </div>
+    <div class="card" data-search data-name="Os Lírios Lilia cigano latim lenormand" data-latim-name="Os Lírios">
+      <div class="card-header"><span class="card-num">30</span><span class="card-name">Os Lírios</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Lilia</span></div>
+      <div class="card-keywords"><span class="tag">Paz</span><span class="tag">Maturidade</span><span class="tag">Sabedoria</span><span class="tag">Virtude</span></div>
+      <div class="card-body"><strong>Significado:</strong> Estabilidade que vem com o tempo — paz, experiência de vida, uma relação madura e duradoura. Os Lírios trazem serenidade construída, ligada a família, idade ou uma relação de longa data.</div>
+    </div>
+    <div class="card" data-search data-name="O Sol Sol cigano latim lenormand" data-latim-name="O Sol">
+      <div class="card-header"><span class="card-num">31</span><span class="card-name">O Sol</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Sol</span></div>
+      <div class="card-keywords"><span class="tag">Sucesso</span><span class="tag">Energia</span><span class="tag">Clareza</span><span class="tag">Triunfo</span></div>
+      <div class="card-body"><strong>Significado:</strong> Uma das cartas mais positivas do baralho — energia, sucesso visível e clareza total. Onde o Sol cai, ilumina: fortalece tudo ao redor, trazendo vitalidade, reconhecimento e a sensação de caminho certo.</div>
+    </div>
+    <div class="card" data-search data-name="A Lua Luna cigano latim lenormand" data-latim-name="A Lua">
+      <div class="card-header"><span class="card-num">32</span><span class="card-name">A Lua</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Luna</span></div>
+      <div class="card-keywords"><span class="tag">Intuição</span><span class="tag">Reconhecimento</span><span class="tag">Emoções</span><span class="tag">Fama</span></div>
+      <div class="card-body"><strong>Significado:</strong> Sentimentos, reputação e reconhecimento público — o lado emocional e intuitivo da situação. Fala de como você é visto e do que sente por dentro; pode indicar honrarias, mas também oscilação emocional.</div>
+    </div>
+    <div class="card" data-search data-name="A Chave Clavis cigano latim lenormand" data-latim-name="A Chave">
+      <div class="card-header"><span class="card-num">33</span><span class="card-name">A Chave</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Clavis</span></div>
+      <div class="card-keywords"><span class="tag">Soluções</span><span class="tag">Certezas</span><span class="tag">A resposta certa</span><span class="tag">Destino</span></div>
+      <div class="card-body"><strong>Significado:</strong> A resposta certa, a solução que destrava tudo — uma das cartas mais afirmativas do baralho. Quando a Chave aparece perto de outra carta, confirma e reforça o significado dela com quase certeza absoluta.</div>
+    </div>
+    <div class="card" data-search data-name="Os Peixes Pisces cigano latim lenormand" data-latim-name="Os Peixes">
+      <div class="card-header"><span class="card-num">34</span><span class="card-name">Os Peixes</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Pisces</span></div>
+      <div class="card-keywords"><span class="tag">Prosperidade</span><span class="tag">Negócios</span><span class="tag">Dinheiro</span><span class="tag">Abundância</span></div>
+      <div class="card-body"><strong>Significado:</strong> Fluxo de recursos — dinheiro entrando (ou saindo), negócios, ou abundância em movimento. Os Peixes nadam em cardume: raramente vêm sozinhos, indicam múltiplas fontes ou movimentações financeiras simultâneas.</div>
+    </div>
+    <div class="card" data-search data-name="A Âncora Ancora cigano latim lenormand" data-latim-name="A Âncora">
+      <div class="card-header"><span class="card-num">35</span><span class="card-name">A Âncora</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Ancora</span></div>
+      <div class="card-keywords"><span class="tag">Estabilidade</span><span class="tag">Segurança</span><span class="tag">Pé no chão</span><span class="tag">Firmeza</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo firme e duradouro — um emprego estável, uma base segura, um compromisso de longo prazo. A Âncora prende no bom sentido (segurança) e no sentido mais pesado (dificuldade de se mover).</div>
+    </div>
+    <div class="card" data-search data-name="A Cruz Crux cigano latim lenormand" data-latim-name="A Cruz">
+      <div class="card-header"><span class="card-num">36</span><span class="card-name">A Cruz</span><span style="font-size:.78rem;opacity:.65;font-style:italic;margin-left:.5rem;">Crux</span></div>
+      <div class="card-keywords"><span class="tag">Fardo</span><span class="tag">Provações</span><span class="tag">Fé</span><span class="tag">Destino</span></div>
+      <div class="card-body"><strong>Significado:</strong> Algo que precisa ser carregado — um fardo, uma prova, ou uma questão de destino maior. É a carta mais pesada do baralho, mas também fala de fé e superação: o que dói agora costuma carregar um propósito maior.</div>
+    </div>
   </div>
 </section>
 
@@ -2667,7 +2879,7 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
 
   function inActiveDeck(el) {
     const sec = el.closest('[data-deck]');
-    return !sec || sec.dataset.deck === (document.body.dataset.deck || 'tarot');
+    return !sec || sec.dataset.deck.split(' ').includes(document.body.dataset.deck || 'tarot');
   }
 
   searchEl.addEventListener('input', () => {
@@ -2809,7 +3021,7 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
 
   // injeta imagem no topo de cada card do guia (só cartas de tarot — cigano tem seu próprio loop)
   document.querySelectorAll('.card[data-search]').forEach(card => {
-    if (card.hasAttribute('data-cigano-name')) return; // cigano gerencia suas próprias imagens
+    if (card.hasAttribute('data-cigano-name') || card.hasAttribute('data-latim-name')) return; // cigano e latim gerenciam suas próprias imagens
     const nameEl = card.querySelector('.card-name');
     if (!nameEl) return;
     const name = nameEl.textContent.trim();
@@ -2892,6 +3104,66 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     card.insertBefore(badge, card.firstChild);
   });
 
+  // IMAGENS DAS CARTAS DO CIGANO LATIM (pasta cigano_latim/)
+  const LATIM_IMAGES_GUIA = {
+    'O Tolo': 'cigano_latim/00_O_Tolo.jpg',
+    'O Cavaleiro': 'cigano_latim/01_O_Cavaleiro.jpg',
+    'O Trevo': 'cigano_latim/02_O_Trevo.jpg',
+    'O Navio': 'cigano_latim/03_O_Navio.jpg',
+    'A Casa': 'cigano_latim/04_A_Casa.jpg',
+    'A Árvore': 'cigano_latim/05_A_Arvore.jpg',
+    'As Nuvens': 'cigano_latim/06_As_Nuvens.jpg',
+    'A Serpente': 'cigano_latim/07_A_Serpente.jpg',
+    'O Caixão': 'cigano_latim/08_O_Caixao.jpg',
+    'As Flores': 'cigano_latim/09_As_Flores.jpg',
+    'A Foice': 'cigano_latim/10_A_Foice.jpg',
+    'O Chicote': 'cigano_latim/11_O_Chicote.jpg',
+    'Os Pássaros': 'cigano_latim/12_Os_Passaros.jpg',
+    'A Criança': 'cigano_latim/13_A_Crianca.jpg',
+    'A Raposa': 'cigano_latim/14_A_Raposa.jpg',
+    'O Urso': 'cigano_latim/15_O_Urso.jpg',
+    'As Estrelas': 'cigano_latim/16_As_Estrelas.jpg',
+    'A Cegonha': 'cigano_latim/17_A_Cegonha.jpg',
+    'O Cão': 'cigano_latim/18_O_Cao.jpg',
+    'A Torre': 'cigano_latim/19_A_Torre.jpg',
+    'O Jardim': 'cigano_latim/20_O_Jardim.jpg',
+    'A Montanha': 'cigano_latim/21_A_Montanha.jpg',
+    'Os Caminhos': 'cigano_latim/22_Os_Caminhos.jpg',
+    'Os Ratos': 'cigano_latim/23_Os_Ratos.jpg',
+    'O Coração': 'cigano_latim/24_O_Coracao.jpg',
+    'O Anel': 'cigano_latim/25_O_Anel.jpg',
+    'O Livro': 'cigano_latim/26_O_Livro.jpg',
+    'A Carta': 'cigano_latim/27_A_Carta.jpg',
+    'O Homem': 'cigano_latim/28_O_Homem.jpg',
+    'O Outro Homem': 'cigano_latim/29_O_Outro_Homem.jpg',
+    'A Mulher': 'cigano_latim/30_A_Mulher.jpg',
+    'A Outra Mulher': 'cigano_latim/31_A_Outra_Mulher.jpg',
+    'Os Lírios': 'cigano_latim/32_Os_Lirios.jpg',
+    'O Sol': 'cigano_latim/33_O_Sol.jpg',
+    'A Lua': 'cigano_latim/34_A_Lua.jpg',
+    'A Chave': 'cigano_latim/35_A_Chave.jpg',
+    'Os Peixes': 'cigano_latim/36_Os_Peixes.jpg',
+    'A Âncora': 'cigano_latim/37_A_Ancora.jpg',
+    'A Cruz': 'cigano_latim/38_A_Cruz.jpg',
+  };
+
+  // CARDS DO GUIA CIGANO LATIM: foto da carta
+  document.querySelectorAll('#latim-grid .card[data-search]').forEach(card => {
+    const name = card.getAttribute('data-latim-name');
+    const url  = LATIM_IMAGES_GUIA[name];
+    if (!url) return;
+    const badge = document.createElement('div');
+    badge.className = 'card-icon-badge';
+    badge.style.cssText = 'padding:0;overflow:hidden;background:none;border:none;height:150px;';
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = name;
+    img.style.cssText = 'width:100%;height:150px;object-fit:cover;border-radius:6px;';
+    img.onerror = () => badge.remove();
+    badge.appendChild(img);
+    card.insertBefore(badge, card.firstChild);
+  });
+
   // IMAGENS DAS CARTAS DO SIBILLA (arquivos na pasta sibilla/; sem arquivo, o card fica só com texto)
   const SIBILLA_IMAGES_GUIA = {
     'O Amor': 'sibilla/01_O_Amor.jpg',
@@ -2965,7 +3237,7 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     card.insertBefore(badge, card.firstChild);
   });
 
-  // ABAS DE BARALHO (Tarot / Baralho Cigano / Sibilla)
+  // ABAS DE BARALHO (Tarot / Baralho Cigano / Cigano Latim / Sibilla)
   (function () {
     const tabs = document.querySelectorAll('.deck-tab');
     const deckSections = document.querySelectorAll('section[data-deck]');
@@ -2978,7 +3250,7 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
       tabs.forEach(t => t.classList.toggle('active', t.dataset.deck === deck));
 
       deckSections.forEach(sec => {
-        sec.classList.toggle('hidden', sec.dataset.deck !== deck);
+        sec.classList.toggle('hidden', !sec.dataset.deck.split(' ').includes(deck));
       });
       deckGroups.forEach(g => {
         g.style.display = (g.dataset.deckGroup === deck) ? '' : 'none';
@@ -2994,7 +3266,7 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     });
 
     const saved = localStorage.getItem('tarotSiteDeck');
-    setDeck(saved === 'cigano' || saved === 'sibilla' ? saved : 'tarot');
+    setDeck(saved === 'cigano' || saved === 'latim' || saved === 'sibilla' ? saved : 'tarot');
   })();
 </script>
 </body>
