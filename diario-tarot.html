@@ -5600,7 +5600,7 @@ function render(){
     const lunar=lunarPhase(e.date);
     const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
     const SUBJECT_BADGE_LABELS={amigo:'👥 Amigo(a)',familiar:'👪 Familiar',outra:'❓ Outra pessoa'};
-    const deckBadge = e.deck==='cigano' ? `<span class="theme-badge" style="background:rgba(37,158,88,.16);border:1px solid #3a8f5a;color:#8fd6a8">🍀 Cigano</span>` : e.deck==='latim' ? `<span class="theme-badge" style="background:rgba(150,96,60,.16);border:1px solid #a8683c;color:#e0a679">📜 Cigano Latim</span>` : e.deck==='sibilla' ? `<span class="theme-badge" style="background:rgba(176,132,60,.16);border:1px solid #b0843c;color:#e6c27a">🕯️ Sibilla</span>` : '';
+    const deckBadge = e.deck==='cigano' ? `<span class="theme-badge" style="background:rgba(37,158,88,.16);border:1px solid #3a8f5a;color:#8fd6a8">🍀 Cigano</span>` : e.deck==='latim' ? `<span class="theme-badge" style="background:rgba(150,96,60,.16);border:1px solid #a8683c;color:#e0a679">📜 Cigano Latim</span>` : e.deck==='sibilla' ? `<span class="theme-badge" style="background:rgba(128,0,32,.22);border:1px solid #8c1d3a;color:#e8a0b2">🕯️ Sibilla</span>` : '';
     const subjectBadge=(e.subject && e.subject!=='mim')?`<span class="theme-badge" style="background:rgba(122,78,184,.18);border:1px solid var(--purple);color:var(--purple-light)">${SUBJECT_BADGE_LABELS[e.subject]||'Outra pessoa'}${e.subjectName?': '+e.subjectName.replace(/</g,'&lt;'):''}</span>`:'';
     html+=`
     <div class="entry" id="entry-${e.id}">

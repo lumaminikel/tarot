@@ -124,6 +124,19 @@
     background: radial-gradient(circle, rgba(122,78,184,0.18) 0%, #080514 75%);
   }
 
+  .img-lightbox {
+    position: fixed; inset: 0; z-index: 1000;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.6rem; padding: 1rem;
+    background: rgba(8,5,20,0.93); cursor: zoom-out;
+  }
+  .img-lightbox.open { display: flex; }
+  .img-lightbox img {
+    max-width: min(92vw, 560px); max-height: 82vh; object-fit: contain;
+    border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  }
+  .img-lightbox-cap { color: var(--gold); font-size: 1.05rem; text-align: center; }
+
   .search-wrap {
     position: sticky;
     top: 0;
@@ -3235,6 +3248,30 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     img.onerror = () => badge.remove();
     badge.appendChild(img);
     card.insertBefore(badge, card.firstChild);
+  });
+
+  // IMAGENS DOS CARDS: carta inteira na visualização + pop-up ao clicar
+  const lightbox = document.createElement('div');
+  lightbox.className = 'img-lightbox';
+  lightbox.innerHTML = '<img alt=""><div class="img-lightbox-cap"></div>';
+  document.body.appendChild(lightbox);
+  const lightboxImg = lightbox.querySelector('img');
+  const lightboxCap = lightbox.querySelector('.img-lightbox-cap');
+  const closeLightbox = () => lightbox.classList.remove('open');
+  lightbox.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  document.querySelectorAll('.card[data-search] img').forEach(img => {
+    const badge = img.closest('.card-icon-badge');
+    if (badge) badge.style.height = 'auto';
+    img.style.cssText = 'width:100%;max-height:240px;object-fit:contain;border-radius:6px;cursor:zoom-in;display:block;'
+      + (badge ? '' : 'margin-bottom:.7rem;border:1px solid var(--border);background:#080514;');
+    img.addEventListener('click', ev => {
+      ev.stopPropagation();
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightboxCap.textContent = img.alt;
+      lightbox.classList.add('open');
+    });
   });
 
   // ABAS DE BARALHO (Tarot / Baralho Cigano / Cigano Latim / Sibilla)
