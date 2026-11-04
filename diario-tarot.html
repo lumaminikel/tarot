@@ -4452,6 +4452,196 @@ const CONSULT_GROUPS = [
   { label: 'Paus',    cards: ['Ás de Paus','Dois de Paus','Três de Paus','Quatro de Paus','Cinco de Paus','Seis de Paus','Sete de Paus','Oito de Paus','Nove de Paus','Dez de Paus','Valete de Paus','Cavaleiro de Paus','Rainha de Paus','Rei de Paus'] },
 ];
 
+// ── BUSCA DE CARTAS: número, sem diferenciar acento e por sinônimos (mesma lógica do guia) ──
+function cqNorm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+const CQ_STOP = new Set(['o','a','os','as','de','da','do','das','dos','e','um','uma']);
+const CQ_GROUPS = [
+  ['bajulador', 'bajulação', 'bajular', 'adulador', 'adulação', 'adular', 'lisonjeador', 'lisonja', 'puxa-saco', 'puxa saco', 'elogio interesseiro', 'falso elogio', 'lambe-botas'],
+  ['amor', 'paixão', 'romance', 'namoro', 'afeto', 'afeição', 'carinho', 'ternura', 'amoroso', 'coração', 'sentimento'],
+  ['amizade', 'amigo', 'amiga', 'camaradagem', 'companheiro', 'companheirismo', 'lealdade', 'fidelidade', 'confiança'],
+  ['apoio', 'amparo', 'ajuda', 'suporte', 'proteção', 'proteger', 'protetor', 'abrigo', 'defesa', 'resguardo'],
+  ['dinheiro', 'grana', 'finanças', 'riqueza', 'prosperidade', 'abundância', 'ganho', 'lucro', 'renda', 'sustento', 'bens', 'fortuna', 'patrimônio'],
+  ['perda', 'prejuízo', 'gasto', 'dano', 'escassez', 'pobreza', 'dificuldade financeira', 'dívida'],
+  ['briga', 'discussão', 'desavença', 'atrito', 'conflito', 'confronto', 'desentendimento', 'rixa', 'bate-boca', 'disputa'],
+  ['raiva', 'ira', 'fúria', 'irritação', 'explosão', 'mau humor', 'aborrecimento', 'zanga', 'zangada', 'ódio', 'nervoso'],
+  ['medo', 'susto', 'sobressalto', 'pavor', 'receio', 'temor', 'pânico', 'assombro'],
+  ['ansiedade', 'angústia', 'preocupação', 'nervosismo', 'estresse', 'tensão', 'agonia', 'aflição', 'angústia mental'],
+  ['tristeza', 'luto', 'dor', 'melancolia', 'depressão', 'desânimo', 'pesar', 'mágoa', 'sofrimento', 'choro', 'lágrimas'],
+  ['alegria', 'felicidade', 'contentamento', 'satisfação', 'celebração', 'festa', 'diversão', 'prazer', 'lazer', 'passatempo', 'divertimento', 'pequenas alegrias'],
+  ['viagem', 'viagens', 'viajar', 'deslocamento', 'passeio', 'jornada', 'trajeto', 'partida', 'travessia', 'navio', 'barco', 'embarcação', 'horizontes distantes'],
+  ['casa', 'lar', 'moradia', 'residência', 'domicílio', 'família', 'casa da cidade', 'casa de campo'],
+  ['casamento', 'matrimônio', 'noivado', 'união', 'aliança', 'alianças', 'anel', 'compromisso', 'contrato', 'parceria', 'sociedade', 'enlace'],
+  ['carta', 'mensagem', 'mensagens', 'notícia', 'notícias', 'recado', 'bilhete', 'documento', 'documentos', 'comunicação', 'correspondência', 'e-mail', 'mensageiro'],
+  ['segredo', 'segredos', 'mistério', 'oculto', 'sigilo', 'enigma', 'conhecimento oculto', 'esotérico'],
+  ['verdade', 'revelação', 'descoberta', 'esclarecimento', 'clareza', 'certeza', 'confirmação'],
+  ['engano', 'mentira', 'falsidade', 'falso', 'traição', 'enganação', 'ilusão', 'ilusões', 'farsa', 'desonestidade', 'trapaça', 'golpe', 'cilada', 'armadilha', 'fraude'],
+  ['ladrão', 'roubo', 'furto', 'assalto', 'larápio', 'gatuno', 'bandido'],
+  ['inimigo', 'rival', 'adversário', 'oposição', 'rivalidade', 'concorrente', 'opositor', 'competição', 'inimizade'],
+  ['morte', 'fim', 'encerramento', 'término', 'finalização', 'caixão', 'fim de ciclo', 'óbito', 'falecimento', 'finitude', 'fim doloroso'],
+  ['mudança', 'mudanças', 'transformação', 'transição', 'renovação', 'virada', 'metamorfose', 'novidade', 'novidades'],
+  ['esperança', 'fé', 'otimismo', 'expectativa', 'desejo', 'sonho'],
+  ['sucesso', 'vitória', 'triunfo', 'êxito', 'conquista', 'realização', 'vencer', 'vencedor', 'glória'],
+  ['sorte', 'fortuna', 'acaso', 'destino', 'sina', 'trevo', 'boa sorte', 'sorte passageira'],
+  ['oportunidade', 'chance', 'ocasião', 'brecha', 'possibilidade'],
+  ['atraso', 'demora', 'adiamento', 'lentidão', 'espera', 'paciência', 'tempo', 'protelação'],
+  ['obstáculo', 'obstáculos', 'impedimento', 'bloqueio', 'entrave', 'barreira', 'dificuldade', 'empecilho', 'pedra no caminho', 'impasse'],
+  ['mulher', 'feminino', 'dama', 'moça', 'senhora', 'figura feminina'],
+  ['homem', 'masculino', 'cavalheiro', 'moço', 'rapaz', 'figura masculina'],
+  ['criança', 'infância', 'bebê', 'filho', 'filha', 'infantil', 'menino', 'menina', 'infantilidade', 'imaturidade', 'inocência'],
+  ['aposentado', 'idoso', 'velho', 'ancião', 'idade', 'terceira idade'],
+  ['trabalho', 'emprego', 'profissão', 'carreira', 'ofício', 'serviço', 'labuta', 'ocupação'],
+  ['justiça', 'advogado', 'juiz', 'lei', 'processo', 'tribunal', 'julgamento', 'direito', 'jurídico', 'sentença'],
+  ['saúde', 'vitalidade', 'bem-estar', 'cura', 'doença', 'enfermidade', 'corpo', 'remédio'],
+  ['fofoca', 'fofocas', 'boatos', 'boato', 'tagarelice', 'mexerico', 'intriga', 'falatório', 'bate-papo', 'conversa', 'conversas', 'comentário'],
+  ['liberdade', 'independência', 'autonomia', 'autossuficiência', 'livre'],
+  ['poder', 'autoridade', 'controle', 'liderança', 'comando', 'domínio', 'mando', 'chefe'],
+  ['força', 'coragem', 'determinação', 'resistência', 'vigor', 'energia', 'garra', 'bravura', 'perseverança'],
+  ['sabedoria', 'conhecimento', 'estudo', 'estudos', 'aprendizado', 'saber', 'estudante', 'livro', 'livros', 'aprender', 'inteligência'],
+  ['intuição', 'percepção', 'sensibilidade', 'instinto', 'sexto sentido', 'clarividência'],
+  ['pensamento', 'mente', 'reflexão', 'ideia', 'lembrança', 'memória', 'contemplação', 'nostalgia'],
+  ['paz', 'tranquilidade', 'calma', 'serenidade', 'sossego', 'descanso', 'repouso', 'harmonia', 'calmaria', 'quietude'],
+  ['cansaço', 'exaustão', 'fraqueza', 'esgotamento', 'fadiga', 'sobrecarga', 'desgaste', 'vulnerabilidade', 'debilidade'],
+  ['escolha', 'escolhas', 'decisão', 'dilema', 'encruzilhada', 'caminho', 'caminhos', 'opções', 'direções', 'bifurcação', 'tomada de decisão'],
+  ['reconciliação', 'perdão', 'reencontro', 'reaproximação', 'retomada', 'fazer as pazes'],
+  ['visita', 'chegada', 'chegadas', 'encontro', 'hóspede', 'convidado', 'aparição'],
+  ['presente', 'presentes', 'regalo', 'mimo', 'brinde', 'agrado', 'dádiva', 'gentileza', 'generosidade', 'recompensa'],
+  ['solidão', 'isolamento', 'viuvez', 'viúva', 'abandono', 'afastamento', 'ausência', 'distância', 'saudade'],
+  ['surpresa', 'imprevisto', 'imprevistos', 'inesperado', 'repentino', 'súbito'],
+  ['soldado', 'militar', 'disciplina', 'guerreiro', 'combate', 'guerra', 'exército'],
+  ['jogo', 'jogos', 'aposta', 'azar', 'risco', 'jogador', 'jogadores', 'cassino', 'arriscar'],
+  ['flores', 'flor', 'buquê', 'ramalhete', 'floral', 'plantas'],
+  ['jardim', 'parque', 'vida social', 'rede de contatos', 'eventos', 'público', 'comunidade'],
+  ['cão', 'cachorro', 'cachorrinho', 'canis', 'amigo fiel'],
+  ['serpente', 'cobra', 'víbora', 'serpens'],
+  ['raposa', 'esperteza', 'astúcia', 'malícia', 'estratégia', 'esperto', 'vulpis', 'sagacidade'],
+  ['rato', 'ratos', 'roedor', 'mures'],
+  ['peixe', 'peixes', 'pisces'],
+  ['cruz', 'fardo', 'provação', 'provações', 'peso', 'ônus', 'crux'],
+  ['lua', 'luna', 'noite', 'lunar'],
+  ['sol', 'solar', 'luz', 'brilho', 'calor'],
+  ['estrela', 'estrelas', 'astro', 'stellae'],
+  ['chave', 'solução', 'soluções', 'resposta', 'abertura', 'clavis', 'resolver'],
+  ['montanha', 'serra', 'monte', 'elevação', 'mons'],
+  ['âncora', 'estabilidade', 'firmeza', 'segurança', 'constância', 'porto'],
+  ['cavaleiro', 'cavalo', 'eques', 'cavalgada'],
+  ['pássaros', 'pássaro', 'aves', 'ave', 'passarinho'],
+  ['nuvens', 'nuvem', 'névoa', 'incerteza', 'dúvida', 'dúvidas', 'confusão', 'ventos', 'vento', 'tempestade'],
+  ['chicote', 'açoite', 'látego', 'flagellum', 'punição'],
+  ['foice', 'colheita', 'ceifa', 'ceifador', 'corte', 'cortes bruscos'],
+  ['cegonha', 'gravidez', 'grávida', 'gestação', 'nascimento', 'gestante'],
+  ['lírio', 'lírios', 'pureza', 'virtude', 'maturidade'],
+  ['mago', 'mágico', 'bruxo', 'feiticeiro', 'habilidade', 'manifestação'],
+  ['sacerdotisa', 'papisa', 'oráculo', 'sibila'],
+  ['imperatriz', 'rainha', 'soberana', 'mãe', 'fertilidade'],
+  ['imperador', 'rei', 'soberano', 'monarca', 'pai', 'governante'],
+  ['hierofante', 'papa', 'sacerdote', 'mestre', 'tradição'],
+  ['enamorados', 'namorados', 'amantes', 'apaixonados', 'casal'],
+  ['carro', 'carruagem', 'veículo', 'carroça'],
+  ['eremita', 'ermitão', 'monge', 'recluso', 'solitário', 'retiro'],
+  ['roda da fortuna', 'roda', 'ciclo', 'reviravolta'],
+  ['enforcado', 'pendurado', 'suspensão', 'sacrifício'],
+  ['temperança', 'moderação', 'equilíbrio', 'alquimia'],
+  ['diabo', 'demônio', 'capeta', 'tentação', 'vício', 'apego', 'satanás', 'obsessão'],
+  ['julgamento', 'juízo', 'renascimento', 'chamado', 'ressurreição', 'avaliação'],
+  ['mundo', 'universo', 'conclusão', 'completude'],
+  ['louco', 'louca', 'tolo', 'tola', 'bobo', 'curinga', 'coringa', 'insensato', 'stulti'],
+  ['copas', 'taça', 'taças', 'cálice', 'cálices'],
+  ['espadas', 'espada', 'lâmina', 'lâminas'],
+  ['ouros', 'ouro', 'moedas', 'moeda', 'pentáculos', 'pentáculo', 'diamantes'],
+  ['paus', 'pau', 'bastões', 'bastão', 'bastos', 'varinhas', 'cajado']
+].map(grp => grp.map(cqNorm));
+const cqWordCache = new Map();
+function cqWord(alt) {
+  if (!cqWordCache.has(alt)) {
+    const tail = alt.length <= 3 ? '($|[^a-z0-9])' : '';
+    cqWordCache.set(alt, new RegExp('(^|[^a-z0-9])' + alt.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + tail));
+  }
+  return cqWordCache.get(alt);
+}
+function cqExpand(term) {
+  const out = new Set([term]);
+  if (term.length < 3) return out;
+  CQ_GROUPS.forEach(grp => {
+    if (grp.some(m => m === term || m.startsWith(term) || (m.length >= 4 && term.startsWith(m)))) grp.forEach(m => out.add(m));
+  });
+  return out;
+}
+function cqRoman(s) {
+  if (!/^[ivxl]+$/.test(s)) return 0;
+  const v = { i: 1, v: 5, x: 10, l: 50 };
+  let n = 0;
+  for (let i = 0; i < s.length; i++) n += (v[s[i + 1]] > v[s[i]]) ? -v[s[i]] : v[s[i]];
+  return n;
+}
+const CQ_NUM_WORDS = { 'as': '1', 'dois': '2', 'tres': '3', 'quatro': '4', 'cinco': '5', 'seis': '6', 'sete': '7', 'oito': '8', 'nove': '9', 'dez': '10' };
+// numeração tradicional dos arcanos maiores (o diário tem 'O Enforcado' e 'A Enforcada', então não dá para usar a posição na lista)
+const CQ_TAROT_MAJORS = {
+  'A Louca': ['0','22'], 'O Mago': ['1'], 'A Sacerdotisa': ['2'], 'A Imperatriz': ['3'], 'O Imperador': ['4'], 'O Hierofante': ['5'],
+  'Os Enamorados': ['6'], 'O Carro': ['7'], 'A Força': ['8'], 'O Eremita': ['9'], 'Roda da Fortuna': ['10'], 'A Justiça': ['11'],
+  'O Enforcado': ['12'], 'A Enforcada': ['12'], 'A Morte': ['13'], 'A Temperança': ['14'], 'O Diabo': ['15'], 'A Torre': ['16'],
+  'A Estrela': ['17'], 'A Lua': ['18'], 'O Sol': ['19'], 'O Julgamento': ['20'], 'O Mundo': ['21'],
+};
+// números que identificam a carta: o número do baralho (cigano/latim/sibilla) ou, no tarot, a posição nos arcanos maiores e o valor dos arcanos menores
+function cqNumbers(name, deck) {
+  const data = cardsDataFor(deck)[name] || {};
+  const set = new Set();
+  if (data.num !== undefined && data.num !== '') set.add(cqNorm(String(data.num)));
+  if (deck === 'tarot') {
+    (CQ_TAROT_MAJORS[name] || []).forEach(n => set.add(n));
+    const first = cqNorm(name).split(' ')[0];
+    if (CQ_NUM_WORDS[first] && / de /.test(name)) set.add(CQ_NUM_WORDS[first]);
+  }
+  return set;
+}
+// devolve uma função nome -> relevância (0 = nome/número, 1 = palavra de apoio, 2 = sinônimo; -1 = não combina)
+function cqRanker(q, deck) {
+  const names = Object.keys(cardsDataFor(deck));
+  const nq = cqNorm(q.trim());
+  let pairs = q.toLowerCase().split(/\s+/).filter(Boolean).map(r => [r, cqNorm(r)]);
+  const meaningful = pairs.filter(pr => !CQ_STOP.has(pr[1]));
+  if (meaningful.length) pairs = meaningful;
+  let numberHits = null;
+  if (/^\d+[a-z]?$/.test(nq)) {
+    numberHits = new Set(names.filter(n => cqNumbers(n, deck).has(nq)));
+    if (!numberHits.size) numberHits = null;
+  }
+  const romanVal = /^[ivxl]{2,}$/.test(nq) ? String(cqRoman(nq)) : null;
+  return function (name) {
+    if (numberHits) return numberHits.has(name) ? 0 : -1;
+    const data = cardsDataFor(deck)[name] || {};
+    const nameN = cqNorm(name);
+    const kwRaw = (data.keywords || []).join(' ').toLowerCase();
+    const kwN = cqNorm(kwRaw);
+    const both = nameN + ' ' + kwN;
+    const nums = cqNumbers(name, deck);
+    if (romanVal && nums.has(romanVal)) return 0;
+    let worst = 0;
+    for (const [raw, t] of pairs) {
+      let r = -1;
+      if (/^\d+$/.test(t)) {
+        r = nums.has(t) ? 0 : -1;
+      } else {
+        const inName = raw !== t ? name.toLowerCase().includes(raw) : nameN.includes(t);
+        const inKw = raw !== t ? kwRaw.includes(raw) : kwN.includes(t);
+        if (inName) r = 0;
+        else if (inKw) r = 1;
+        else { for (const alt of cqExpand(t)) { if (alt !== t && cqWord(alt).test(both)) { r = 2; break; } } }
+      }
+      if (r < 0) { worst = -1; break; }
+      worst = Math.max(worst, r);
+    }
+    if (worst >= 0) return worst;
+    if (nq.includes(' ')) { for (const alt of cqExpand(nq)) if (cqWord(alt).test(both)) return 2; }
+    return -1;
+  };
+}
+// filtra e ordena (nome/número primeiro, depois palavras de apoio, depois sinônimos)
+function cqFilter(names, q, deck = formDeck) {
+  const rank = cqRanker(q, deck);
+  return names.map((n, i) => [n, rank(n), i]).filter(x => x[1] >= 0)
+    .sort((a, b) => a[1] - b[1] || a[2] - b[2]).map(x => x[0]);
+}
+
 function buildConsultList() {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const activeGroups = formDeck === 'cigano' ? [CIGANO_CONSULT_GROUP] : formDeck === 'latim' ? [LATIM_CONSULT_GROUP] : formDeck === 'sibilla' ? [SIBILLA_CONSULT_GROUP] : CONSULT_GROUPS;
@@ -4475,9 +4665,10 @@ function buildConsultList() {
 function filterConsultList(q) {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const nq = norm(q.trim());
+  const rank = nq ? cqRanker(q, formDeck) : null;
   let any = false;
   document.querySelectorAll('.consult-card-item').forEach(item => {
-    const match = !nq || item.dataset.norm.includes(nq);
+    const match = !nq || rank(item.dataset.name) >= 0;
     item.classList.toggle('hidden', !match);
     if (match) any = true;
   });
@@ -4917,9 +5108,10 @@ function allCardNames() { return Object.keys(cardsDataFor(formDeck)); }
 
 function openAutocomplete(q) {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const nq = norm(q.replace(/inverti.*/i,'').trim());
-  if (!nq || nq.length < 2) { autocomplete.classList.remove('open'); return; }
-  const matches = allCardNames().filter(n => norm(n).includes(nq)).slice(0, 10);
+  const cleanQ = q.replace(/inverti.*/i,'').trim();
+  const nq = norm(cleanQ);
+  if (!nq || (nq.length < 2 && !/^\d$/.test(nq))) { autocomplete.classList.remove('open'); return; }
+  const matches = cqFilter(allCardNames(), cleanQ).slice(0, 10);
   const IMAGES_SRC = cardImagesFor(formDeck);
   if (!matches.length) { autocomplete.classList.remove('open'); return; }
 
@@ -4993,9 +5185,10 @@ function renderBottomCardPreview() {
 
 function openBottomCardAutocomplete(q) {
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const nq = norm(q.replace(/inverti.*/i,'').trim());
-  if (!nq || nq.length < 2) { bottomCardAC.classList.remove('open'); return; }
-  const matches = allCardNames().filter(n => norm(n).includes(nq)).slice(0, 10);
+  const cleanQ = q.replace(/inverti.*/i,'').trim();
+  const nq = norm(cleanQ);
+  if (!nq || (nq.length < 2 && !/^\d$/.test(nq))) { bottomCardAC.classList.remove('open'); return; }
+  const matches = cqFilter(allCardNames(), cleanQ).slice(0, 10);
   const IMAGES_SRC = cardImagesFor(formDeck);
   if (!matches.length) { bottomCardAC.classList.remove('open'); return; }
 
