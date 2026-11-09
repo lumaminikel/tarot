@@ -1715,89 +1715,17 @@
   "Cada carta é uma conversa entre você e o invisível."
 </footer>
 
+<script src="tarot-cards.js?v=2"></script>
 <script>
-const TAROT_CARDS = {
-  'A Louca':         {oracle:'talvez',keywords:['Começos','Liberdade','Fé cega'],        meaning:'Novo começo, salto de fé, espontaneidade. No seu baralho ela fecha o ciclo como carta 22 — a jornada completa que renasce com leveza.'},
-  'O Mago':          {oracle:'sim',   keywords:['Manifestação','Vontade','Habilidade'],   meaning:'Poder de manifestar, criatividade ativa. Você tem todas as ferramentas necessárias.'},
-  'A Sacerdotisa':   {oracle:'talvez',keywords:['Intuição','Mistério','Sabedoria'],       meaning:'O mundo interior fala. Silêncio, espera e confiança na voz interna.'},
-  'A Imperatriz':    {oracle:'sim',   keywords:['Fertilidade','Abundância','Natureza'],   meaning:'Criatividade fértil, abundância, maternidade. Nutrir e deixar florescer.'},
-  'O Imperador':     {oracle:'sim',   keywords:['Autoridade','Estrutura','Disciplina'],   meaning:'Liderança, ordem e estabilidade. Construir com firmeza sobre bases sólidas.'},
-  'O Hierofante':    {oracle:'talvez',keywords:['Tradição','Espiritualidade','Ensino'],   meaning:'Tradição, mentor espiritual, comprometimento formal. Respeitar o processo.'},
-  'Os Enamorados':      {oracle:'sim',   keywords:['Escolha','Amor','Valores'],              meaning:'Decisão consciente, alinhamento de valores, união dos opostos.'},
-  'O Carro':         {oracle:'sim',   keywords:['Vitória','Controle','Movimento'],        meaning:'Triunfo pela força de vontade. Manter o foco enquanto o mundo gira.'},
-  'A Força':         {oracle:'sim',   keywords:['Coragem','Compaixão','Força interior'],  meaning:'Domesticar os instintos com amor, não repressão. Coragem que vem do coração.'},
-  'O Eremita':       {oracle:'talvez',keywords:['Solidão','Sabedoria','Introspecção'],    meaning:'Recolhimento necessário, busca interior. A lanterna ilumina só o próximo passo.'},
-  'Roda da Fortuna': {oracle:'sim',   keywords:['Ciclos','Destino','Karma'],              meaning:'A roda gira sempre. Reconheça em que ponto está e flua com o movimento.'},
-  'A Justiça':       {oracle:'talvez',keywords:['Equilíbrio','Verdade','Causa e efeito'], meaning:'Verdade objetiva, causa e efeito, honestidade radical consigo mesma.'},
-  'O Enforcado':     {oracle:'nao',   keywords:['Sacrifício','Pausa','Nova perspectiva'], meaning:'Entrega voluntária, ver de outro ângulo. Parar de lutar para enxergar mais.'},
-  'A Enforcada':     {oracle:'nao',   keywords:['Sacrifício','Pausa','Nova perspectiva'], meaning:'Entrega voluntária, ver de outro ângulo. Parar de lutar para enxergar mais.'},
-  'A Morte':         {oracle:'talvez',keywords:['Transformação','Fim de ciclo','Renovação'],meaning:'Metamorfose radical. O que deve morrer para que você viva mais plenamente?'},
-  'A Temperança':    {oracle:'talvez',keywords:['Equilíbrio','Alquimia','Moderação'],     meaning:'Mistura gradual, paciência como virtude. A cura que não pode ser apressada.'},
-  'O Diabo':         {oracle:'nao',   keywords:['Sombra','Vício','Apego'],                meaning:'As correntes que criamos nós mesmos. O que você se recusa a soltar?'},
-  'A Torre':         {oracle:'nao',   keywords:['Ruptura','Revelação','Libertação'],      meaning:'Destrói só o que estava podre. Dolorosa mas necessária libertação.'},
-  'A Estrela':       {oracle:'sim',   keywords:['Esperança','Cura','Renovação'],          meaning:'Após toda destruição, a beleza retorna. Fase de graça e conexão com o divino.'},
-  'A Lua':           {oracle:'nao',   keywords:['Ilusão','Inconsciente','Medo'],          meaning:'As coisas não são como parecem. Enfrente os medos antes de agir.'},
-  'O Sol':           {oracle:'sim',   keywords:['Alegria','Sucesso','Vitalidade'],        meaning:'Clareza plena, celebração, sucesso. A consciência que ilumina tudo.'},
-  'O Julgamento':    {oracle:'sim',   keywords:['Renascimento','Chamado','Despertar'],    meaning:'Chamado ao propósito. Está vivendo de acordo com o que sua alma veio fazer?'},
-  'O Mundo':         {oracle:'sim',   keywords:['Completude','Realização','Integração'],  meaning:'Ciclo completo com honra. Tornar-se quem verdadeiramente se é.'},
-  'Ás de Copas':        {oracle:'sim',   keywords:['Novo amor','Abertura emocional'],        meaning:'Coração aberto e abundante. Novo começo emocional, amor que surge.'},
-  'Dois de Copas':      {oracle:'sim',   keywords:['União','Parceria','Reciprocidade'],       meaning:'Dar e receber em igual medida. O amor mais equilibrado do baralho.'},
-  'Três de Copas':      {oracle:'sim',   keywords:['Celebração','Amizade','Comunidade'],      meaning:'Alegria compartilhada, encontros felizes, conquistas celebradas juntas.'},
-  'Quatro de Copas':    {oracle:'nao',   keywords:['Contemplação','Tédio','Indiferença'],      meaning:'A bênção está sendo ignorada. Aprecie o que já existe antes de pedir mais.'},
-  'Cinco de Copas':     {oracle:'nao',   keywords:['Perda','Luto','Tristeza'],                 meaning:'Virar-se para o que restou em vez de só lamentar o que se perdeu.'},
-  'Seis de Copas':      {oracle:'talvez',keywords:['Nostalgia','Infância','Passado'],           meaning:'Memórias doces, reencontros, inocência. Cuidado com idealização do passado.'},
-  'Sete de Copas':      {oracle:'nao',   keywords:['Ilusões','Muitas escolhas','Fantasia'],     meaning:'Excesso de possibilidades paralisa. Discernimento entre o real e o fantasioso.'},
-  'Oito de Copas':      {oracle:'nao',   keywords:['Partida','Busca espiritual','Deixar ir'],   meaning:'Abandono voluntário em busca de algo mais profundo. Coragem de deixar para trás.'},
-  'Nove de Copas':      {oracle:'sim',   keywords:['Satisfação','Desejo realizado','Prazer'],   meaning:'A carta dos desejos. Realização emocional genuína, contentamento pleno.'},
-  'Dez de Copas':       {oracle:'sim',   keywords:['Família','Harmonia','Felicidade'],           meaning:'O lar ideal, amor familiar completo, paz duradoura. Realização emocional máxima.'},
-  'Valete de Copas':    {oracle:'talvez',keywords:['Mensagem emocional','Jovem sensitivo'],      meaning:'Mensagens do mundo espiritual, intuição em desenvolvimento, sonhos.'},
-  'Cavaleiro de Copas': {oracle:'sim',   keywords:['Romance','Proposta','Mensageiro'],           meaning:'Propostas românticas, convites, mensagens de amor. Energia suave e poética.'},
-  'Rainha de Copas':    {oracle:'sim',   keywords:['Empatia','Intuição madura','Cuidado'],       meaning:'Cuidado profundo, psíquico desenvolvido, amor maduro e curador.'},
-  'Rei de Copas':       {oracle:'sim',   keywords:['Sabedoria emocional','Equilíbrio'],          meaning:'Sentir tudo sem ser arrastado. Líder que usa o coração como bússola.'},
-  'Ás de Espadas':        {oracle:'sim',   keywords:['Clareza','Verdade','Breakthrough'],          meaning:'A espada da verdade corta toda ilusão. Clareza mental repentina, decisão firme.'},
-  'Dois de Espadas':      {oracle:'nao',   keywords:['Impasse','Decisão difícil','Evitação'],      meaning:'Recusa de ver a realidade. Decisão adiada que precisa ser tomada.'},
-  'Três de Espadas':      {oracle:'nao',   keywords:['Dor','Traição','Separação'],                 meaning:'A dor que não pode ser evitada. Separação, traição, desgosto — mas passa.'},
-  'Quatro de Espadas':    {oracle:'talvez',keywords:['Descanso','Recuperação','Pausa'],            meaning:'Após batalhas mentais, descansar. O guerreiro que não repousa perde a próxima.'},
-  'Cinco de Espadas':     {oracle:'nao',   keywords:['Conflito','Derrota','Vitória vazia'],        meaning:'Vencer a qualquer custo tem consequências. Conflitos sem vencedores reais.'},
-  'Seis de Espadas':      {oracle:'talvez',keywords:['Transição','Afastamento','Calmaria'],        meaning:'Transição difícil mas necessária para águas mais calmas.'},
-  'Sete de Espadas':      {oracle:'nao',   keywords:['Estratégia','Desonestidade','Furtividade'],  meaning:'Cuidado com quem ou o que não é o que parece. Traição ou estratégia necessária.'},
-  'Oito de Espadas':      {oracle:'nao',   keywords:['Aprisionamento mental','Limitação'],         meaning:'A prisão é mental. Crenças limitantes, ansiedade — a venda pode ser tirada.'},
-  'Nove de Espadas':      {oracle:'nao',   keywords:['Ansiedade','Pesadelo','Angústia'],           meaning:'Pensamentos catastróficos às 3 da manhã. A situação é menos grave do que parece.'},
-  'Dez de Espadas':       {oracle:'nao',   keywords:['Fim doloroso','Toque do fundo'],             meaning:'O pior já passou. Fim inevitável, mas o amanhecer começa no horizonte.'},
-  'Valete de Espadas':    {oracle:'talvez',keywords:['Curiosidade','Vigilância','Notícias'],       meaning:'Notícias chegando, pensamento crítico, perspicácia aguçada.'},
-  'Cavaleiro de Espadas': {oracle:'sim',   keywords:['Velocidade','Ação direta','Impulsividade'],  meaning:'Decisões rápidas, comunicação direta. Energia que resolve mas pode atropelar.'},
-  'Rainha de Espadas':    {oracle:'talvez',keywords:['Clareza','Independência','Percepção'],       meaning:'Mulher que passou por dor e tornou-se sábia. Pede a verdade antes da gentileza.'},
-  'Rei de Espadas':       {oracle:'sim',   keywords:['Autoridade intelectual','Razão'],            meaning:'Julgamento claro, mente superior. Autoridade que usa a lógica com justiça.'},
-  'Ás de Ouros':        {oracle:'sim',   keywords:['Prosperidade','Nova oportunidade'],            meaning:'Semente de abundância. Nova oportunidade financeira ou material surgindo.'},
-  'Dois de Ouros':      {oracle:'talvez',keywords:['Malabarismo','Equilíbrio','Flexibilidade'],    meaning:'Múltiplas responsabilidades em equilíbrio. Adaptação com humor e destreza.'},
-  'Três de Ouros':      {oracle:'sim',   keywords:['Trabalho em equipe','Habilidade','Reconhecimento'],meaning:'Colaboração, aprendizado de um ofício, trabalho reconhecido.'},
-  'Quatro de Ouros':    {oracle:'nao',   keywords:['Controle','Apego','Possessividade'],           meaning:'Apego ao dinheiro, medo de perder o que se tem. O que você se recusa a soltar?'},
-  'Cinco de Ouros':     {oracle:'nao',   keywords:['Dificuldade financeira','Exclusão'],           meaning:'Dificuldades materiais. A luz (ajuda) está mais perto do que parece — peça.'},
-  'Seis de Ouros':      {oracle:'sim',   keywords:['Generosidade','Dar e receber','Equilíbrio'],   meaning:'Equilíbrio entre dar e receber. Caridade genuína, pagamentos chegando.'},
-  'Sete de Ouros':      {oracle:'talvez',keywords:['Paciência','Investimento','Avaliação'],        meaning:'O trabalho foi feito — aguarde os frutos. Vale o esforço o retorno?'},
-  'Oito de Ouros':      {oracle:'sim',   keywords:['Dedicação','Aperfeiçoamento','Aprendizado'],   meaning:'Maestria que vem com a prática. Dedicação ao trabalho, melhoria contínua.'},
-  'Nove de Ouros':      {oracle:'sim',   keywords:['Abundância','Autossuficiência','Prazer'],      meaning:'Independência financeira conquistada. Prosperidade e luxo merecidos.'},
-  'Dez de Ouros':       {oracle:'sim',   keywords:['Herança','Legado','Segurança familiar'],       meaning:'Riqueza que se perpetua. Herança, investimentos de longo prazo, segurança.'},
-  'Valete de Ouros':    {oracle:'talvez',keywords:['Estudante','Novo projeto','Prático'],          meaning:'Aprendizado prático, novo projeto em estágio inicial. Jovem confiável.'},
-  'Cavaleiro de Ouros': {oracle:'talvez',keywords:['Responsabilidade','Diligência','Confiabilidade'],meaning:'O mais lento dos cavaleiros, mas o mais confiável. Resultados sólidos.'},
-  'Rainha de Ouros':    {oracle:'sim',   keywords:['Prosperidade','Nutrição prática','Conforto'],  meaning:'O lar como templo, cuidado com o corpo e o dinheiro. Abundância prática.'},
-  'Rei de Ouros':       {oracle:'sim',   keywords:['Riqueza','Liderança','Sucesso consolidado'],   meaning:'Sucesso financeiro com sabedoria. O empreendedor generoso e bem-sucedido.'},
-  'Ás de Paus':        {oracle:'sim',   keywords:['Inspiração','Potencial criativo','Ação'],       meaning:'Faísca de inspiração, início cheio de entusiasmo, energia vital em seu ápice.'},
-  'Dois de Paus':      {oracle:'talvez',keywords:['Planejamento','Visão de futuro','Decisão'],     meaning:'Visão clara, mas o passo ainda não foi dado. Hora de planejar com estratégia.'},
-  'Três de Paus':      {oracle:'sim',   keywords:['Expansão','Viagem','Resultados chegando'],      meaning:'O que foi semeado começa a retornar. Expansão de projetos e horizontes.'},
-  'Quatro de Paus':    {oracle:'sim',   keywords:['Celebração','Lar feliz','Comunidade'],          meaning:'Casamento, celebrações, harmonia no lar. Pausa para comemorar conquistas.'},
-  'Cinco de Paus':     {oracle:'nao',   keywords:['Conflito','Competição','Caos'],                 meaning:'Energia dispersa em várias direções. Competição que pode desgastar.'},
-  'Seis de Paus':      {oracle:'sim',   keywords:['Vitória','Reconhecimento público','Sucesso'],   meaning:'Triunfo reconhecido. Colher os louros com humildade após longa luta.'},
-  'Sete de Paus':      {oracle:'talvez',keywords:['Defesa','Perseverança','Posição'],              meaning:'Manter-se firme contra adversidades. Você tem terreno elevado — defenda-o.'},
-  'Oito de Paus':      {oracle:'sim',   keywords:['Movimento veloz','Comunicação','Mensagens'],    meaning:'Tudo acontecendo de uma vez e rápido. Notícias chegando, viagem iminente.'},
-  'Nove de Paus':      {oracle:'talvez',keywords:['Resistência','Exaustão','Determinação'],        meaning:'Cansaço profundo mas ainda de pé. Reúna as últimas forças para cruzar a linha.'},
-  'Dez de Paus':       {oracle:'nao',   keywords:['Sobrecarga','Fardo excessivo','Responsabilidade'],meaning:'Você carrega mais do que deve. Hora de delegar ou largar o que não é seu.'},
-  'Valete de Paus':    {oracle:'sim',   keywords:['Entusiasmo','Aventura','Energia criativa'],     meaning:'Boas notícias, energia adventurosa. A faísca que precisa ser canalizada.'},
-  'Cavaleiro de Paus': {oracle:'sim',   keywords:['Aventura','Paixão','Ação impulsiva'],           meaning:'Energia irresistível, sedutor, apaixonado. Mudanças de rumo frequentes.'},
-  'Rainha de Paus':    {oracle:'sim',   keywords:['Confiança','Carisma','Liderança natural'],      meaning:'Solar, exuberante, confiante. Criatividade e paixão de vida irresistíveis.'},
-  'Rei de Paus':       {oracle:'sim',   keywords:['Visão','Empreendedorismo','Liderança'],         meaning:'Líder visionário, empreendedor nato. Inspira pelo fogo da visão.'},
-};
-
+  // se o arquivo de dados não carregar (ex.: offline sem cache), avisa em vez de deixar a tela quebrada sem explicação
+  if (typeof TAROT_CARDS === 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.insertAdjacentHTML('afterbegin',
+        '<div style="padding:1rem;text-align:center;background:#5a1a2a;color:#fff">Não foi possível carregar os dados das cartas (tarot-cards.js). Verifique sua conexão e recarregue a página.</div>');
+    });
+  }
+</script>
+<script>
 // Significados invertidos — mesclados no TAROT_CARDS
 const REV = {
   'A Louca':'Impulsividade destrutiva, recusa a crescer, fuga de responsabilidades, decisões sem planejamento.',
@@ -2291,282 +2219,6 @@ const CARD_EXTRAS = {
   },
 };
 
-const CIGANO_CARDS = {
-  'O Cavaleiro': {num:'1', oracle:'sim', keywords:["Notícias", "Movimento", "Chegada"], meaning:'Uma novidade está a caminho — visita, mensagem ou mudança rápida de cenário. Sempre indica algo se aproximando rápido. Perto de cartas boas, a notícia é boa; perto de cartas pesadas, a chegada traz tensão junto.'},
-  'As Pedras': {num:'2', oracle:'talvez', keywords:["Obstáculos pequenos", "Sorte bloqueada", "Pedra no caminho"], meaning:'Uma pedra no caminho — não é o fim do mundo, mas exige atenção e desvio. Indica um pequeno entrave que pode ser contornado com paciência. Perto de cartas boas, é só uma pedra; perto de pesadas, vira barreira maior.'},
-  'O Navio': {num:'3', oracle:'sim', keywords:["Viagem", "Comércio", "Distância"], meaning:'Deslocamento, negócio à distância ou algo vindo de longe — física ou emocionalmente. Fala de movimento para fora do território conhecido: uma viagem, um negócio, ou alguém que está se distanciando.'},
-  'A Casa': {num:'4', oracle:'sim', keywords:["Lar", "Família", "Segurança"], meaning:'Tudo que é base, raiz, o núcleo familiar ou a sensação de chegar em casa. Representa fundações — pode ser a própria casa, a família ou uma sensação de pertencimento que está sendo construída ou testada.'},
-  'A Árvore': {num:'5', oracle:'talvez', keywords:["Saúde", "Crescimento lento", "Raízes"], meaning:'Crescimento devagar e constante — corpo, saúde ou algo que precisa de tempo para amadurecer. Tudo que envolve a Árvore tem raiz profunda e não se resolve rápido: saúde física, um vínculo antigo, um processo que já vem de longe.'},
-  'Os Ventos': {num:'6', oracle:'nao', keywords:["Confusão", "Instabilidade", "Mudança rápida"], meaning:'Situação turva e instável — ventos que mudam de direção sem aviso. Indica incerteza, indecisão ou uma fase que ainda não se definiu. O lado positivo: vento forte também limpa o ar; a confusão tende a se dissipar.'},
-  'A Serpente': {num:'7', oracle:'nao', keywords:["Desvio", "Complicação", "Astúcia"], meaning:'Um caminho torto, uma complicação inesperada ou alguém que não age de frente. A Serpente raramente é boa notícia perto de outra pessoa: sinaliza desvio de rota, terceira pessoa envolvida ou solução que exige rodeios.'},
-  'A Morte': {num:'8', oracle:'nao', keywords:["Fim de ciclo", "Transformação", "Encerramento"], meaning:'Um fim necessário — não é sempre morte literal, mas o encerramento definitivo de uma fase. Junto de cartas positivas, algo precisa morrer para o novo nascer. Junto de cartas pesadas, aponta perda real e período de luto.'},
-  'O Ramalhete': {num:'9', oracle:'sim', keywords:["Beleza", "Presente", "Gentileza"], meaning:'Um gesto bonito, um presente, um convite — algo que traz leveza e é bem-vindo. Uma das cartas mais gentis do baralho: geralmente reforça o campo positivo ao redor, suavizando até combinações difíceis.'},
-  'A Foice': {num:'10', oracle:'nao', keywords:["Corte súbito", "Decisão rápida", "Ruptura"], meaning:'Um corte rápido e definitivo — decisão, ruptura ou fim que chega sem aviso prévio. A Foice age depressa; o que ela corta não volta. Pode ser libertador (cortar o que não serve) ou doloroso, dependendo do contexto.'},
-  'O Chicote': {num:'11', oracle:'nao', keywords:["Conflito", "Repetição", "Discussão"], meaning:'Discussão, atrito ou um padrão que se repete — algo indo e voltando sem se resolver. O Chicote fala de repetição: uma briga antiga que volta, uma rotina desgastante ou esforço repetitivo que exaure.'},
-  'Os Pássaros': {num:'12', oracle:'talvez', keywords:["Conversa", "Ansiedade", "Dupla"], meaning:'Papo, troca de mensagens, um casal ou dupla — e também a agitação mental de quem pensa demais. Sempre envolve comunicação entre duas partes; perto de cartas tensas, vira fofoca ou ansiedade.'},
-  'A Criança': {num:'13', oracle:'sim', keywords:["Começo", "Inocência", "Algo novo e pequeno"], meaning:'Algo no início — um projeto recém-nascido, uma ideia simples, ou literalmente uma criança. Marca o começo de algo que ainda vai crescer. Também pode apontar falta de experiência ou abordagem ingênua.'},
-  'A Raposa': {num:'14', oracle:'talvez', keywords:["Astúcia", "Trabalho", "Desconfiança"], meaning:'Esperteza aplicada — no trabalho, em uma negociação, ou em alguém que não é totalmente transparente. Pode ser você agindo com inteligência, ou um alerta para desconfiar de quem está por perto.'},
-  'O Urso': {num:'15', oracle:'talvez', keywords:["Poder", "Proteção", "Autoridade"], meaning:'Força bruta usada para proteger — um chefe, uma figura de autoridade, ou recursos financeiros. Representa quem detém o poder na situação e também questões de dinheiro e possessividade emocional.'},
-  'As Estrelas': {num:'16', oracle:'sim', keywords:["Esperança", "Orientação", "Sucesso"], meaning:'Um objetivo iluminado no horizonte — inspiração, direção clara, sucesso que ainda está a caminho. As Estrelas mostram o rumo certo, mas geralmente a longo prazo — não é a resposta imediata, é a bússola.'},
-  'A Cegonha': {num:'17', oracle:'sim', keywords:["Mudança", "Transição", "Melhoria"], meaning:'Uma mudança se aproxima — de casa, de trabalho, de fase de vida, geralmente para melhor. Sempre fala de movimento e renovação. Pode indicar uma transição que ainda dá um friozinho na barriga.'},
-  'O Cão': {num:'18', oracle:'sim', keywords:["Amizade", "Lealdade", "Confiança"], meaning:'Um amigo de verdade, apoio leal, ou a própria qualidade da amizade sendo testada. Aponta para relações de confiança mútua — quem está ao seu lado de verdade. Perto de cartas tensas, lealdade mal correspondida.'},
-  'A Torre': {num:'19', oracle:'talvez', keywords:["Instituição", "Estrutura", "Ambição"], meaning:'Empresas, governo, hierarquia — o mundo institucional, formal e estruturado. Fala de estabilidade de longo prazo construída com esforço, mas também de solidão em posições de autoridade.'},
-  'O Jardim': {num:'20', oracle:'sim', keywords:["Sociedade", "Vida pública", "Eventos sociais"], meaning:'A vida social, redes de contato, eventos, festas — tudo que acontece em público. Representa o campo social como um todo: networking, reputação pública, ou o convite para sair da bolha e se misturar.'},
-  'A Montanha': {num:'21', oracle:'nao', keywords:["Obstáculo", "Bloqueio", "Distância"], meaning:'Um obstáculo real pela frente — algo grande, difícil de contornar, mas não impossível. A Montanha nomeia o bloqueio com honestidade: pode ser uma pessoa, burocracia ou limitação que exige rota alternativa.'},
-  'Os Caminhos': {num:'22', oracle:'talvez', keywords:["Escolha", "Decisão", "Opções"], meaning:'Um momento de bifurcação — mais de uma opção sobre a mesa, e a decisão é sua. Convida a pesar as alternativas com calma; raramente há só um caminho certo, mas sempre um mais alinhado com o que você quer.'},
-  'Os Ratos': {num:'23', oracle:'nao', keywords:["Desgaste", "Perda gradual", "Estresse"], meaning:'Algo sendo corroído aos poucos — energia, dinheiro, saúde ou paz, escapando devagar. Os Ratos raramente indicam catástrofe súbita; indicam um vazamento lento que precisa ser identificado e estancado.'},
-  'O Coração': {num:'24', oracle:'sim', keywords:["Amor", "Emoção genuína", "Afeto"], meaning:'Sentimento verdadeiro — amor romântico, afeto profundo ou o próprio coração da questão. Uma das cartas mais bem-vindas: onde ela cai, há emoção real envolvida, seja em relação a alguém ou a um projeto amado.'},
-  'As Alianças': {num:'25', oracle:'sim', keywords:["Compromisso", "Contrato", "União"], meaning:'Um vínculo formal — casamento, contrato, parceria séria, ou um ciclo que se fecha. Fala de continuidade e compromisso; perto de cartas boas, une; perto de cartas tensas, ciclo repetitivo do qual é hora de sair.'},
-  'Os Livros': {num:'26', oracle:'talvez', keywords:["Segredo", "Conhecimento", "Estudo"], meaning:'Algo ainda não revelado — um segredo, um estudo em curso, ou conhecimento por vir. Os Livros fechados guardam o que ainda não é hora de saber; abertos perto de outras cartas, a informação está prestes a vir à tona.'},
-  'A Carta': {num:'27', oracle:'talvez', keywords:["Mensagem", "Documento", "Comunicação escrita"], meaning:'Uma comunicação formal ou escrita — e-mail, mensagem, documento oficial. Sempre aponta para algo que chega por escrito; o tom da notícia depende inteiramente das cartas vizinhas.'},
-  'O Cigano': {num:'28', oracle:'talvez', keywords:["Figura masculina", "O consulente (se homem)", "Liberdade"], meaning:'Representa um homem importante na situação, ou o próprio consulente, se for homem. Serve como personagem da leitura: as cartas ao redor dele mostram como ele pensa e age na situação perguntada.'},
-  'A Cigana': {num:'29', oracle:'talvez', keywords:["Figura feminina", "A consulente (se mulher)", "Intuição"], meaning:'Representa uma mulher importante na situação, ou a própria consulente, se for mulher. Funciona como personagem; observe as cartas ao lado dela para entender seu estado emocional na leitura.'},
-  'Os Lírios': {num:'30', oracle:'sim', keywords:["Maturidade", "Paz", "Família estabelecida"], meaning:'Estabilidade que vem com o tempo — paz, experiência de vida, uma relação madura e duradoura. Os Lírios trazem serenidade construída, ligada a família, idade ou uma relação de longa data.'},
-  'O Sol': {num:'31', oracle:'sim', keywords:["Sucesso", "Vitalidade", "Clareza"], meaning:'Uma das cartas mais positivas do baralho — energia, sucesso visível e clareza total. Onde o Sol cai, ilumina: fortalece tudo ao redor, trazendo vitalidade, reconhecimento e a sensação de caminho certo.'},
-  'A Lua': {num:'32', oracle:'talvez', keywords:["Reconhecimento", "Emoção", "Intuição"], meaning:'Sentimentos, reputação e reconhecimento público — o lado emocional e intuitivo da situação. Fala de como você é visto e do que sente por dentro; pode indicar honrarias, mas também oscilação emocional.'},
-  'A Chave': {num:'33', oracle:'sim', keywords:["Solução", "Certeza", "Ponto decisivo"], meaning:'A resposta certa, a solução que destrava tudo — uma das cartas mais afirmativas do baralho. Quando a Chave aparece perto de outra carta, confirma e reforça o significado dela com quase certeza absoluta.'},
-  'Os Peixes': {num:'34', oracle:'sim', keywords:["Dinheiro", "Abundância", "Fluxo"], meaning:'Fluxo de recursos — dinheiro entrando (ou saindo), negócios, ou abundância em movimento. Os Peixes nadam em cardume: raramente vêm sozinhos, indicam múltiplas fontes ou movimentações financeiras simultâneas.'},
-  'A Âncora': {num:'35', oracle:'talvez', keywords:["Estabilidade", "Trabalho fixo", "Segurança"], meaning:'Algo firme e duradouro — um emprego estável, uma base segura, um compromisso de longo prazo. A Âncora prende no bom sentido (segurança) e no sentido mais pesado (dificuldade de se mover).'},
-  'A Cruz': {num:'36', oracle:'nao', keywords:["Fardo", "Destino", "Fé"], meaning:'Algo que precisa ser carregado — um fardo, uma prova, ou uma questão de destino maior. É a carta mais pesada do baralho, mas também fala de fé e superação: o que dói agora costuma carregar um propósito maior.'},
-};
-
-const CIGANO_IMAGES = {
-  'O Cavaleiro': 'cigano/01_O_Cavaleiro.jpg',
-  'As Pedras': 'cigano/02_As_Pedras.jpg',
-  'O Navio': 'cigano/03_O_Navio.jpg',
-  'A Casa': 'cigano/04_A_Casa.jpg',
-  'A Árvore': 'cigano/05_A_Arvore.jpg',
-  'Os Ventos': 'cigano/06_Os_Ventos.jpg',
-  'A Serpente': 'cigano/07_A_Serpente.jpg',
-  'A Morte': 'cigano/08_A_Morte.jpg',
-  'O Ramalhete': 'cigano/09_O_Ramalhete.jpg',
-  'A Foice': 'cigano/10_A_Foice.jpg',
-  'O Chicote': 'cigano/11_O_Chicote.jpg',
-  'Os Pássaros': 'cigano/12_Os_Passaros.jpg',
-  'A Criança': 'cigano/13_A_Crianca.jpg',
-  'A Raposa': 'cigano/14_A_Raposa.jpg',
-  'O Urso': 'cigano/15_O_Urso.jpg',
-  'As Estrelas': 'cigano/16_As_Estrelas.jpg',
-  'A Cegonha': 'cigano/17_A_Cegonha.jpg',
-  'O Cão': 'cigano/18_O_Cao.jpg',
-  'A Torre': 'cigano/19_A_Torre.jpg',
-  'O Jardim': 'cigano/20_O_Jardim.jpg',
-  'A Montanha': 'cigano/21_A_Montanha.jpg',
-  'Os Caminhos': 'cigano/22_Os_Caminhos.jpg',
-  'Os Ratos': 'cigano/23_Os_Ratos.jpg',
-  'O Coração': 'cigano/24_O_Coracao.jpg',
-  'As Alianças': 'cigano/25_As_Aliancas.jpg',
-  'Os Livros': 'cigano/26_Os_Livros.jpg',
-  'A Carta': 'cigano/27_A_Carta.jpg',
-  'O Cigano': 'cigano/28_O_Cigano.jpg',
-  'A Cigana': 'cigano/29_A_Cigana.jpg',
-  'Os Lírios': 'cigano/30_Os_Lirios.jpg',
-  'O Sol': 'cigano/31_O_Sol.jpg',
-  'A Lua': 'cigano/32_A_Lua.jpg',
-  'A Chave': 'cigano/33_A_Chave.jpg',
-  'Os Peixes': 'cigano/34_Os_Peixes.jpg',
-  'A Âncora': 'cigano/35_A_Ancora.jpg',
-  'A Cruz': 'cigano/36_A_Cruz.jpg',
-};
-
-// ── BARALHO SIBILLA (Sibilla Oracle Cards, 52 cartas) ──
-// As imagens são esperadas na pasta sibilla/ (ajuste os nomes abaixo conforme os seus arquivos);
-// enquanto o arquivo não existir, o app mostra o ícone 🃏 no lugar.
-const SIBILLA_CARDS = {
-  'O Amor': {num:'1', oracle:'sim', keywords:["Amor", "Paixão", "Romance"], meaning:'Sentimento verdadeiro e forte, um amor que nasce ou se fortalece. Em qualquer tema, mostra que o coração está no centro da questão.'},
-  'O Amigo Sincero': {num:'2', oracle:'sim', keywords:["Amizade", "Lealdade", "Apoio"], meaning:'Alguém de confiança que está ao seu lado e fala a verdade com carinho. Aponta apoio genuíno e conselho honesto.'},
-  'A Ausência': {num:'3', oracle:'nao', keywords:["Distância", "Falta", "Separação"], meaning:'Distância física ou emocional; alguém ou algo que faz falta ou ainda não chegou. Pode indicar afastamento temporário ou uma lacuna a ser preenchida.'},
-  'A Espera': {num:'4', oracle:'talvez', keywords:["Paciência", "Expectativa", "Tempo"], meaning:'Hora de aguardar: a resposta ainda não veio e forçar não adianta. Pede paciência e confiança no tempo certo das coisas.'},
-  'Muito Dinheiro': {num:'5', oracle:'sim', keywords:["Abundância", "Ganho", "Prosperidade"], meaning:'Grande entrada financeira ou fase de fartura. Indica ganho significativo; as cartas vizinhas mostram de onde ele vem.'},
-  'O Bilhete Doce': {num:'6', oracle:'sim', keywords:["Declaração", "Carta de amor", "Doçura"], meaning:'Mensagem carinhosa, convite ou declaração; gentileza que chega por palavras. Traz suavidade e romance.'},
-  'A Contrariedade': {num:'7', oracle:'nao', keywords:["Aborrecimento", "Desagrado", "Obstáculo"], meaning:'Algo que contraria seus planos e causa irritação ou desgosto. Um aborrecimento que costuma ser passageiro, mas pede jogo de cintura.'},
-  'A Infantilidade': {num:'8', oracle:'talvez', keywords:["Imaturidade", "Ingenuidade", "Brincadeira"], meaning:'Atitude imatura ou ingênua, sua ou de alguém próximo; também pode apontar leveza e espontaneidade. Pergunta onde falta maturidade, ou onde sobra rigidez.'},
-  'A Tagarelice': {num:'9', oracle:'talvez', keywords:["Fofoca", "Conversa", "Boatos"], meaning:'Muita conversa, comentário e fofoca ao redor. Atenção ao que é dito e a quem escuta: a informação pode circular além do que deveria.'},
-  'A Raiva': {num:'10', oracle:'nao', keywords:["Ira", "Explosão", "Conflito"], meaning:'Irritação forte, discussão ou emoção fora de controle. Aconselha respirar antes de agir para não agravar a situação.'},
-  'A Esperança': {num:'11', oracle:'sim', keywords:["Otimismo", "Fé", "Desejo"], meaning:'Perspectiva positiva e desejo que ainda pode se realizar. Há luz à frente, mas a esperança precisa vir acompanhada de ação.'},
-  'O Inimigo': {num:'12', oracle:'nao', keywords:["Oposição", "Rivalidade", "Cuidado"], meaning:'Alguém ou algo trabalhando contra você, ou uma situação de oposição. Pede atenção redobrada e discrição com seus planos.'},
-  'O Impedimento': {num:'13', oracle:'nao', keywords:["Bloqueio", "Entrave", "Obstáculo"], meaning:'Algo se coloca no caminho e trava o andamento. Mostra que é preciso remover o entrave antes de seguir.'},
-  'O Bajulador': {num:'14', oracle:'nao', keywords:["Falsidade", "Elogio interesseiro", "Manipulação"], meaning:'Alguém que elogia demais por interesse. Cuidado com palavras doces que escondem segundas intenções.'},
-  'A Fidelidade': {num:'15', oracle:'sim', keywords:["Lealdade", "Afeição", "Constância"], meaning:'Lealdade e afeto estáveis; confiança que se confirma. Fala de relações firmes e de pessoas que permanecem.'},
-  'O Advogado': {num:'16', oracle:'talvez', keywords:["Justiça", "Orientação", "Processo"], meaning:'Assuntos legais, contratos ou necessidade de orientação especializada. Também pode ser alguém que defende a sua causa.'},
-  'A Inconstância': {num:'17', oracle:'nao', keywords:["Instabilidade", "Mudança de ideia", "Volubilidade"], meaning:'Falta de firmeza: sentimentos ou decisões que mudam o tempo todo. Evite apostar em quem, ou no que, não se sustenta.'},
-  'Os Jogadores': {num:'18', oracle:'talvez', keywords:["Risco", "Aposta", "Sorte"], meaning:'Risco, jogo e dependência da sorte. Pede cautela com apostas, financeiras ou emocionais, e clareza sobre o que se pode perder.'},
-  'O Consulente': {num:'19', oracle:'talvez', keywords:["Figura masculina", "Quem consulta", "Personagem"], meaning:'Representa o homem que consulta, ou um homem central na situação. As cartas ao redor mostram como ele vive o assunto.'},
-  'A Consulente': {num:'20', oracle:'talvez', keywords:["Figura feminina", "Quem consulta", "Personagem"], meaning:'Representa a mulher que consulta, ou uma mulher central na situação. As cartas ao redor mostram como ela vive o assunto.'},
-  'O Susto': {num:'21', oracle:'nao', keywords:["Medo", "Sobressalto", "Imprevisto"], meaning:'Sobressalto, notícia inesperada ou medo repentino. Costuma ser maior no impacto do que na consequência real.'},
-  'A Mulher Zangada': {num:'22', oracle:'nao', keywords:["Irritação", "Mau humor", "Discussão"], meaning:'Uma mulher irritada, ou um clima de mau humor ao redor. Pode ser você; pede diálogo calmo antes que o atrito cresça.'},
-  'O Soldado': {num:'23', oracle:'talvez', keywords:["Disciplina", "Proteção", "Coragem"], meaning:'Disciplina, ordem e coragem; alguém que protege ou que age de modo rígido. Também pode indicar um militar ou figura de autoridade.'},
-  'A Casa da Cidade': {num:'24', oracle:'sim', keywords:["Lar", "Estabilidade", "Vida urbana"], meaning:'Casa, moradia e vida estruturada na cidade. Fala de segurança, família e assuntos domésticos.'},
-  'A Casa de Campo': {num:'25', oracle:'sim', keywords:["Descanso", "Tranquilidade", "Natureza"], meaning:'Sossego, descanso e vida mais simples. Indica a pausa necessária e ambientes tranquilos.'},
-  'O Casamento': {num:'26', oracle:'sim', keywords:["União", "Compromisso", "Aliança"], meaning:'Compromisso formal, união ou acordo sério. Vale para casamento, mas também para sociedades e parcerias.'},
-  'A Fraqueza': {num:'27', oracle:'nao', keywords:["Vulnerabilidade", "Cansaço", "Desânimo"], meaning:'Momento de fragilidade, física ou emocional. Pede cuidado, descanso e apoio, sem se cobrar além da conta.'},
-  'O Pensamento': {num:'28', oracle:'talvez', keywords:["Reflexão", "Mente", "Lembrança"], meaning:'Alguém está pensando no assunto (ou em você), ou é hora de refletir antes de agir. Ruminar demais também pode paralisar.'},
-  'Os Presentes': {num:'29', oracle:'sim', keywords:["Presente", "Gentileza", "Recompensa"], meaning:'Presente, agrado ou ajuda que chega. Gestos de generosidade e recompensa por esforços anteriores.'},
-  'A Perda de Dinheiro': {num:'30', oracle:'nao', keywords:["Prejuízo", "Gasto", "Descuido"], meaning:'Gasto inesperado, prejuízo ou desperdício. Pede atenção às finanças e às decisões impulsivas.'},
-  'O Protetor': {num:'31', oracle:'sim', keywords:["Proteção", "Amparo", "Influência"], meaning:'Alguém com mais poder ou influência que ampara você; também a sensação de estar protegida. Boa carta para pedir ajuda.'},
-  'A Armadilha': {num:'32', oracle:'nao', keywords:["Cilada", "Engano", "Perigo oculto"], meaning:'Cilada ou situação com algo escondido. Examine promessas boas demais e leia tudo antes de assinar ou aceitar.'},
-  'A Viagem ao Campo': {num:'33', oracle:'sim', keywords:["Passeio", "Leveza", "Descanso"], meaning:'Passeio, escapada ou momento de lazer fora da rotina. Traz alívio, renovação e a chance de espairecer.'},
-  'O Passatempo': {num:'34', oracle:'sim', keywords:["Prazer", "Diversão", "Lazer"], meaning:'Momentos agradáveis, diversão e prazer. Convite a cuidar da própria alegria.'},
-  'A Briga': {num:'35', oracle:'nao', keywords:["Discussão", "Desavença", "Atrito"], meaning:'Desentendimento, rixa ou atrito aberto. Observe o que está por trás da discussão antes de reagir.'},
-  'O Atraso': {num:'36', oracle:'nao', keywords:["Demora", "Adiamento", "Lentidão"], meaning:'As coisas demoram mais do que o esperado: adiamentos e burocracia. Nem sempre é ruim, às vezes o atraso protege.'},
-  'O Aposentado': {num:'37', oracle:'talvez', keywords:["Experiência", "Descanso", "Idade"], meaning:'Pessoa mais velha, experiência acumulada ou fase de desacelerar. Pode indicar sabedoria, ou estagnação.'},
-  'A Reconciliação': {num:'38', oracle:'sim', keywords:["Paz", "Reencontro", "Perdão"], meaning:'Fazer as pazes, retomar contato, superar uma mágoa. Indica reaproximação possível se houver abertura dos dois lados.'},
-  'A Revelação Importante': {num:'39', oracle:'talvez', keywords:["Verdade", "Descoberta", "Segredo revelado"], meaning:'Algo importante vem à tona. A carta ao lado diz se a descoberta alivia ou pesa.'},
-  'O Sucesso': {num:'40', oracle:'sim', keywords:["Êxito", "Reconhecimento", "Conquista"], meaning:'Resultado favorável, conquista e reconhecimento. Esforço que dá frutos.'},
-  'A Surpresa': {num:'41', oracle:'talvez', keywords:["Imprevisto", "Novidade", "Inesperado"], meaning:'Algo inesperado, bom ou ruim conforme as vizinhas. Prepare-se para sair do roteiro.'},
-  'A Ternura': {num:'42', oracle:'sim', keywords:["Carinho", "Delicadeza", "Afeto"], meaning:'Afeto suave, carinho e cuidado entre pessoas. Um toque de delicadeza que acalma e cura.'},
-  'A Mulher Loira': {num:'43', oracle:'talvez', keywords:["Figura feminina", "Cabelos claros", "Terceira pessoa"], meaning:'Mulher de cabelos claros, ou uma figura feminina importante na história. O tom da leitura vem das cartas vizinhas.'},
-  'A Viúva': {num:'44', oracle:'talvez', keywords:["Solidão", "Luto", "Independência"], meaning:'Solidão, perda ou fase de recomeçar sozinha. Também aponta independência e uma mulher que seguiu em frente.'},
-  'Algum Dinheiro': {num:'45', oracle:'sim', keywords:["Ganho modesto", "Sustento", "Entrada"], meaning:'Um dinheiro que chega, sem ser fortuna. Garante o necessário e alivia o orçamento.'},
-  'A Carta': {num:'46', oracle:'talvez', keywords:["Mensagem", "Notícia", "Documento"], meaning:'Mensagem, notícia ou documento a caminho. Quem envia e o tom dependem das cartas vizinhas.'},
-  'O Jovem Moreno': {num:'47', oracle:'talvez', keywords:["Figura masculina", "Jovem", "Cabelos escuros"], meaning:'Rapaz de cabelos escuros, ou um jovem importante na situação. Costuma aparecer em temas de amor e novidade.'},
-  'A Mulher Morena': {num:'48', oracle:'talvez', keywords:["Figura feminina", "Cabelos escuros", "Terceira pessoa"], meaning:'Mulher de cabelos escuros, ou uma figura feminina marcante. Observe as cartas ao lado para entender o papel dela.'},
-  'O Ladrão': {num:'49', oracle:'nao', keywords:["Roubo", "Perda", "Traição"], meaning:'Perda causada por terceiros: roubo, golpe ou alguém que tira algo seu. Pede proteção de bens, tempo e confiança.'},
-  'A Viagem': {num:'50', oracle:'sim', keywords:["Deslocamento", "Mudança", "Caminho"], meaning:'Deslocamento, viagem ou mudança de fase. Movimento rumo a novas paisagens.'},
-  'A Visita': {num:'51', oracle:'talvez', keywords:["Chegada", "Encontro", "Novidade"], meaning:'Alguém chega, ou você vai ao encontro de alguém. A visita pode trazer alegria ou obrigação, conforme as vizinhas.'},
-  'A Vitória': {num:'52', oracle:'sim', keywords:["Triunfo", "Superação", "Resultado"], meaning:'Superação e triunfo sobre uma dificuldade. A carta de fechamento: esforço recompensado.'},
-};
-
-const SIBILLA_IMAGES = {
-  'O Amor': 'sibilla/01_O_Amor.jpg',
-  'O Amigo Sincero': 'sibilla/02_O_Amigo_Sincero.jpg',
-  'A Ausência': 'sibilla/03_A_Ausencia.jpg',
-  'A Espera': 'sibilla/04_A_Espera.jpg',
-  'Muito Dinheiro': 'sibilla/05_Muito_Dinheiro.jpg',
-  'O Bilhete Doce': 'sibilla/06_O_Bilhete_Doce.jpg',
-  'A Contrariedade': 'sibilla/07_A_Contrariedade.jpg',
-  'A Infantilidade': 'sibilla/08_A_Infantilidade.jpg',
-  'A Tagarelice': 'sibilla/09_A_Tagarelice.jpg',
-  'A Raiva': 'sibilla/10_A_Raiva.jpg',
-  'A Esperança': 'sibilla/11_A_Esperanca.jpg',
-  'O Inimigo': 'sibilla/12_O_Inimigo.jpg',
-  'O Impedimento': 'sibilla/13_O_Impedimento.jpg',
-  'O Bajulador': 'sibilla/14_O_Bajulador.jpg',
-  'A Fidelidade': 'sibilla/15_A_Fidelidade.jpg',
-  'O Advogado': 'sibilla/16_O_Advogado.jpg',
-  'A Inconstância': 'sibilla/17_A_Inconstancia.jpg',
-  'Os Jogadores': 'sibilla/18_Os_Jogadores.jpg',
-  'O Consulente': 'sibilla/19_O_Consulente.jpg',
-  'A Consulente': 'sibilla/20_A_Consulente.jpg',
-  'O Susto': 'sibilla/21_O_Susto.jpg',
-  'A Mulher Zangada': 'sibilla/22_A_Mulher_Zangada.jpg',
-  'O Soldado': 'sibilla/23_O_Soldado.jpg',
-  'A Casa da Cidade': 'sibilla/24_A_Casa_da_Cidade.jpg',
-  'A Casa de Campo': 'sibilla/25_A_Casa_de_Campo.jpg',
-  'O Casamento': 'sibilla/26_O_Casamento.jpg',
-  'A Fraqueza': 'sibilla/27_A_Fraqueza.jpg',
-  'O Pensamento': 'sibilla/28_O_Pensamento.jpg',
-  'Os Presentes': 'sibilla/29_Os_Presentes.jpg',
-  'A Perda de Dinheiro': 'sibilla/30_A_Perda_de_Dinheiro.jpg',
-  'O Protetor': 'sibilla/31_O_Protetor.jpg',
-  'A Armadilha': 'sibilla/32_A_Armadilha.jpg',
-  'A Viagem ao Campo': 'sibilla/33_A_Viagem_ao_Campo.jpg',
-  'O Passatempo': 'sibilla/34_O_Passatempo.jpg',
-  'A Briga': 'sibilla/35_A_Briga.jpg',
-  'O Atraso': 'sibilla/36_O_Atraso.jpg',
-  'O Aposentado': 'sibilla/37_O_Aposentado.jpg',
-  'A Reconciliação': 'sibilla/38_A_Reconciliacao.jpg',
-  'A Revelação Importante': 'sibilla/39_A_Revelacao_Importante.jpg',
-  'O Sucesso': 'sibilla/40_O_Sucesso.jpg',
-  'A Surpresa': 'sibilla/41_A_Surpresa.jpg',
-  'A Ternura': 'sibilla/42_A_Ternura.jpg',
-  'A Mulher Loira': 'sibilla/43_A_Mulher_Loira.jpg',
-  'A Viúva': 'sibilla/44_A_Viuva.jpg',
-  'Algum Dinheiro': 'sibilla/45_Algum_Dinheiro.jpg',
-  'A Carta': 'sibilla/46_A_Carta.jpg',
-  'O Jovem Moreno': 'sibilla/47_O_Jovem_Moreno.jpg',
-  'A Mulher Morena': 'sibilla/48_A_Mulher_Morena.jpg',
-  'O Ladrão': 'sibilla/49_O_Ladrao.jpg',
-  'A Viagem': 'sibilla/50_A_Viagem.jpg',
-  'A Visita': 'sibilla/51_A_Visita.jpg',
-  'A Vitória': 'sibilla/52_A_Vitoria.jpg',
-};
-
-// ── BARALHO CIGANO LATIM (Petit Lenormand em latim, 39 cartas; imagens em cigano_latim/) ──
-const LATIM_CARDS = {
-  'O Tolo': {num:'0', oracle:'talvez', keywords:["Imprevistos", "Energia coringa", "Sorte e acaso", "Roda da fortuna"], meaning:'Carta extra do seu baralho: a roda e a figura do tolo lembram que a sorte gira e nem tudo está sob controle. Marca um imprevisto ou uma energia coringa na tiragem, algo que foge do roteiro e pode virar o jogo para qualquer lado. O sentido final vem das cartas vizinhas: perto de cartas boas, a reviravolta ajuda; perto de cartas pesadas, pede flexibilidade.'},
-  'O Cavaleiro': {num:'1', oracle:'sim', keywords:["Notícias rápidas", "Movimento", "Chegadas"], meaning:'Uma novidade está a caminho — visita, mensagem ou mudança rápida de cenário. Sempre indica algo se aproximando rápido. Perto de cartas boas, a notícia é boa; perto de cartas pesadas, a chegada traz tensão junto.'},
-  'O Trevo': {num:'2', oracle:'sim', keywords:["Sorte passageira", "Pequenas alegrias", "Oportunidade"], meaning:'Uma sorte pequena e rápida: uma oportunidade que aparece e pede para ser aproveitada logo. Traz leveza e pequenas alegrias, mas não dura para sempre. Perto de cartas boas, a chance se confirma; perto de cartas pesadas, é só uma folga curta no meio da dificuldade.'},
-  'O Navio': {num:'3', oracle:'sim', keywords:["Viagens", "Transições", "Horizontes distantes"], meaning:'Deslocamento, negócio à distância ou algo vindo de longe — física ou emocionalmente. Fala de movimento para fora do território conhecido: uma viagem, um negócio, ou alguém que está se distanciando.'},
-  'A Casa': {num:'4', oracle:'sim', keywords:["Lar", "Família", "Segurança", "Estabilidade"], meaning:'Tudo que é base, raiz, o núcleo familiar ou a sensação de chegar em casa. Representa fundações — pode ser a própria casa, a família ou uma sensação de pertencimento que está sendo construída ou testada.'},
-  'A Árvore': {num:'5', oracle:'talvez', keywords:["Saúde", "Crescimento", "Ancestralidade", "Vitalidade"], meaning:'Crescimento devagar e constante — corpo, saúde ou algo que precisa de tempo para amadurecer. Tudo que envolve a Árvore tem raiz profunda e não se resolve rápido: saúde física, um vínculo antigo, um processo que já vem de longe.'},
-  'As Nuvens': {num:'6', oracle:'nao', keywords:["Dúvidas", "Confusão mental", "Instabilidade passageira"], meaning:'Situação turva e incerta: nuvens que encobrem a visão por um tempo. Indica dúvida, indecisão ou uma fase que ainda não se definiu. O lado positivo é que nuvens passam; a confusão tende a se dissipar quando as cartas vizinhas trazem clareza.'},
-  'A Serpente': {num:'7', oracle:'nao', keywords:["Astúcia", "Rivalidade", "Atração", "Cautela com falsidade"], meaning:'Um caminho torto, uma complicação inesperada ou alguém que não age de frente. A Serpente raramente é boa notícia perto de outra pessoa: sinaliza desvio de rota, terceira pessoa envolvida ou solução que exige rodeios.'},
-  'O Caixão': {num:'8', oracle:'nao', keywords:["Fim de ciclo", "Transformação necessária", "Encerramento"], meaning:'Um fim necessário: não é morte literal, mas o encerramento definitivo de uma fase. Junto de cartas positivas, algo precisa terminar para o novo nascer. Junto de cartas pesadas, aponta perda real e período de luto.'},
-  'As Flores': {num:'9', oracle:'sim', keywords:["Presentes", "Beleza", "Harmonia", "Reconhecimento"], meaning:'Um gesto bonito, um presente, um convite — algo que traz leveza e é bem-vindo. Uma das cartas mais gentis do baralho: geralmente reforça o campo positivo ao redor, suavizando até combinações difíceis.'},
-  'A Foice': {num:'10', oracle:'nao', keywords:["Cortes bruscos", "Decisões rápidas", "Colheita"], meaning:'Um corte rápido e definitivo — decisão, ruptura ou fim que chega sem aviso prévio. A Foice age depressa; o que ela corta não volta. Pode ser libertador (cortar o que não serve) ou doloroso, dependendo do contexto.'},
-  'O Chicote': {num:'11', oracle:'nao', keywords:["Conflitos", "Discussões", "Hábitos repetitivos"], meaning:'Discussão, atrito ou um padrão que se repete — algo indo e voltando sem se resolver. O Chicote fala de repetição: uma briga antiga que volta, uma rotina desgastante ou esforço repetitivo que exaure.'},
-  'Os Pássaros': {num:'12', oracle:'talvez', keywords:["Comunicação", "Conversas", "Trocas", "Agitação"], meaning:'Papo, troca de mensagens, um casal ou dupla — e também a agitação mental de quem pensa demais. Sempre envolve comunicação entre duas partes; perto de cartas tensas, vira fofoca ou ansiedade.'},
-  'A Criança': {num:'13', oracle:'sim', keywords:["Novos começos", "Inocência", "Leveza", "Curiosidade"], meaning:'Algo no início — um projeto recém-nascido, uma ideia simples, ou literalmente uma criança. Marca o começo de algo que ainda vai crescer. Também pode apontar falta de experiência ou abordagem ingênua.'},
-  'A Raposa': {num:'14', oracle:'talvez', keywords:["Estratégia", "Astúcia no trabalho", "Autoproteção"], meaning:'Esperteza aplicada — no trabalho, em uma negociação, ou em alguém que não é totalmente transparente. Pode ser você agindo com inteligência, ou um alerta para desconfiar de quem está por perto.'},
-  'O Urso': {num:'15', oracle:'talvez', keywords:["Força", "Proteção", "Finanças", "Autoridade"], meaning:'Força bruta usada para proteger — um chefe, uma figura de autoridade, ou recursos financeiros. Representa quem detém o poder na situação e também questões de dinheiro e possessividade emocional.'},
-  'As Estrelas': {num:'16', oracle:'sim', keywords:["Esperança", "Clareza espiritual", "Sorte", "Destino"], meaning:'Um objetivo iluminado no horizonte — inspiração, direção clara, sucesso que ainda está a caminho. As Estrelas mostram o rumo certo, mas geralmente a longo prazo — não é a resposta imediata, é a bússola.'},
-  'A Cegonha': {num:'17', oracle:'sim', keywords:["Mudanças", "Novidades", "Renovação de ciclo"], meaning:'Uma mudança se aproxima — de casa, de trabalho, de fase de vida, geralmente para melhor. Sempre fala de movimento e renovação. Pode indicar uma transição que ainda dá um friozinho na barriga.'},
-  'O Cão': {num:'18', oracle:'sim', keywords:["Fidelidade", "Amizade sincera", "Apoio leal"], meaning:'Um amigo de verdade, apoio leal, ou a própria qualidade da amizade sendo testada. Aponta para relações de confiança mútua — quem está ao seu lado de verdade. Perto de cartas tensas, lealdade mal correspondida.'},
-  'A Torre': {num:'19', oracle:'talvez', keywords:["Autonomia", "Visão ampla", "Instituições", "Isolamento"], meaning:'Empresas, governo, hierarquia — o mundo institucional, formal e estruturado. Fala de estabilidade de longo prazo construída com esforço, mas também de solidão em posições de autoridade.'},
-  'O Jardim': {num:'20', oracle:'sim', keywords:["Vida social", "Rede de contatos", "Eventos", "O público"], meaning:'A vida social, redes de contato, eventos, festas — tudo que acontece em público. Representa o campo social como um todo: networking, reputação pública, ou o convite para sair da bolha e se misturar.'},
-  'A Montanha': {num:'21', oracle:'nao', keywords:["Desafios", "Obstáculos firmes", "Superação com paciência"], meaning:'Um obstáculo real pela frente — algo grande, difícil de contornar, mas não impossível. A Montanha nomeia o bloqueio com honestidade: pode ser uma pessoa, burocracia ou limitação que exige rota alternativa.'},
-  'Os Caminhos': {num:'22', oracle:'talvez', keywords:["Escolhas", "Tomada de decisão", "Direções"], meaning:'Um momento de bifurcação — mais de uma opção sobre a mesa, e a decisão é sua. Convida a pesar as alternativas com calma; raramente há só um caminho certo, mas sempre um mais alinhado com o que você quer.'},
-  'Os Ratos': {num:'23', oracle:'nao', keywords:["Desgaste", "Perdas graduais", "Estresse", "Ansiedade"], meaning:'Algo sendo corroído aos poucos — energia, dinheiro, saúde ou paz, escapando devagar. Os Ratos raramente indicam catástrofe súbita; indicam um vazamento lento que precisa ser identificado e estancado.'},
-  'O Coração': {num:'24', oracle:'sim', keywords:["Amor", "Paixão", "Afeto", "Entrega emocional"], meaning:'Sentimento verdadeiro — amor romântico, afeto profundo ou o próprio coração da questão. Uma das cartas mais bem-vindas: onde ela cai, há emoção real envolvida, seja em relação a alguém ou a um projeto amado.'},
-  'O Anel': {num:'25', oracle:'sim', keywords:["Alianças", "Contratos", "Compromissos", "União"], meaning:'Um vínculo formal — casamento, contrato, parceria séria, ou um ciclo que se fecha. Fala de continuidade e compromisso; perto de cartas boas, une; perto de cartas tensas, ciclo repetitivo do qual é hora de sair.'},
-  'O Livro': {num:'26', oracle:'talvez', keywords:["Segredos", "Estudos", "Conhecimento oculto"], meaning:'Algo ainda não revelado: um segredo, um estudo em curso ou conhecimento por vir. O Livro fechado guarda o que ainda não é hora de saber; aberto perto de outras cartas, a informação está prestes a vir à tona.'},
-  'A Carta': {num:'27', oracle:'talvez', keywords:["Mensagens formais", "Documentos", "Notícias por escrito"], meaning:'Uma comunicação formal ou escrita — e-mail, mensagem, documento oficial. Sempre aponta para algo que chega por escrito; o tom da notícia depende inteiramente das cartas vizinhas.'},
-  'O Homem': {num:'28', oracle:'talvez', keywords:["O consulente (homem)", "Figura masculina principal", "Personagem"], meaning:'Representa um homem importante na situação, ou o próprio consulente, se for homem. Serve como personagem da leitura: as cartas ao redor dele mostram como ele pensa e age na situação perguntada.'},
-  'O Outro Homem': {num:'28b', oracle:'talvez', keywords:["Segundo significador masculino", "Outro homem", "Mais de um envolvido"], meaning:'Segunda carta de significador masculino. Use quando há dois homens na situação (por exemplo, leituras de casais do mesmo sexo ou relações com mais de um envolvido) ou para separar o consulente de outro homem importante. As cartas ao redor mostram o papel e as intenções dele.'},
-  'A Mulher': {num:'29', oracle:'talvez', keywords:["A consulente (mulher)", "Figura feminina principal", "Personagem"], meaning:'Representa uma mulher importante na situação, ou a própria consulente, se for mulher. Funciona como personagem; observe as cartas ao lado dela para entender seu estado emocional na leitura.'},
-  'A Outra Mulher': {num:'29b', oracle:'talvez', keywords:["Segundo significador feminino", "Outra mulher", "Mais de um envolvido"], meaning:'Segunda carta de significador feminino. Use quando há duas mulheres na situação (por exemplo, leituras de casais do mesmo sexo ou relações com mais de um envolvido) ou para separar a consulente de outra mulher importante. As cartas ao redor mostram o papel e as intenções dela.'},
-  'Os Lírios': {num:'30', oracle:'sim', keywords:["Paz", "Maturidade", "Sabedoria", "Virtude"], meaning:'Estabilidade que vem com o tempo — paz, experiência de vida, uma relação madura e duradoura. Os Lírios trazem serenidade construída, ligada a família, idade ou uma relação de longa data.'},
-  'O Sol': {num:'31', oracle:'sim', keywords:["Sucesso", "Energia", "Clareza", "Triunfo"], meaning:'Uma das cartas mais positivas do baralho — energia, sucesso visível e clareza total. Onde o Sol cai, ilumina: fortalece tudo ao redor, trazendo vitalidade, reconhecimento e a sensação de caminho certo.'},
-  'A Lua': {num:'32', oracle:'talvez', keywords:["Intuição", "Reconhecimento", "Emoções", "Fama"], meaning:'Sentimentos, reputação e reconhecimento público — o lado emocional e intuitivo da situação. Fala de como você é visto e do que sente por dentro; pode indicar honrarias, mas também oscilação emocional.'},
-  'A Chave': {num:'33', oracle:'sim', keywords:["Soluções", "Certezas", "A resposta certa", "Destino"], meaning:'A resposta certa, a solução que destrava tudo — uma das cartas mais afirmativas do baralho. Quando a Chave aparece perto de outra carta, confirma e reforça o significado dela com quase certeza absoluta.'},
-  'Os Peixes': {num:'34', oracle:'sim', keywords:["Prosperidade", "Negócios", "Dinheiro", "Abundância"], meaning:'Fluxo de recursos — dinheiro entrando (ou saindo), negócios, ou abundância em movimento. Os Peixes nadam em cardume: raramente vêm sozinhos, indicam múltiplas fontes ou movimentações financeiras simultâneas.'},
-  'A Âncora': {num:'35', oracle:'talvez', keywords:["Estabilidade", "Segurança", "Pé no chão", "Firmeza"], meaning:'Algo firme e duradouro — um emprego estável, uma base segura, um compromisso de longo prazo. A Âncora prende no bom sentido (segurança) e no sentido mais pesado (dificuldade de se mover).'},
-  'A Cruz': {num:'36', oracle:'nao', keywords:["Fardo", "Provações", "Fé", "Destino"], meaning:'Algo que precisa ser carregado — um fardo, uma prova, ou uma questão de destino maior. É a carta mais pesada do baralho, mas também fala de fé e superação: o que dói agora costuma carregar um propósito maior.'},
-};
-
-const LATIM_IMAGES = {
-  'O Tolo': 'cigano_latim/00_O_Tolo.jpg',
-  'O Cavaleiro': 'cigano_latim/01_O_Cavaleiro.jpg',
-  'O Trevo': 'cigano_latim/02_O_Trevo.jpg',
-  'O Navio': 'cigano_latim/03_O_Navio.jpg',
-  'A Casa': 'cigano_latim/04_A_Casa.jpg',
-  'A Árvore': 'cigano_latim/05_A_Arvore.jpg',
-  'As Nuvens': 'cigano_latim/06_As_Nuvens.jpg',
-  'A Serpente': 'cigano_latim/07_A_Serpente.jpg',
-  'O Caixão': 'cigano_latim/08_O_Caixao.jpg',
-  'As Flores': 'cigano_latim/09_As_Flores.jpg',
-  'A Foice': 'cigano_latim/10_A_Foice.jpg',
-  'O Chicote': 'cigano_latim/11_O_Chicote.jpg',
-  'Os Pássaros': 'cigano_latim/12_Os_Passaros.jpg',
-  'A Criança': 'cigano_latim/13_A_Crianca.jpg',
-  'A Raposa': 'cigano_latim/14_A_Raposa.jpg',
-  'O Urso': 'cigano_latim/15_O_Urso.jpg',
-  'As Estrelas': 'cigano_latim/16_As_Estrelas.jpg',
-  'A Cegonha': 'cigano_latim/17_A_Cegonha.jpg',
-  'O Cão': 'cigano_latim/18_O_Cao.jpg',
-  'A Torre': 'cigano_latim/19_A_Torre.jpg',
-  'O Jardim': 'cigano_latim/20_O_Jardim.jpg',
-  'A Montanha': 'cigano_latim/21_A_Montanha.jpg',
-  'Os Caminhos': 'cigano_latim/22_Os_Caminhos.jpg',
-  'Os Ratos': 'cigano_latim/23_Os_Ratos.jpg',
-  'O Coração': 'cigano_latim/24_O_Coracao.jpg',
-  'O Anel': 'cigano_latim/25_O_Anel.jpg',
-  'O Livro': 'cigano_latim/26_O_Livro.jpg',
-  'A Carta': 'cigano_latim/27_A_Carta.jpg',
-  'O Homem': 'cigano_latim/28_O_Homem.jpg',
-  'O Outro Homem': 'cigano_latim/29_O_Outro_Homem.jpg',
-  'A Mulher': 'cigano_latim/30_A_Mulher.jpg',
-  'A Outra Mulher': 'cigano_latim/31_A_Outra_Mulher.jpg',
-  'Os Lírios': 'cigano_latim/32_Os_Lirios.jpg',
-  'O Sol': 'cigano_latim/33_O_Sol.jpg',
-  'A Lua': 'cigano_latim/34_A_Lua.jpg',
-  'A Chave': 'cigano_latim/35_A_Chave.jpg',
-  'Os Peixes': 'cigano_latim/36_Os_Peixes.jpg',
-  'A Âncora': 'cigano_latim/37_A_Ancora.jpg',
-  'A Cruz': 'cigano_latim/38_A_Cruz.jpg',
-};
-
 let formDeck = 'tarot';
 function cardsDataFor(deck) { return deck === 'cigano' ? CIGANO_CARDS : deck === 'latim' ? LATIM_CARDS : deck === 'sibilla' ? SIBILLA_CARDS : TAROT_CARDS; }
 function cardImagesFor(deck) { return deck === 'cigano' ? CIGANO_IMAGES : deck === 'latim' ? LATIM_IMAGES : deck === 'sibilla' ? SIBILLA_IMAGES : CARD_IMAGES; }
@@ -2638,7 +2290,7 @@ async function saveContentOverrides(partial) {
     if (partial.sibillaCards) merged.sibillaCards = { ...(current.sibillaCards||{}), ...partial.sibillaCards };
     if (partial.latimCards) merged.latimCards = { ...(current.latimCards||{}), ...partial.latimCards };
     localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(merged));
-  } catch(e) { /* ignora erro de cache */ }
+  } catch (e) { console.warn('Não foi possível atualizar o cache local do conteúdo', e); }
 }
 
 // ── FASE DA LUA ──
@@ -2680,7 +2332,10 @@ function playBell() {
       osc.start(ctx.currentTime + delay);
       osc.stop(ctx.currentTime + delay + 2);
     });
-  } catch(e) {}
+  } catch (e) {
+    // o som é só um aviso extra: se o navegador bloquear o áudio, o timer segue funcionando
+    console.warn('Não foi possível tocar o sino do timer', e);
+  }
 }
 
 document.getElementById('timer-btn').addEventListener('click', () => {
@@ -2882,7 +2537,8 @@ document.getElementById('settings-save').addEventListener('click', () => {
   else localStorage.removeItem('gemini_key');
   document.getElementById('settings-overlay').classList.remove('open');
   showToast(key ? '✦ Chave API salva!' : 'Chave removida');
-  if (currentUser) profileDocRef(currentUser.uid).set({ geminiKey: key }, { merge:true }).catch(()=>{});
+  if (currentUser) profileDocRef(currentUser.uid).set({ geminiKey: key }, { merge:true })
+    .catch(err => reportError('Não foi possível salvar a chave no seu perfil (ficou salva só neste aparelho)', err));
 });
 
 // ── IA: GERAR ANÁLISE (Gemini) ──
@@ -3486,7 +3142,8 @@ document.getElementById('astro-save-chart').addEventListener('click', () => {
   if (currentUser) {
     profileDocRef(currentUser.uid).set({
       birthDate: chart.date, birthTime: chart.time, birthLat: chart.lat, birthLon: chart.lon, birthTz: chart.tz
-    }, { merge:true }).catch(()=>{});
+    }, { merge:true })
+      .catch(err => reportError('Não foi possível salvar o mapa natal no seu perfil (ficou salvo só neste aparelho)', err));
   }
   astroEditing = false;
   renderAstroOverlay();
@@ -3556,7 +3213,11 @@ function loadSR() {
   catch { return {}; }
 }
 function saveSR(data) {
-  try { localStorage.setItem(SR_KEY, JSON.stringify(data)); } catch {}
+  try { localStorage.setItem(SR_KEY, JSON.stringify(data)); }
+  catch (e) {
+    console.warn('Não foi possível salvar o progresso da revisão', e);
+    if (!saveSR.avisou) { saveSR.avisou = true; showToast('Não foi possível salvar o progresso da revisão neste aparelho'); }
+  }
 }
 function getCardSR(sr, name) {
   return sr[name] || { box: 1, due: 0, seen: 0, wrong: 0 };
@@ -4247,93 +3908,6 @@ async function persistCombos() {
 
 // ── CARD IMAGES (Rider-Waite, domínio público via Wikimedia Commons) ──
 const W = 'https://upload.wikimedia.org/wikipedia/commons/';
-const CARD_IMAGES = {
-  // Arcanos Maiores
-  'A Louca':         'rider-waite/RWS_Tarot_00_Fool.jpg',
-  'O Mago':          'rider-waite/RWS_Tarot_01_Magician.jpg',
-  'A Sacerdotisa':   'rider-waite/RWS_Tarot_02_High_Priestess.jpg',
-  'A Imperatriz':    'rider-waite/RWS_Tarot_03_Empress.jpg',
-  'O Imperador':     'rider-waite/RWS_Tarot_04_Emperor.jpg',
-  'O Hierofante':    'rider-waite/RWS_Tarot_05_Hierophant.jpg',
-  'Os Enamorados':      'rider-waite/RWS_Tarot_06_Lovers.jpg',
-  'O Carro':         'rider-waite/RWS_Tarot_07_Chariot.jpg',
-  'A Força':         'rider-waite/RWS_Tarot_08_Strength.jpg',
-  'O Eremita':       'rider-waite/RWS_Tarot_09_Hermit.jpg',
-  'Roda da Fortuna': 'rider-waite/RWS_Tarot_10_Wheel_of_Fortune.jpg',
-  'A Justiça':       'rider-waite/RWS_Tarot_11_Justice.jpg',
-  'O Enforcado':     'rider-waite/RWS_Tarot_12_Hanged_Man.jpg',
-  'A Enforcada':     'rider-waite/RWS_Tarot_12_Hanged_Man.jpg',
-  'A Morte':         'rider-waite/RWS_Tarot_13_Death.jpg',
-  'A Temperança':    'rider-waite/RWS_Tarot_14_Temperance.jpg',
-  'O Diabo':         'rider-waite/RWS_Tarot_15_Devil.jpg',
-  'A Torre':         'rider-waite/RWS_Tarot_16_Tower.jpg',
-  'A Estrela':       'rider-waite/RWS_Tarot_17_Star.jpg',
-  'A Lua':           'rider-waite/RWS_Tarot_18_Moon.jpg',
-  'O Sol':           'rider-waite/RWS_Tarot_19_Sun.jpg',
-  'O Julgamento':    'rider-waite/RWS_Tarot_20_Judgement.jpg',
-  'O Mundo':         'rider-waite/RWS_Tarot_21_World.jpg',
-  // Copas
-  'Ás de Copas':        'rider-waite/Cups01.jpg',
-  'Dois de Copas':      'rider-waite/Cups02.jpg',
-  'Três de Copas':      'rider-waite/Cups03.jpg',
-  'Quatro de Copas':    'rider-waite/Cups04.jpg',
-  'Cinco de Copas':     'rider-waite/Cups05.jpg',
-  'Seis de Copas':      'rider-waite/Cups06.jpg',
-  'Sete de Copas':      'rider-waite/Cups07.jpg',
-  'Oito de Copas':      'rider-waite/Cups08.jpg',
-  'Nove de Copas':      'rider-waite/Cups09.jpg',
-  'Dez de Copas':       'rider-waite/Cups10.jpg',
-  'Valete de Copas':    'rider-waite/Cups11.jpg',
-  'Cavaleiro de Copas': 'rider-waite/Cups12.jpg',
-  'Rainha de Copas':    'rider-waite/Cups13.jpg',
-  'Rei de Copas':       'rider-waite/Cups14.jpg',
-  // Espadas
-  'Ás de Espadas':        'rider-waite/Swords01.jpg',
-  'Dois de Espadas':      'rider-waite/Swords02.jpg',
-  'Três de Espadas':      'rider-waite/Swords03.jpg',
-  'Quatro de Espadas':    'rider-waite/Swords04.jpg',
-  'Cinco de Espadas':     'rider-waite/Swords05.jpg',
-  'Seis de Espadas':      'rider-waite/Swords06.jpg',
-  'Sete de Espadas':      'rider-waite/Swords07.jpg',
-  'Oito de Espadas':      'rider-waite/Swords08.jpg',
-  'Nove de Espadas':      'rider-waite/Swords09.jpg',
-  'Dez de Espadas':       'rider-waite/Swords10.jpg',
-  'Valete de Espadas':    'rider-waite/Swords11.jpg',
-  'Cavaleiro de Espadas': 'rider-waite/Swords12.jpg',
-  'Rainha de Espadas':    'rider-waite/Swords13.jpg',
-  'Rei de Espadas':       'rider-waite/Swords14.jpg',
-  // Ouros
-  'Ás de Ouros':        'rider-waite/Pents01.jpg',
-  'Dois de Ouros':      'rider-waite/Pents02.jpg',
-  'Três de Ouros':      'rider-waite/Pents03.jpg',
-  'Quatro de Ouros':    'rider-waite/Pents04.jpg',
-  'Cinco de Ouros':     'rider-waite/Pents05.jpg',
-  'Seis de Ouros':      'rider-waite/Pents06.jpg',
-  'Sete de Ouros':      'rider-waite/Pents07.jpg',
-  'Oito de Ouros':      'rider-waite/Pents08.jpg',
-  'Nove de Ouros':      'rider-waite/Pents09.jpg',
-  'Dez de Ouros':       'rider-waite/Pents10.jpg',
-  'Valete de Ouros':    'rider-waite/Pents11.jpg',
-  'Cavaleiro de Ouros': 'rider-waite/Pents12.jpg',
-  'Rainha de Ouros':    'rider-waite/Pents13.jpg',
-  'Rei de Ouros':       'rider-waite/Pents14.jpg',
-  // Paus
-  'Ás de Paus':        'rider-waite/Wands01.jpg',
-  'Dois de Paus':      'rider-waite/Wands02.jpg',
-  'Três de Paus':      'rider-waite/Wands03.jpg',
-  'Quatro de Paus':    'rider-waite/Wands04.jpg',
-  'Cinco de Paus':     'rider-waite/Wands05.jpg',
-  'Seis de Paus':      'rider-waite/Wands06.jpg',
-  'Sete de Paus':      'rider-waite/Wands07.jpg',
-  'Oito de Paus':      'rider-waite/Wands08.jpg',
-  'Nove de Paus':      'rider-waite/Wands09.jpg',
-  'Dez de Paus':       'rider-waite/Wands10.jpg',
-  'Valete de Paus':    'rider-waite/Wands11.jpg',
-  'Cavaleiro de Paus': 'rider-waite/Wands12.jpg',
-  'Rainha de Paus':    'rider-waite/Wands13.jpg',
-  'Rei de Paus':       'rider-waite/Wands14.jpg',
-};
-
 // ── POPUP: incluir nota personalizada ──
 const oracleLabels = { sim:'✓ Sim', nao:'✗ Não', talvez:'◈ Talvez' };
 
@@ -4944,6 +4518,8 @@ function genId(){ return Date.now().toString(36)+Math.random().toString(36).slic
 function formatDate(iso){ const[y,m,d]=iso.split('-'); return`${d}/${m}/${y}` }
 function weekday(iso){ const days=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado']; return days[new Date(iso+'T12:00:00').getDay()] }
 function monthLabel(iso){ const months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']; const[y,m]=iso.split('-'); return`${months[parseInt(m)-1]} ${y}` }
+// registra o erro no console e avisa a pessoa (em vez de engolir em silêncio)
+function reportError(msg, err){ console.error(msg, err); showToast(msg) }
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800) }
 function showError(msg){ const el=document.getElementById('login-error'); el.textContent=msg; el.classList.add('show') }
 function hideError(){ document.getElementById('login-error').classList.remove('show') }
@@ -5069,10 +4645,21 @@ async function syncProfileWithCloud(user){
 function col(){ return db.collection('users').doc(currentUser.uid).collection('entries') }
 
 async function loadEntries(){
-  document.getElementById('history').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando diário...</div>';
-  const snap = await col().orderBy('date','desc').get();
-  entries = snap.docs.map(d=>({id:d.id,...d.data()}));
-  render();
+  const historyEl = document.getElementById('history');
+  historyEl.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando diário...</div>';
+  try {
+    const snap = await col().orderBy('date','desc').get();
+    entries = snap.docs.map(d=>({id:d.id,...d.data()}));
+    render();
+  } catch (err) {
+    // sem isso o "Carregando diário..." ficava para sempre quando o Firebase falhava (offline, permissão, etc.)
+    console.error('Falha ao carregar o diário', err);
+    historyEl.innerHTML = `<div class="loading" style="font-style:normal">
+      <div style="margin-bottom:1rem">Não foi possível carregar o diário.<br><small>Verifique sua conexão e tente de novo.</small></div>
+      <button type="button" class="btn-signout" onclick="loadEntries()">↻ Tentar novamente</button>
+    </div>`;
+    showToast('Não foi possível carregar o diário');
+  }
 }
 
 async function saveEntry(entry){
@@ -5874,7 +5461,8 @@ window.toggleMonth=function(key){ document.getElementById('month-'+key)?.classLi
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js')
+      .catch(err => console.warn('Service worker não registrado (o modo offline fica indisponível)', err));
   });
 }
 </script>

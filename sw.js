@@ -1,11 +1,11 @@
 // sw.js — cache offline para o Guia e Diário de Tarot
-const CACHE_VERSION = 'tarot-cache-v3';
+const CACHE_VERSION = 'tarot-cache-v4';
 const APP_SHELL = [
   './',
   './index.html',
   './diario-tarot.html',
   './perfil.html',
-  './tarot-cards.js',
+  './tarot-cards.js?v=2',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
