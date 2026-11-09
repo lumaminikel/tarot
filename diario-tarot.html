@@ -4573,10 +4573,31 @@ function cqRoman(s) {
   for (let i = 0; i < s.length; i++) n += (v[s[i + 1]] > v[s[i]]) ? -v[s[i]] : v[s[i]];
   return n;
 }
-const CQ_NUM_WORDS = { 'as': '1', 'dois': '2', 'tres': '3', 'quatro': '4', 'cinco': '5', 'seis': '6', 'sete': '7', 'oito': '8', 'nove': '9', 'dez': '10' };
+// ordem do seu baralho: arcanos maiores 1 a 22 (A Louca = 22); depois Copas, Ouros, Espadas e Paus (23 a 78),
+// cada naipe de Ás a 10 e depois Valete, Cavaleiro, Rainha e Rei
+const CQ_SUITS = ['copas', 'ouros', 'espadas', 'paus'];
+const CQ_RANKS = ['as', 'dois', 'tres', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'valete', 'cavaleiro', 'rainha', 'rei'];
+function cqTarotMinor(name) {
+  const m = cqNorm(name).match(/^(\w+) de (copas|ouros|espadas|paus)$/);
+  if (!m) return null;
+  const r = CQ_RANKS.indexOf(m[1]);
+  if (r < 0) return null;
+  return { global: String(22 + CQ_SUITS.indexOf(m[2]) * 14 + r + 1), face: r < 10 ? String(r + 1) : '' };
+}
+// número principal da carta (usado para ordenar: o número do baralho vem antes do valor da carta)
+function cqPrimary(name, deck) {
+  if (deck === 'tarot') {
+    const mj = CQ_TAROT_MAJORS[name];
+    if (mj) return mj[mj.length - 1];
+    const mn = cqTarotMinor(name);
+    return mn ? mn.global : '';
+  }
+  const data = cardsDataFor(deck)[name] || {};
+  return data.num !== undefined ? cqNorm(String(data.num)) : '';
+}
 // numeração tradicional dos arcanos maiores (o diário tem 'O Enforcado' e 'A Enforcada', então não dá para usar a posição na lista)
 const CQ_TAROT_MAJORS = {
-  'A Louca': ['0','22'], 'O Mago': ['1'], 'A Sacerdotisa': ['2'], 'A Imperatriz': ['3'], 'O Imperador': ['4'], 'O Hierofante': ['5'],
+  'A Louca': ['22'], 'O Mago': ['1'], 'A Sacerdotisa': ['2'], 'A Imperatriz': ['3'], 'O Imperador': ['4'], 'O Hierofante': ['5'],
   'Os Enamorados': ['6'], 'O Carro': ['7'], 'A Força': ['8'], 'O Eremita': ['9'], 'Roda da Fortuna': ['10'], 'A Justiça': ['11'],
   'O Enforcado': ['12'], 'A Enforcada': ['12'], 'A Morte': ['13'], 'A Temperança': ['14'], 'O Diabo': ['15'], 'A Torre': ['16'],
   'A Estrela': ['17'], 'A Lua': ['18'], 'O Sol': ['19'], 'O Julgamento': ['20'], 'O Mundo': ['21'],
@@ -4588,8 +4609,8 @@ function cqNumbers(name, deck) {
   if (data.num !== undefined && data.num !== '') set.add(cqNorm(String(data.num)));
   if (deck === 'tarot') {
     (CQ_TAROT_MAJORS[name] || []).forEach(n => set.add(n));
-    const first = cqNorm(name).split(' ')[0];
-    if (CQ_NUM_WORDS[first] && / de /.test(name)) set.add(CQ_NUM_WORDS[first]);
+    const mn = cqTarotMinor(name);
+    if (mn) { set.add(mn.global); if (mn.face) set.add(mn.face); }
   }
   return set;
 }
@@ -4607,7 +4628,7 @@ function cqRanker(q, deck) {
   }
   const romanVal = /^[ivxl]{2,}$/.test(nq) ? String(cqRoman(nq)) : null;
   return function (name) {
-    if (numberHits) return numberHits.has(name) ? 0 : -1;
+    if (numberHits) return numberHits.has(name) ? (cqPrimary(name, deck) === nq ? 0 : 1) : -1;
     const data = cardsDataFor(deck)[name] || {};
     const nameN = cqNorm(name);
     const kwRaw = (data.keywords || []).join(' ').toLowerCase();

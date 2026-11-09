@@ -3012,6 +3012,8 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
     });
     return out;
   }
+  const TAROT_SUITS = ['copas', 'ouros', 'espadas', 'paus'];
+  const TAROT_RANKS = ['as', 'dois', 'tres', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'valete', 'cavaleiro', 'rainha', 'rei'];
   function romanToInt(s) {
     if (!/^[IVXL]+$/.test(s)) return 0;
     const v = { I: 1, V: 5, X: 10, L: 50 };
@@ -3030,7 +3032,18 @@ document.querySelectorAll('.card[data-search]').forEach(card => {
         if (norm(raw) === 'as') set.add('1');
       }
       const nm = ((card.querySelector('.card-name') || {}).textContent || '').trim();
-      if (nm === 'A Louca') set.add('0');
+      // tarot: arcanos maiores 1 a 22 (A Louca = 22); depois Copas, Ouros, Espadas e Paus em sequência (23 a 78)
+      const sec = card.closest('[data-deck]');
+      if (sec && sec.dataset.deck === 'tarot') {
+        const mm = norm(nm).match(/^(\w+) de (copas|ouros|espadas|paus)$/);
+        if (mm) {
+          const r = TAROT_RANKS.indexOf(mm[1]);
+          if (r >= 0) {
+            set.add(String(22 + TAROT_SUITS.indexOf(mm[2]) * 14 + r + 1));
+            if (r < 10) set.add(String(r + 1));   // valor da carta (7 de copas também responde a "7")
+          }
+        }
+      }
       card._nums = set;
     }
     return card._nums;
