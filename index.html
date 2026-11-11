@@ -2840,6 +2840,9 @@ const labels = { sim: '✓ Sim', nao: '✗ Não', talvez: '◈ Talvez' };
 document.querySelectorAll('.card[data-search]').forEach(card => {
   const nameEl = card.querySelector('.card-name');
   if (!nameEl) return;
+  // o mapa de oráculo é só do Tarot: não aplicar em cartas de outros baralhos que tenham o mesmo nome (A Torre, O Sol, A Lua...)
+  const deckSec = card.closest('[data-deck]');
+  if (deckSec && deckSec.dataset.deck !== 'tarot') return;
   const name = nameEl.textContent.trim();
   const oracle = oracleMap[name];
   if (!oracle) return;

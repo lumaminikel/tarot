@@ -3516,7 +3516,7 @@ window.showCalDay = function(dateStr) {
     ).join('');
     html += `<div style="margin-bottom:.7rem;cursor:pointer" onclick="goToEntry('${e.id}')" title="Ver essa tiragem no diário">
       <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.3rem">${badges}</div>
-      ${e.analysis?`<div style="font-size:.82rem;color:var(--text-dim);line-height:1.5">${e.analysis.slice(0,120).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<strong>$1</strong>')}${e.analysis.length>120?'…':''}</div>`:''}
+      ${e.analysis?`<div style="font-size:.82rem;color:var(--text-dim);line-height:1.5">${escapeHtml(e.analysis.slice(0,120)).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<strong>$1</strong>')}${e.analysis.length>120?'…':''}</div>`:''}
     </div>`;
   });
   const detail = document.getElementById('cal-day-detail');
@@ -4518,6 +4518,12 @@ function genId(){ return Date.now().toString(36)+Math.random().toString(36).slic
 function formatDate(iso){ const[y,m,d]=iso.split('-'); return`${d}/${m}/${y}` }
 function weekday(iso){ const days=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado']; return days[new Date(iso+'T12:00:00').getDay()] }
 function monthLabel(iso){ const months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']; const[y,m]=iso.split('-'); return`${months[parseInt(m)-1]} ${y}` }
+// escapa texto de usuário/IA antes de colocar em innerHTML
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+// nome de carta digitado livremente: tira os caracteres que quebrariam o HTML
+function cleanCardName(s) { return String(s == null ? '' : s).replace(/[<>"&`]/g, '').trim(); }
 // registra o erro no console e avisa a pessoa (em vez de engolir em silêncio)
 function reportError(msg, err){ console.error(msg, err); showToast(msg) }
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800) }
@@ -4594,7 +4600,7 @@ auth.onAuthStateChanged(user => {
     if(!ub){
       ub = document.createElement('div');
       ub.id='user-bar'; ub.className='user-bar';
-      ub.innerHTML=`<span class="user-email">${user.email}</span><a href="perfil.html" class="btn-signout" style="text-decoration:none;display:inline-block">👤 Perfil</a><button class="btn-signout" onclick="auth.signOut()">Sair</button>`;
+      ub.innerHTML=`<span class="user-email">${escapeHtml(user.email)}</span><a href="perfil.html" class="btn-signout" style="text-decoration:none;display:inline-block">👤 Perfil</a><button class="btn-signout" onclick="auth.signOut()">Sair</button>`;
       document.getElementById('header-bottom').appendChild(ub);
     }
     loadEntries();
@@ -4650,6 +4656,10 @@ async function loadEntries(){
   try {
     const snap = await col().orderBy('date','desc').get();
     entries = snap.docs.map(d=>({id:d.id,...d.data()}));
+    entries.forEach(e => {
+      if (Array.isArray(e.cards)) e.cards.forEach(c => { c.name = cleanCardName(c.name); });
+      if (e.bottomCard) e.bottomCard.name = cleanCardName(e.bottomCard.name);
+    });
     render();
   } catch (err) {
     // sem isso o "Carregando diário..." ficava para sempre quando o Firebase falhava (offline, permissão, etc.)
@@ -4680,7 +4690,7 @@ function renderTags(){
   cardTags.forEach((tag,i)=>{
     const div=document.createElement('div');
     div.className='card-tag'+(tag.inv?' invertida':'');
-    div.innerHTML=`${tag.name}${tag.inv?' ↩':''} <button onclick="removeTag(${i})">×</button>`;
+    div.innerHTML=`${escapeHtml(tag.name)}${tag.inv?' ↩':''} <button onclick="removeTag(${i})">×</button>`;
     tagsWrap.insertBefore(div,tagInput);
   });
   if (formDeck === 'tarot') {
@@ -4699,7 +4709,7 @@ function addCardFromInput(){
   const val = tagInput.value.trim().replace(/,$/,'').trim();
   if(!val) return;
   const inv = val.endsWith('↩') || /inverti|inversa/i.test(val);
-  const name = val.replace(/↩|invertida|inversa/gi,'').replace(/,$/,'').trim();
+  const name = cleanCardName(val.replace(/↩|invertida|inversa/gi,'').replace(/,$/,''));
   if(name){
     cardTags.push({name, inv});
     renderTags();
@@ -5396,13 +5406,13 @@ function render(){
       <div class="month-body">`;
     g.entries.forEach(e=>{
     const badges=e.cards.map(c=>`<span class="entry-card-badge${c.inv?' invertida':''}" onclick="showCardPopup('${c.name.replace(/'/g,"\\'")}',${c.inv?'true':'false'},'${e.deck||'tarot'}')"><span title="Ver significado">${c.name}${c.inv?' ↩':''}</span></span>`).join('');
-    const an=(e.analysis||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<strong>$1</strong>');
-    const nt=(e.notes||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const an=escapeHtml(e.analysis||'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<strong>$1</strong>');
+    const nt=escapeHtml(e.notes||'');
     const lunar=lunarPhase(e.date);
-    const themeBadge=e.theme?`<span class="theme-badge theme-${e.theme}">${THEME_LABELS[e.theme]||e.theme}</span>`:'';
+    const themeBadge=e.theme?`<span class="theme-badge theme-${escapeHtml(e.theme)}">${escapeHtml(THEME_LABELS[e.theme]||e.theme)}</span>`:'';
     const SUBJECT_BADGE_LABELS={amigo:'👥 Amigo(a)',familiar:'👪 Familiar',outra:'❓ Outra pessoa'};
     const deckBadge = e.deck==='cigano' ? `<span class="theme-badge" style="background:rgba(37,158,88,.16);border:1px solid #3a8f5a;color:#8fd6a8">🍀 Cigano</span>` : e.deck==='latim' ? `<span class="theme-badge" style="background:rgba(150,96,60,.16);border:1px solid #a8683c;color:#e0a679">📜 Cigano Latim</span>` : e.deck==='sibilla' ? `<span class="theme-badge" style="background:rgba(128,0,32,.22);border:1px solid #8c1d3a;color:#e8a0b2">🕯️ Sibilla</span>` : '';
-    const subjectBadge=(e.subject && e.subject!=='mim')?`<span class="theme-badge" style="background:rgba(122,78,184,.18);border:1px solid var(--purple);color:var(--purple-light)">${SUBJECT_BADGE_LABELS[e.subject]||'Outra pessoa'}${e.subjectName?': '+e.subjectName.replace(/</g,'&lt;'):''}</span>`:'';
+    const subjectBadge=(e.subject && e.subject!=='mim')?`<span class="theme-badge" style="background:rgba(122,78,184,.18);border:1px solid var(--purple);color:var(--purple-light)">${SUBJECT_BADGE_LABELS[e.subject]||'Outra pessoa'}${e.subjectName?': '+escapeHtml(e.subjectName):''}</span>`:'';
     html+=`
     <div class="entry" id="entry-${e.id}">
       <div class="entry-header" onclick="toggleEntry('${e.id}')">

@@ -1,5 +1,5 @@
 // sw.js — cache offline para o Guia e Diário de Tarot
-const CACHE_VERSION = 'tarot-cache-v4';
+const CACHE_VERSION = 'tarot-cache-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -32,6 +32,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+
+  // Login e banco de dados (Firebase) nunca passam pelo cache: sempre direto da rede, para não devolver resposta velha
+  const host = new URL(req.url).hostname;
+  if (host === 'firestore.googleapis.com' || host === 'identitytoolkit.googleapis.com' ||
+      host === 'securetoken.googleapis.com' || host === 'firebaseinstallations.googleapis.com' ||
+      host === 'generativelanguage.googleapis.com' || host.endsWith('.firebaseio.com')) return;
 
   // Navegação (abrir a página em si): tenta a rede primeiro, cai pro cache se offline
   if (req.mode === 'navigate') {
